@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+<rect width="1200" height="1200" fill="#0B0F14"/>
+<g transform="translate(0, 340)">
+<rect width="1200" height="520" fill="#0B0F14"/>
+<text x="40" y="64" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="40" font-weight="bold" fill="#E6EAF2" text-anchor="start">Server settings to re-tune</text>
+<text x="40" y="100" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="20" font-weight="normal" fill="#9AA3B5" text-anchor="start">Two fixes change what Powersuits' numbers mean. Apply these in powersuits-server.toml (every world, and defaultconfigs).</text>
+<rect x="40" y="130" width="1120" height="360" rx="10" fill="#10151C" stroke="#FFD23A" stroke-width="2" opacity="1"/>
+<text x="62" y="170" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#FFD23A" text-anchor="start" letter-spacing="2">POWERSUITS-SERVER.TOML</text>
+<line x1="62" y1="186" x2="1138" y2="186" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
+<text x="70" y="200" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#9AA3B5" text-anchor="start" letter-spacing="1">KEY</text>
+<text x="640" y="200" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#9AA3B5" text-anchor="start" letter-spacing="1">WAS</text>
+<text x="750" y="200" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#9AA3B5" text-anchor="start" letter-spacing="1">SET TO</text>
+<text x="860" y="200" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#9AA3B5" text-anchor="start" letter-spacing="1">WHY</text>
+<line x1="70" y1="212" x2="1130" y2="212" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
+<text x="70" y="246" font-family="Menlo, Monaco, monospace" font-size="13" font-weight="normal" fill="#E6EAF2" text-anchor="start">[jetpack] jetpackThrust_thrust_multiplier</text>
+<text x="640" y="246" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">0.16</text>
+<text x="750" y="246" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="bold" fill="#8FE04A" text-anchor="start">0.32</text>
+<text x="860" y="246" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#9AA3B5" text-anchor="start">the suit ticks once now (F-3)</text>
+<text x="70" y="286" font-family="Menlo, Monaco, monospace" font-size="13" font-weight="normal" fill="#E6EAF2" text-anchor="start">[jetpack] energyCon_thrust_multiplier</text>
+<text x="640" y="286" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">15000</text>
+<text x="750" y="286" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="bold" fill="#8FE04A" text-anchor="start">2500</text>
+<text x="860" y="286" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#9AA3B5" text-anchor="start">about 16,000 FE/s at full thrust</text>
+<text x="70" y="326" font-family="Menlo, Monaco, monospace" font-size="13" font-weight="normal" fill="#E6EAF2" text-anchor="start">[jet_boots] jetbootsThrust_thrust_multiplier</text>
+<text x="640" y="326" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">0.08</text>
+<text x="750" y="326" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="bold" fill="#8FE04A" text-anchor="start">0.16</text>
+<text x="860" y="326" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#9AA3B5" text-anchor="start">same as the jetpack</text>
+<text x="70" y="366" font-family="Menlo, Monaco, monospace" font-size="13" font-weight="normal" fill="#E6EAF2" text-anchor="start">[generator_kinetic] base_energyPerBlock</text>
+<text x="640" y="366" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">2000</text>
+<text x="750" y="366" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="bold" fill="#8FE04A" text-anchor="start">250</text>
+<text x="860" y="366" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#9AA3B5" text-anchor="start">energy is per real block now (F-6)</text>
+<text x="70" y="406" font-family="Menlo, Monaco, monospace" font-size="13" font-weight="normal" fill="#E6EAF2" text-anchor="start">[generator_kinetic] energyPerBlock_energyGenerated_multiplier</text>
+<text x="640" y="406" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">6000</text>
+<text x="750" y="406" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="bold" fill="#8FE04A" text-anchor="start">750</text>
+<text x="860" y="406" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#9AA3B5" text-anchor="start">about 5,600 FE/s sprinting, like solar</text>
+<text x="70" y="462" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="start">BSP-Mod Fixes' own file, bsp_mod_fixes-server.toml, has one switch: suitClearsFire (true keeps Powersuits' fire immunity).</text>
+</g>
+</svg>

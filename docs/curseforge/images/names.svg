@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+<rect width="1200" height="1200" fill="#0B0F14"/>
+<g transform="translate(0, 335)">
+<rect width="1200" height="530" fill="#0B0F14"/>
+<text x="40" y="64" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="40" font-weight="bold" fill="#E6EAF2" text-anchor="start">Names instead of keys</text>
+<text x="40" y="100" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="20" font-weight="normal" fill="#9AA3B5" text-anchor="start">Numina ships its English as us_en.json, a file Minecraft never loads. Powersuits forgot its keybinding names.</text>
+<rect x="40" y="130" width="1120" height="370" rx="10" fill="#10151C" stroke="#19D3B0" stroke-width="2" opacity="1"/>
+<text x="62" y="170" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#19D3B0" text-anchor="start" letter-spacing="2">THE TINKER TABLE, CONTROLS AND TOOLTIPS</text>
+<line x1="62" y1="186" x2="1138" y2="186" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
+<text x="70" y="210" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">numina.module.category.armor</text>
+<line x1="560" y1="205" x2="610" y2="205" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="205" x2="597.7138441335347" y2="211.71195754045885" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="205" x2="597.7138441335347" y2="198.28804245954115" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<text x="640" y="210" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#E6EAF2" text-anchor="start">Armor Modules</text>
+<text x="70" y="242" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">numina.module.category.energystorage</text>
+<line x1="560" y1="237" x2="610" y2="237" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="237" x2="597.7138441335347" y2="243.71195754045885" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="237" x2="597.7138441335347" y2="230.28804245954115" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<text x="640" y="242" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#E6EAF2" text-anchor="start">Energy Storage</text>
+<text x="70" y="274" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">item.numina.component_servo</text>
+<line x1="560" y1="269" x2="610" y2="269" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="269" x2="597.7138441335347" y2="275.71195754045885" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="269" x2="597.7138441335347" y2="262.28804245954115" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<text x="640" y="274" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#E6EAF2" text-anchor="start">Servo Motor</text>
+<text x="70" y="306" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">item.numina.battery_basic</text>
+<line x1="560" y1="301" x2="610" y2="301" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="301" x2="597.7138441335347" y2="307.71195754045885" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="301" x2="597.7138441335347" y2="294.28804245954115" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<text x="640" y="306" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#E6EAF2" text-anchor="start">Basic Battery</text>
+<text x="70" y="338" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">keybinding.powersuits.jetpack</text>
+<line x1="560" y1="333" x2="610" y2="333" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="333" x2="597.7138441335347" y2="339.71195754045885" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="333" x2="597.7138441335347" y2="326.28804245954115" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<text x="640" y="338" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#E6EAF2" text-anchor="start">Toggle Jetpack</text>
+<text x="70" y="370" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">keybinding.powersuits.goDownKey</text>
+<line x1="560" y1="365" x2="610" y2="365" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="365" x2="597.7138441335347" y2="371.71195754045885" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="365" x2="597.7138441335347" y2="358.28804245954115" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<text x="640" y="370" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#E6EAF2" text-anchor="start">Fly Down (Flight Control)</text>
+<text x="70" y="402" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">key..numina.fovfixtoggle</text>
+<line x1="560" y1="397" x2="610" y2="397" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="397" x2="597.7138441335347" y2="403.71195754045885" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="397" x2="597.7138441335347" y2="390.28804245954115" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<text x="640" y="402" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#E6EAF2" text-anchor="start">Toggle field of view fix</text>
+<text x="70" y="434" font-family="Menlo, Monaco, monospace" font-size="15" font-weight="normal" fill="#FF6B5C" text-anchor="start">gui.tinkertable</text>
+<line x1="560" y1="429" x2="610" y2="429" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="429" x2="597.7138441335347" y2="435.71195754045885" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<line x1="610" y1="429" x2="597.7138441335347" y2="422.28804245954115" stroke="#2A2F3A" stroke-width="2" stroke-linecap="round"/>
+<text x="640" y="434" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="17" font-weight="bold" fill="#E6EAF2" text-anchor="start">Tinker Table</text>
+<g shape-rendering="crispEdges">
+<rect x="1078.00" y="153.00" width="3.30" height="3.30" fill="#3e1002"/>
+<rect x="1081.00" y="153.00" width="3.30" height="3.30" fill="#c66a04"/>
+<rect x="1084.00" y="153.00" width="3.30" height="3.30" fill="#fca018"/>
+<rect x="1087.00" y="153.00" width="3.30" height="3.30" fill="#3e1002"/>
+<rect x="1075.00" y="156.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1078.00" y="156.00" width="3.30" height="3.30" fill="#3e1002"/>
+<rect x="1081.00" y="156.00" width="3.30" height="3.30" fill="#8d3007"/>
+<rect x="1084.00" y="156.00" width="3.30" height="3.30" fill="#8d3007"/>
+<rect x="1087.00" y="156.00" width="3.30" height="3.30" fill="#3e1002"/>
+<rect x="1090.00" y="156.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1072.00" y="159.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1075.00" y="159.00" width="3.30" height="3.30" fill="#878d98"/>
+<rect x="1078.00" y="159.00" width="3.30" height="3.30" fill="#a9b0b6"/>
+<rect x="1081.00" y="159.00" width="3.30" height="3.30" fill="#878d98"/>
+<rect x="1084.00" y="159.00" width="3.30" height="3.30" fill="#ffffff"/>
+<rect x="1087.00" y="159.00" width="3.30" height="3.30" fill="#ffffff"/>
+<rect x="1090.00" y="159.00" width="3.30" height="3.30" fill="#a9b0b6"/>
+<rect x="1093.00" y="159.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1072.00" y="162.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1075.00" y="162.00" width="3.30" height="3.30" fill="#878d98"/>
+<rect x="1078.00" y="162.00" width="3.30" height="3.30" fill="#a9b0b6"/>
+<rect x="1081.00" y="162.00" width="3.30" height="3.30" fill="#878d98"/>
+<rect x="1084.00" y="162.00" width="3.30" height="3.30" fill="#ffffff"/>
+<rect x="1087.00" y="162.00" width="3.30" height="3.30" fill="#ffffff"/>
+<rect x="1090.00" y="162.00" width="3.30" height="3.30" fill="#a9b0b6"/>
+<rect x="1093.00" y="162.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1072.00" y="165.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1075.00" y="165.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1078.00" y="165.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1081.00" y="165.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1084.00" y="165.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1087.00" y="165.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1090.00" y="165.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1093.00" y="165.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1072.00" y="168.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1075.00" y="168.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1078.00" y="168.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1081.00" y="168.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1084.00" y="168.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1087.00" y="168.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1090.00" y="168.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1093.00" y="168.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1072.00" y="171.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1075.00" y="171.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1078.00" y="171.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1081.00" y="171.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1084.00" y="171.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1087.00" y="171.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1090.00" y="171.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1093.00" y="171.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1072.00" y="174.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1075.00" y="174.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1078.00" y="174.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1081.00" y="174.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1084.00" y="174.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1087.00" y="174.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1090.00" y="174.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1093.00" y="174.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1072.00" y="177.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1075.00" y="177.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1078.00" y="177.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1081.00" y="177.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1084.00" y="177.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1087.00" y="177.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1090.00" y="177.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1093.00" y="177.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1069.00" y="180.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1072.00" y="180.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1075.00" y="180.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1078.00" y="180.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1081.00" y="180.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1084.00" y="180.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1087.00" y="180.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1090.00" y="180.00" width="3.30" height="3.30" fill="#454950"/>
+<rect x="1093.00" y="180.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1096.00" y="180.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1069.00" y="183.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1072.00" y="183.00" width="3.30" height="3.30" fill="#878d98"/>
+<rect x="1075.00" y="183.00" width="3.30" height="3.30" fill="#878d98"/>
+<rect x="1078.00" y="183.00" width="3.30" height="3.30" fill="#a9b0b6"/>
+<rect x="1081.00" y="183.00" width="3.30" height="3.30" fill="#a9b0b6"/>
+<rect x="1084.00" y="183.00" width="3.30" height="3.30" fill="#a9b0b6"/>
+<rect x="1087.00" y="183.00" width="3.30" height="3.30" fill="#a9b0b6"/>
+<rect x="1090.00" y="183.00" width="3.30" height="3.30" fill="#ffffff"/>
+<rect x="1093.00" y="183.00" width="3.30" height="3.30" fill="#a9b0b6"/>
+<rect x="1096.00" y="183.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1069.00" y="186.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1072.00" y="186.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1075.00" y="186.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1078.00" y="186.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1081.00" y="186.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1084.00" y="186.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1087.00" y="186.00" width="3.30" height="3.30" fill="#5c636d"/>
+<rect x="1090.00" y="186.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1093.00" y="186.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1096.00" y="186.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1078.00" y="189.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1081.00" y="189.00" width="3.30" height="3.30" fill="#878d98"/>
+<rect x="1084.00" y="189.00" width="3.30" height="3.30" fill="#a9b0b6"/>
+<rect x="1087.00" y="189.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1078.00" y="192.00" width="3.30" height="3.30" fill="#181b1d"/>
+<rect x="1081.00" y="192.00" width="3.30" height="3.30" fill="#878d98"/>
+<rect x="1084.00" y="192.00" width="3.30" height="3.30" fill="#ffffff"/>
+<rect x="1087.00" y="192.00" width="3.30" height="3.30" fill="#181b1d"/>
+</g>
+<text x="70" y="480" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="start">Two small lang files in this jar: all of Numina's plus the keys its code uses, and only the keys Powersuits lacks. Nothing of theirs is overridden.</text>
+</g>
+</svg>

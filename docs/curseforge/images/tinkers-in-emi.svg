@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+<rect width="1200" height="1200" fill="#0B0F14"/>
+<g transform="translate(0, 320)">
+<rect width="1200" height="560" fill="#0B0F14"/>
+<text x="40" y="64" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="40" font-weight="bold" fill="#E6EAF2" text-anchor="start">Tinkers' Construct recipes in EMI</text>
+<text x="40" y="100" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="20" font-weight="normal" fill="#9AA3B5" text-anchor="start">EMI's JEI layer stopped at an older JEI API. Tinkers calls the newer methods, so every category showed "Error rendering".</text>
+<rect x="40" y="130" width="540" height="400" rx="10" fill="#10151C" stroke="#FF6B5C" stroke-width="2" opacity="1"/>
+<text x="62" y="170" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#FF6B5C" text-anchor="start" letter-spacing="2">BEFORE</text>
+<line x1="62" y1="186" x2="558" y2="186" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
+<rect x="70" y="200" width="480" height="280" rx="8" fill="#0C0E12" stroke="#FF6B5C" stroke-width="1.5" opacity="1"/>
+<text x="310" y="250" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="26" font-weight="bold" fill="#FF6B5C" text-anchor="middle">Error rendering</text>
+<text x="310" y="284" font-family="Menlo, Monaco, monospace" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="middle">java.lang.AbstractMethodError</text>
+<text x="310" y="306" font-family="Menlo, Monaco, monospace" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="middle">JemiTooltipBuilder.getLines()</text>
+<text x="310" y="328" font-family="Menlo, Monaco, monospace" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="middle">JemiRecipeExtrasBuilder.addDrawableWidget(...)</text>
+<text x="310" y="372" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="middle">Melting, casting, alloying, part builder,</text>
+<text x="310" y="396" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="middle">modifiers: every Tinkers category, and</text>
+<text x="310" y="420" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="middle">entity melting and severing were empty.</text>
+<rect x="620" y="130" width="540" height="400" rx="10" fill="#10151C" stroke="#8FE04A" stroke-width="2" opacity="1"/>
+<text x="642" y="170" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#8FE04A" text-anchor="start" letter-spacing="2">NOW</text>
+<line x1="642" y1="186" x2="1138" y2="186" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
+<rect x="650" y="200" width="480" height="280" rx="8" fill="#0C0E12" stroke="#8FE04A" stroke-width="1.5" opacity="1"/>
+<text x="890" y="236" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" fill="#E6EAF2" text-anchor="middle">Melting</text>
+<rect x="690" y="270" width="56" height="56" rx="4" fill="#1c1c1c" stroke="#6a6a6a" stroke-width="1.5" opacity="1"/>
+<rect x="700" y="280" width="36" height="36" rx="2" fill="#8d8d8d" opacity="1"/>
+<line x1="770" y1="298" x2="860" y2="298" stroke="#19D3B0" stroke-width="3" stroke-linecap="round"/>
+<line x1="860" y1="298" x2="847.7138441335347" y2="304.71195754045885" stroke="#19D3B0" stroke-width="3" stroke-linecap="round"/>
+<line x1="860" y1="298" x2="847.7138441335347" y2="291.28804245954115" stroke="#19D3B0" stroke-width="3" stroke-linecap="round"/>
+<rect x="890" y="262" width="40" height="72" rx="4" fill="#1c1c1c" stroke="#6a6a6a" stroke-width="1.5" opacity="1"/>
+<rect x="896" y="276" width="28" height="52" rx="2" fill="#d9742b" opacity="1"/>
+<rect x="960" y="270" width="150" height="56" rx="4" fill="#10151C" stroke="#2A2F3A" stroke-width="1.5" opacity="1"/>
+<text x="970" y="292" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="bold" fill="#E6EAF2" text-anchor="start">Molten Iron</text>
+<text x="970" y="312" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#9AA3B5" text-anchor="start">1 Ingot</text>
+<text x="690" y="372" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="start">Temperature: 1000</text>
+<text x="690" y="396" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="start">Time: 2 s</text>
+<text x="890" y="452" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="middle">Arrows animate, fluids show Tinkers' ingot and nugget lines,</text>
+<text x="890" y="472" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="middle">entity melting and severing have their recipes back.</text>
+</g>
+</svg>
