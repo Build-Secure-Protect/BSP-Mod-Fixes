@@ -25,7 +25,22 @@ public class BSPModFixes {
         context.registerConfig(ModConfig.Type.SERVER, FixesConfig.SPEC);
         Fixes.registerEvents();
         context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> Fixes.report());
+        if (Boolean.getBoolean("bsp_mod_fixes.emiProbe")) {
+            context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runEmiProbe());
+        }
         LOGGER.info("BSP-Mod Fixes {} loaded (Numina {}, Modular Powersuits {})", version(MODID), version("numina"), version("powersuits"));
+    }
+
+    /**
+     * Dev only ({@code -PemiProbe} on a client run): the probe class of the gametest package, which is not in the jar, is
+     * loaded by name and run, so the EMI fixes' methods are called headlessly on EMI's real classes.
+     */
+    private static void runEmiProbe() {
+        try {
+            Class.forName("com.mrgregles.bsp_mod_fixes.gametest.EmiClientProbe").getMethod("run").invoke(null);
+        } catch (Throwable t) {
+            LOGGER.error("BSP-Mod Fixes probe FAILED to run", t);
+        }
     }
 
     /** The version of a loaded mod as mods.toml gives it, or "absent". */

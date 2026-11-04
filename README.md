@@ -4,6 +4,8 @@ Fixes for other mods in the Build Secure Protect (BSP) modpack: Minecraft 1.20.1
 
 The mod patches bugs and exploits in **Numina 2.3.13** and **Modular Powersuits 2.3.13** without shipping or changing their jars: mixins into their classes, event handlers of this mod's own, and language files that fill the gaps in theirs. It is installed on every client and every server, and it requires exactly the versions it was built against, so a different Numina or Powersuits refuses to start instead of being patched wrongly.
 
+It also patches **EMI 1.1.24+1.20.1+forge**'s JEI compatibility layer so that Tinkers' Construct 3.12.1.231 recipes render in EMI. EMI is optional and client-side: those fixes apply only when exactly that EMI build is loaded, and any other EMI (or none) costs them and nothing else, with one line in the log.
+
 What each fix does is in `CHANGELOG.md`; the server settings that go with it are in `docs/CONFIG.md`; the checks are in `docs/TESTING.md`. The server log lists the fixes once loading is complete.
 
 | Fix | Mod at fault | What changes |
@@ -18,11 +20,17 @@ What each fix does is in `CHANGELOG.md`; the server settings that go with it are
 | F-8 | Powersuits | The Energy Shield absorbs part of each hit for energy instead of adding armor points, and stays on when the battery is low. |
 | F-9 | Numina, Powersuits | English names: Numina's misnamed lang file and Powersuits' missing keybinding and GUI keys. |
 | F-10 | Numina | Option `suitClearsFire` in `bsp_mod_fixes-server.toml` (default on) decides whether a suit puts its wearer's fire out. |
+| F-11 | EMI | A null entry in a JEI ingredient list (allowed by JEI's API) becomes an empty EMI stack instead of dropping the recipe; Tinkers' entity melting and severing categories show in EMI. |
+| F-12 | EMI | EMI's JEI tooltip builder gains the JEI 15.x methods it lacked (`getLines`, `clear`, `clearIngredient`, `addKeyUsageComponent`), so Tinkers' fluid tooltips no longer turn a recipe into "Error Rendering". |
+| F-13 | EMI | A fluid's amount line is offered to a JEI rich tooltip callback under JEI's key, so Tinkers' unit lines ("1 Ingot") replace EMI's "mB" line as they do in JEI. |
+| F-14 | EMI | EMI's JEI recipe extras builder gains the JEI 15.56 widget methods (drawables, arrows, plus signs, flames, tooltip areas, buttons) with their tooltips, so Tinkers' arrows and icons draw. |
+| F-15 | EMI | JEI text widgets are drawn (EMI returned them without drawing them), so Tinkers' titles, temperatures and times show. |
 
 ## Requirements
 
-- Minecraft 1.20.1 with Forge 47.4.10 or newer (the network runs 47.4.23).
+- Minecraft 1.20.1 with Forge 47.3.10 or newer (the network runs 47.4.23).
 - Numina 2.3.13 and Modular Powersuits 2.3.13, on the client and on the server.
+- Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes (F-11 onward); they are skipped with any other EMI.
 
 ## Build
 
@@ -30,4 +38,4 @@ What each fix does is in `CHANGELOG.md`; the server settings that go with it are
 ./gradlew build
 ```
 
-The jar is written to `build/libs/`. `./gradlew check` also runs `tools/check_lang.py` over the two shipped lang files (regenerate them with `tools/gen_lang.py <numina jar> <powersuits jar>` after a dependency bump). `./gradlew runGameTestServer` runs the headless tests (add `-PmixinVerbose` to see every injection Mixin applies); `./gradlew runServer` and `./gradlew runClient` start a dev server or client with both patched mods loaded.
+The jar is written to `build/libs/`. `./gradlew check` also runs `tools/check_lang.py` over the two shipped lang files (regenerate them with `tools/gen_lang.py <numina jar> <powersuits jar>` after a dependency bump). `./gradlew runGameTestServer` runs the headless tests (add `-PmixinVerbose` to see every injection Mixin applies); `./gradlew runServer` and `./gradlew runClient` start a dev server or client with both patched mods loaded; add `-PwithEmi` to any run to load EMI, JEI, Tinkers' Construct and Mantle as well (the exact pack files, from CurseMaven) for the EMI checks. `./gradlew runClient -PwithEmi -PquickPlay=<world>` opens a world from `run/saves` straight away, which is how the headless check reaches EMI's recipe reload. `-PemiProbe` on that run calls the EMI fixes' methods on EMI's real classes once loading is complete and logs one "BSP-Mod Fixes probe" line per check (the probe class lives in the gametest package and is not in the jar).

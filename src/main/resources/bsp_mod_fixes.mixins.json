@@ -15,7 +15,13 @@
     "MovementManagerFallMixin",
     "EnergyShieldArmorMixin",
     "EnergyShieldTickerMixin",
-    "NuminaFireClearMixin"
+    "NuminaFireClearMixin",
+    "EmiNullStackMixin",
+    "EmiTooltipBuilderMixin",
+    "EmiSlotTooltipMixin",
+    "EmiRecipeExtrasMixin",
+    "EmiPlaceableMixin",
+    "EmiTextWidgetMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -40,6 +40,16 @@ minecraft {
 
         client {
             property 'forge.enabledGameTestNamespaces', mod_id
+            // ./gradlew runClient -PquickPlay=<world in run/saves>: opens that world at once (vanilla quick play), so a
+            // headless check can reach the recipe reload (EMI's JEI layer only loads in a world).
+            if (project.hasProperty('quickPlay')) {
+                args '--quickPlaySingleplayer', project.property('quickPlay')
+            }
+            // ./gradlew runClient -PwithEmi -PemiProbe: runs gametest/EmiClientProbe once loading is complete (the EMI
+            // fixes' methods, called on EMI's real classes without a screen); its lines start "BSP-Mod Fixes probe".
+            if (project.hasProperty('emiProbe')) {
+                property 'bsp_mod_fixes.emiProbe', 'true'
+            }
         }
 
         server {
@@ -88,6 +98,18 @@ dependencies {
     // The two mods this mod patches: compiled against and loaded in every dev run (mandatory in mods.toml, exact versions).
     implementation fg.deobf("curse.maven:${numina_curse}")
     implementation fg.deobf("curse.maven:${powersuits_curse}")
+
+    // EMI and the JEI API, compiled against for the EMI fixes (F-11 onward); optional at runtime, gated to emi_version.
+    compileOnly fg.deobf("curse.maven:${emi_curse}")
+    compileOnly fg.deobf("curse.maven:${jei_curse}")
+
+    // ./gradlew runClient -PwithEmi (or any run): EMI, JEI, Tinkers' Construct and Mantle load, for the in-game checks of docs/TESTING.md.
+    if (project.hasProperty('withEmi')) {
+        runtimeOnly fg.deobf("curse.maven:${emi_curse}")
+        runtimeOnly fg.deobf("curse.maven:${jei_curse}")
+        runtimeOnly fg.deobf("curse.maven:${tconstruct_curse}")
+        runtimeOnly fg.deobf("curse.maven:${mantle_curse}")
+    }
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -98,6 +120,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
             numina_version_range: numina_version_range, powersuits_version_range: powersuits_version_range,
+            emi_version: emi_version,
     ]
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
@@ -109,6 +132,12 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.register('checkLang', Exec) {
     description = 'Checks the shipped Numina and Powersuits lang files.'
     commandLine 'python3', '-I', 'tools/check_lang.py'
+    // The same checks run as a GameTest; without python3 on the PATH this task only warns instead of failing the build.
+    onlyIf {
+        def found = System.getenv('PATH')?.split(File.pathSeparator)?.any { new File(it, 'python3').canExecute() }
+        if (!found) logger.warn('checkLang skipped: python3 is not on the PATH (the lang GameTest still covers the files)')
+        return found
+    }
 }
 check.dependsOn 'checkLang'
 

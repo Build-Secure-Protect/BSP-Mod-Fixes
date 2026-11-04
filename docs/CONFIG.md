@@ -31,6 +31,8 @@ Energy is now per block walked, every tick, so the old per-sample numbers are fa
 | `[Modules.Energy_Generation.generator_kinetic]` | `base_energyPerBlock` | 2000 | **250** | sprinting at max ≈ 0.28 blocks/tick × 1000 × 20 ≈ 5,600 FE/s, like a solar module in full sun |
 | `[Modules.Energy_Generation.generator_kinetic]` | `energyPerBlock_energyGenerated_multiplier` | 6000 | **750** | same |
 
+The generator credits whole FE per tick, truncated: a rate under about 4 FE per block (walking is 0.22 block a tick, sprinting 0.28) would round to nothing every tick, so keep `base_energyPerBlock` well above that. A step of more than one block in a tick is treated as a teleport and pays nothing; that is also the most a modified client can claim per tick.
+
 This is a deliberate re-balance toward solar: on open ground the old module's steady state was higher than it looked, but erratic (see the vault's assessment).
 
 ### Energy Shield (F-8)

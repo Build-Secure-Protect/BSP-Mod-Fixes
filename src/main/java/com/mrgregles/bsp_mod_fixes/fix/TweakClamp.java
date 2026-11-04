@@ -31,7 +31,7 @@ public final class TweakClamp {
     }
 
     public static void warn(@Nullable ServerPlayer sender, ResourceLocation module, String tweak, double raw, double clamped) {
-        Fixes.LOGGER.warn("{}: clamped tweak '{}' on module {} from {} to {} (sent by {})", ID, tweak, module, raw, clamped,
-                sender == null ? "a connection without a player" : sender.getGameProfile().getName());
+        String name = sender == null ? "a connection without a player" : sender.getGameProfile().getName();
+        Fixes.warnThrottled(ID + ":" + name, "{}: clamped tweak '{}' on module {} from {} to {} (sent by {})", ID, tweak, module, raw, clamped, name);
     }
 }

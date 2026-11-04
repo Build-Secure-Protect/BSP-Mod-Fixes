@@ -98,3 +98,68 @@ In game, on a dedicated server (the setting is a server config, synced to client
 3. Set `suitClearsFire = false` and `/reload` or restart: the same player keeps burning like anyone else; heat still rises from fire damage as before.
 
 Untested in game at the time of writing: all of the above.
+
+## 2026-11-04: MF-9, the EMI gate and the null ingredient (F-11)
+
+Headless: 2 new GameTests (19 in all): `emi_gate_applies_the_fixes_for_the_exact_version_only` (the verdict for the pinned build, no EMI, an older, a newer and the fabric build) and `emi_fixes_are_skipped_without_emi_and_never_applied_on_a_server` (without EMI the plugin skipped F-11 and the report says "[skipped: EMI is not loaded]"; with `-PwithEmi` the gate reads EMI's version, applies, and F-11 waits for its target, which never loads on a server). Both `./gradlew runGameTestServer` and `./gradlew runGameTestServer -PwithEmi` pass 19/19.
+
+In game, on a client with EMI 1.1.24+1.20.1+forge, JEI 15.74.0.234, Tinkers' Construct 3.12.1.231 and Mantle 1.11.117 (`./gradlew runClient -PwithEmi`, or the pack):
+1. The log has "BSP-Mod Fixes: EMI 1.1.24+1.20.1+forge is loaded, the EMI fixes apply" before the mod list, and the startup report lists F-11 (EMI 1.1.24+1.20.1+forge) "[applies when its target class loads]"; once a world is open and EMI has reloaded, "F-11 applied to dev.emi.emi.jemi.JemiUtil (first use of its target)".
+2. `latest.log` has no "Exception thrown adding adding JEI recipe" lines (the pack's log had three, from `EntityMeltingRecipeCategory` twice and `SeveringCategory`).
+3. EMI's Entity Melting and Severing categories (Tinkers' Construct) show recipes.
+4. With a different EMI version in `mods` (any other build): the game starts, the log has one WARN "EMI <version> is loaded but the EMI fixes were built for 1.1.24+1.20.1+forge; they are skipped", and the report lists F-11 "[skipped: EMI is not 1.1.24+1.20.1+forge]". Everything else works as before.
+5. On a dedicated server (no EMI) and in single player without EMI: the log has "EMI is not loaded, the EMI fixes are skipped" and the report lists F-11 as skipped; nothing else changes.
+
+Untested in game at the time of writing: all of the above (the dev client reaches the title screen only; see MF-12).
+
+## 2026-11-04: MF-10, the tooltip builder (F-12) and the fluid amount line (F-13)
+
+Headless: 3 new GameTests (22 in all) on the generic parts, without client classes: `live_lines_mirror_every_add_and_write_removals_and_inserts_through` (the live line list over EMI's two lists: adds through EMI are recorded, a line EMI drops is not, a ListIterator removal and inserts reach both lists, set between text and rich lines keeps the plain text in order, entries changed behind the view's back are realigned by identity, clear empties all three), `amount_probe_is_replaced_by_the_callbacks_lines_or_put_back_where_it_was` (the amount line's index, Tinkers' removal and units in its place, another mod's callback leaving it, no amount line) and `key_usage_line_formats_the_key_name_in_bold_on_an_italic_gray_line`. `./gradlew runGameTestServer` 22/22; without EMI the report lists F-12 and F-13 "[skipped: EMI is not loaded]".
+
+In game, on a client with EMI 1.1.24+1.20.1+forge, JEI 15.74.0.234, Tinkers' Construct 3.12.1.231 and Mantle 1.11.117, in a world:
+1. The startup report lists F-12 and F-13 (EMI 1.1.24+1.20.1+forge); after EMI's reload the log has "F-12 applied to dev.emi.emi.jemi.impl.JemiTooltipBuilder" and "F-13 applied to dev.emi.emi.jemi.widget.JemiSlotWidget".
+2. Open EMI's recipes for Molten Iron (melting): no "Error Rendering" box; hovering the molten iron tank shows "Molten Iron", then Mantle's unit lines ("1 Ingot" for 90 mB of molten iron... in the fluid's units: ingots, nuggets, a leftover mB line), then "Tinkers' Construct" in blue italics; EMI's own "90mB"-style line is gone (F-13). No stack trace tooltip anywhere.
+3. A fuel slot in the same recipe (lava): the fluid name and mod name only; no amount line at all (Tinkers removes JEI's and adds none for fuels), as in JEI.
+4. A casting table recipe and an alloying recipe: hovering their fluids reads as in 2; hovering the items shows the usual item tooltip.
+5. A vanilla fluid in another mod's EMI recipe (for example water in a JEI-plugin recipe without a Tinkers callback): the tooltip is unchanged from EMI's (name, amount line, mod name).
+6. Any recipe of any mod that adds a "press key" hint through JEI's `addKeyUsageComponent` reads as in JEI (italic gray, the key in bold).
+
+Untested in game at the time of writing: all of the above (the dev client reaches the title screen only; see MF-12).
+
+## 2026-11-04: MF-11, the extras widgets (F-14) and the text widgets (F-15)
+
+Headless: 3 new GameTests (25 in all) on the generic parts: `cycle_button_values_step_round_and_start_at_the_initial_value`, `text_layout_measures_lines_as_jei_does` (line height, block height for centring, the line limit of an area) and `extras_and_text_fixes_are_known_and_skipped_without_emi`. The widgets themselves draw on a client only.
+
+In game, on a client with EMI 1.1.24+1.20.1+forge, JEI 15.74.0.234, Tinkers' Construct 3.12.1.231 and Mantle 1.11.117, in a world:
+1. The startup report lists F-14 and F-15; after opening any Tinkers recipe in EMI the log has "F-14 applied to dev.emi.emi.jemi.impl.extras.JemiRecipeExtrasBuilder" (and `JemiPlaceable`) and "F-15 applied to dev.emi.emi.jemi.impl.extras.JemiTextWidget". No "Exception adding JEMI extras" lines.
+2. Melting (Molten Iron, Seared Brick): the arrow animates (fills left to right over the recipe's time), hovering it shows the melting time; the ore-rate icon shows at the top right with its tooltip; the temperature ("1,000°"-style, red, at the top right) and the fuel label are drawn (F-15).
+3. Casting table and basin: the cooling arrow animates and shows the cooling time when hovered; the cast-consumed/kept icon shows its tooltip.
+4. Alloying: the recipe shows its title and temperature text; part builder: the arrow and the material text; tool building: the arrow and the slot icons with their tooltips.
+5. Modifier recipes: the slot icons draw with their tooltips; the modifier worktable shows its title and, over the title line, the recipe's description as a tooltip (`addTooltipArea`).
+6. Entity melting and severing: the arrow draws; the damage text is drawn.
+7. Any other mod's JEI plugin that uses buttons in a recipe (none known in the pack): a grey bordered button with its message; clicking it runs its action.
+8. Compare each of 2 to 6 with the same recipe in JEI: positions and texts match; EMI's arrow art differs from JEI's by design.
+
+Untested in game at the time of writing: all of the above (see MF-12 for what the headless client run covered).
+
+## 2026-11-04: MF-12, the headless client runs with EMI
+
+Headless, done in this session (the dev client, `./gradlew runClient -PwithEmi -PemiProbe -PquickPlay=emitest`, where `emitest` is a copy of the GameTest server's world in `run/saves`):
+1. The client starts with EMI 1.1.24+1.20.1+forge, JEI 15.74.0.234, Tinkers' Construct 3.12.1.231 and Mantle 1.11.117; the log has "EMI 1.1.24+1.20.1+forge is loaded, the EMI fixes apply" and the report "15 fixes in this build, 11 already applied, 0 skipped" (F-11 applies at EMI's plugin init; F-12 to F-15 wait for their targets).
+2. The probe (`gametest/EmiClientProbe`, not in the jar) runs at load complete: 17 checks, 0 failed. It constructs EMI's real `JemiTooltipBuilder` and `JemiRecipeExtrasBuilder`, calls `getLines` (a ListIterator removal reaches EMI's lists), `addAll`, `addKeyUsageComponent`, `clear`, the eight F-14 methods, `addText(...).setPosition(...)` and the aligned overloads, builds the resulting EMI widgets into a collecting holder (12 widgets from 10 builders) and reads their tooltips through EMI's widgets. The log shows "F-12 applied to ...JemiTooltipBuilder", "F-14 applied to ...JemiRecipeExtrasBuilder" and "...JemiPlaceable", "F-15 applied to ...JemiTextWidget". The probe is what found the covariant `ITextWidget.setPosition` gap (F-15 addendum).
+3. The world opens; EMI reloads ("Reloaded EMI in 2,9 s"), JEMI collects every Tinkers category including Entity Melting and Severing, "F-13 applied to ...JemiSlotWidget", and `latest.log` has zero "Exception thrown adding adding JEI recipe" lines (the pack's log had three).
+4. EMI warns "<class> is tainted by com.mrgregles.bsp_mod_fixes.mixin.<mixin>" once per patched class: EMI's notice that another mod's mixin touched its class, expected and harmless. EMI also reports "2 recipes loaded with the same id: jei:/tconstruct/smeltery/melting/..." for a few Tinkers recipes; that is EMI's own, present without this mod.
+5. `./gradlew runGameTestServer` without EMI: 25/25, "15 fixes in this build, 8 already applied, 5 skipped" with F-11 to F-15 "[skipped: EMI is not loaded]"; with `-PwithEmi`: 25/25, nothing skipped.
+
+Untested, for the owner (nothing draws without a screen): everything that is seen, in MF-9 to MF-11 above: the arrows animating, the texts and icons in place, the fluid tooltips with Tinkers' units and without EMI's mB line, the buttons; the full BSP instance with its 300 mods (JeiTweaker included); a dedicated Forge or Mohist server with the jar (the GameTest server stands in for it: the gate skips cleanly); a client with a different EMI version (the WARN line and the skip). `./gradlew runServer` still needs `run/eula.txt` from the owner.
+
+## 2026-11-04: audit before the commit
+
+Two independent reviews of the code (the Numina/Powersuits fixes; the EMI fixes), each given the owner's briefs and the target jars, and a scan of all 293 jars in the BSP instance. Findings fixed: the Kinetic Generator's position map is server-only (the client player shares the server player's entity id in single player); refusal WARN lines are throttled per player; the Forge range is `[47.3.10,)` (constructor injection arrived there); `checkLang` warns instead of failing without `python3`; the id sorter tolerates any id; F-13 handles multi-fluid slots; F-12 keeps blank lines for unrenderable components; F-15 uses JEI's no-shadow default and a tooltip for truncated text; the EMI fixes report "client-side only" on a dedicated server; the F-13 probe sits inside its `try`. Headless: 26 GameTests pass with and without `-PwithEmi` (1 new: `refusal_warnings_are_throttled_per_player_and_fix_ids_sort_by_number`); the client probe passes again after the changes (see the Task Queue entry for the figures).
+
+Pack scan (instance `Build Secure Protect (Adding Mods)`, 293 jars): no other mod mixes into Numina, Powersuits or EMI's JEI layer (only Numina's own mixin into vanilla and EMI's own into JEI); no other mod ships `assets/numina/lang` or `assets/powersuits/lang`; no other mod references Numina or Powersuits classes; Applied Mekanistics calls EMI's `JemiUtil.getStack(Object)`, not the overload F-11 patches, and never with null; 14 mods carry EMI plugins through EMI's own API (untouched); the mixin libraries bundled in six mods (MixinSquared and the like) target their own mods; JeiTweaker and the one CraftTweaker script do not touch Tinkers or EMI; Numina, Powersuits, EMI, JEI, Tinkers and Mantle are at exactly the pinned versions.
+
+In game, for the owner, in addition to MF-9 to MF-12:
+1. Alloying in EMI with a tag-backed input (for example an alloy that accepts any molten copper): hovering the input tank shows the picked fluid's name, Tinkers' unit lines, then the mod name, with no "mB" line of EMI's.
+2. A Tinkers recipe title or temperature draws without a drop shadow, as in JEI.
+3. A survival player spamming creative-install or tweak packets from a modified client produces one WARN line per 10 seconds with the count held back.

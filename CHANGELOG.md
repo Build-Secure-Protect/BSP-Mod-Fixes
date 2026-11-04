@@ -4,6 +4,32 @@ All notable changes to this project are documented in this file. The format is b
 
 ## [Unreleased]
 
+Nothing yet.
+
+## [0.2.0] - 2026-11-04
+
+### Added
+- EMI support, gated: the fixes for EMI's JEI compatibility layer (F-11 onward) apply only when EMI 1.1.24+1.20.1+forge is loaded. EMI is an optional client-side dependency; without it the mixins are skipped before Mixin looks at their targets, and with any other EMI version one WARN line names the version found and the fixes are skipped. The startup report lists skipped fixes with the reason.
+- F-11 (EMI): a null entry in a JEI ingredient list, which JEI's API allows and JEI's own layout builder skips, converts to the empty EMI stack instead of throwing. EMI's `JemiUtil.getStack` handed the null to `EmiStack.of`, which dropped the whole recipe at reload with "Exception thrown adding adding JEI recipe"; Tinkers' Construct's entity melting and severing categories pass null for every entity without a spawn egg, so those categories were empty in EMI.
+- F-12 (EMI): EMI's JEI tooltip builder gains the four JEI 15.39-15.52 methods it never implemented: `getLines()` (a live list over EMI's own lines, so removing or adding through it changes what EMI renders), `clear()`, `clearIngredient()` and `addKeyUsageComponent()` (JEI's form: the key name in bold on an italic gray line). EMI compiled against JEI 15.20 and these are abstract in the JEI API, so any JEI plugin calling one of them under EMI threw `AbstractMethodError`; Tinkers' Construct calls `getLines()` for every fluid slot, which turned the whole recipe into "Error Rendering" with the stack trace as the tooltip.
+- F-13 (EMI): a fluid's amount line under a JEI rich tooltip callback is offered to the callback under JEI's key `jei.tooltip.liquid.amount`. Tinkers' Construct removes that line and adds Mantle's unit lines ("1 Ingot"), which under EMI left both EMI's "1,000mB" and Tinkers' units, the latter after the mod name; now the units take the amount line's place, as in JEI. A callback that leaves the line alone gets EMI's line back where it was.
+- F-14 (EMI): EMI's JEI recipe extras builder gains the JEI 15.56 widget methods it lacked (`addDrawableWidget`, `addTooltipArea`, `addRecipeArrowWidget`, `addRecipePlusSignWidget`, `addAnimatedRecipeArrowWidget`, `addAnimatedRecipeFlameWidget`, `addButton`, `addCycleButton`) and every EMI placeable gains the aligned `setPosition` overload. Each widget is drawn with EMI's own widgets the way EMI's older `addDrawable` and `addRecipeArrow` are, and shows the tooltip the plugin set (text, lines, a rich component or a callback) over its area. Tinkers' Construct draws its arrows, icons and tooltip areas through these, so every Tinkers category's extras threw `AbstractMethodError` under EMI ("Exception adding JEMI extras" in the log) and the recipe drew without arrows. Buttons are minimal working widgets (a bordered box with the message or icon; a click runs the action, a cycle button steps its values).
+- F-15 (EMI): JEI text widgets are drawn in EMI. EMI's `addText` returned a widget it never added to its widget list, so JEI plugins' titles and labels (Tinkers' temperatures, cooling times, recipe titles) never showed under EMI. They are now wrapped to their width, aligned as JEI aligns them, with JEI's default line spacing, and take the four `setTooltip` forms and the two `setPosition` forms JEI 15.56 declares on `ITextWidget` (JEI redeclares `setPosition` with the `ITextWidget` return type, which EMI's widget never got, so `addText(...).setPosition(x, y)` threw `AbstractMethodError` as well).
+- `./gradlew runClient -PquickPlay=<world>` opens a world in `run/saves` at once, so a headless run reaches EMI's recipe reload.
+- `./gradlew <run> -PwithEmi` loads EMI, JEI, Tinkers' Construct and Mantle in a dev run (the exact pack files, from CurseMaven) for the in-game checks; without it the runs stay EMI-free, which is what the headless tests check.
+
+### Changed
+- F-6: the Kinetic Generator's position map is touched by the server thread only. In single player the client's player shares its entity id with the server's, so the client tick could evict the server's entry on every jump and lose a tick's credit (audit finding).
+- F-1 and F-2: the refusal and clamp WARN lines are throttled to one per player every 10 seconds, with the count of lines held back, so a hostile client cannot flood the server log (audit finding).
+- The Forge range is `[47.3.10,)`: Forge began handing the loading context to mod constructors in 47.3.10, and older 47.x would have refused the mod at load despite the old `[47,)`.
+- `./gradlew check` skips the Python lang check with a warning when `python3` is not on the PATH (the lang GameTest covers the same files).
+- The startup report sorts fix ids tolerantly (an id without a number no longer breaks the report).
+- `docs/CONFIG.md`: a note on the Kinetic Generator's whole-FE truncation and its one-block-per-tick ceiling.
+- F-13 also covers a slot holding several fluids (a tag-backed input, as in alloying): EMI shows the fluid it picked for the second, and its amount line is now found there too (audit finding).
+- F-12: a tooltip component the client has no renderer for becomes an empty line instead of being dropped from the live list, so list iterators keep their place (audit finding).
+- F-15: text widgets start without a shadow, as JEI's do (EMI's started with one), and when an area cannot hold all the lines the full text goes into the widget's tooltip, as JEI does (audit findings).
+- The EMI fixes are reported as skipped on a dedicated server ("client-side only") instead of waiting for targets that never load there (audit finding).
+
 ## [0.1.0] - 2026-11-04
 
 ### Added

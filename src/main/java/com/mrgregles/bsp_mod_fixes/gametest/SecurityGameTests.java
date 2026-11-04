@@ -1,6 +1,7 @@
 package com.mrgregles.bsp_mod_fixes.gametest;
 
 import com.mrgregles.bsp_mod_fixes.BSPModFixes;
+import com.mrgregles.bsp_mod_fixes.fix.Fixes;
 import com.mrgregles.bsp_mod_fixes.fix.TweakClamp;
 import lehjr.numina.common.capabilities.inventory.modularitem.IModularItem;
 import lehjr.numina.common.network.packets.serverbound.TweakRequestDoublePacketServerBound;
@@ -124,5 +125,19 @@ public class SecurityGameTests {
             throw new AssertionError("the energy shield is not installed");
         }
         return TagUtils.getModuleDoubleOrZero(chest.getStackInSlot(slot), FIELD_STRENGTH);
+    }
+
+    @GameTest(template = ModFixesGameTests.EMPTY)
+    public void refusal_warnings_are_throttled_per_player_and_fix_ids_sort_by_number(GameTestHelper h) {
+        int[] suppressed = new int[1];
+        String key = "F-test:" + System.nanoTime();
+        h.assertTrue(Fixes.mayWarn(key, 1_000, suppressed) && suppressed[0] == 0, "the first line prints");
+        h.assertFalse(Fixes.mayWarn(key, 2_000, suppressed), "a second line within the interval is held back");
+        h.assertFalse(Fixes.mayWarn(key, 3_000, suppressed), "and a third");
+        h.assertTrue(Fixes.mayWarn(key, 1_000 + Fixes.WARN_INTERVAL_MS, suppressed) && suppressed[0] == 2, "after the interval one prints, counting the two held back, got " + suppressed[0]);
+        h.assertTrue(Fixes.mayWarn(key + "b", 3_500, suppressed), "another key is independent");
+        h.assertTrue(Fixes.byNumber("F-2", "F-10") < 0 && Fixes.byNumber("F-10", "F-2") > 0 && Fixes.byNumber("F-7", "F-7") == 0, "numeric order");
+        h.assertTrue(Fixes.byNumber("F-8a", "F-9") < 0 && Fixes.byNumber("F-8", "F-8a") < 0 && Fixes.byNumber("odd", "F-1") > 0, "suffixes and ids without a number do not throw");
+        h.succeed();
     }
 }

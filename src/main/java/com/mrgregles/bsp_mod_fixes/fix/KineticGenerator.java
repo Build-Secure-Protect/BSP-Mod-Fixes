@@ -16,7 +16,9 @@ import java.util.WeakHashMap;
  * the player happens to be on the ground at that tick, and its "not generating" branch (flying, riding, airborne) falls through
  * and generates anyway. This replacement measures the horizontal distance the player moved since the previous tick, every tick,
  * on the server, and pays {@code energyPerBlock} per block of it. Nothing is paid while flying, riding, gliding or airborne,
- * and a step of more than {@link #MAX_STEP} blocks (a teleport) is ignored.
+ * and a step of more than {@link #MAX_STEP} blocks (a teleport) is ignored. The position map is only ever touched on the
+ * server thread; the step and the on-ground state come from the client's movement packets, so a modified client can earn at
+ * most {@code MAX_STEP × energyPerBlock} per tick (the original paid an unbounded sample).
  */
 public final class KineticGenerator {
     public static final String ID = "F-6";
@@ -32,12 +34,18 @@ public final class KineticGenerator {
 
     /** Replaces the module's tick. {@code module} is the generator (its properties and inactive branch), {@code suit} the worn item. */
     public static void tick(Player player, IPlayerTickModule module, ItemStack suit) {
-        if (player.getAbilities().flying || player.isPassenger() || player.isFallFlying() || !player.onGround()) {
-            module.onPlayerTickInactive(player, suit);
-            LAST.remove(player);
+        boolean airborne = player.getAbilities().flying || player.isPassenger() || player.isFallFlying() || !player.onGround();
+        if (player.level().isClientSide) {
+            // Only the server thread touches the position map: in single player the client's player has the same entity id
+            // (and so the same map key) as the server's, and must not evict its entry.
+            if (airborne) {
+                module.onPlayerTickInactive(player, suit);
+            }
             return;
         }
-        if (player.level().isClientSide) {
+        if (airborne) {
+            module.onPlayerTickInactive(player, suit);
+            LAST.remove(player);
             return;
         }
         Vec3 now = player.position();

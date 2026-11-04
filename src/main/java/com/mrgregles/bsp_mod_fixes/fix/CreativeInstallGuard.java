@@ -27,8 +27,9 @@ public final class CreativeInstallGuard {
         if (sender != null && sender.isCreative()) {
             return true;
         }
-        Fixes.LOGGER.warn("{}: refused a creative-install request from {} (not in creative mode) for module {} into the {} slot",
-                ID, sender == null ? "a connection without a player" : sender.getGameProfile().getName(), module, slot.getName());
+        String name = sender == null ? "a connection without a player" : sender.getGameProfile().getName();
+        Fixes.warnThrottled(ID + ":" + name, "{}: refused a creative-install request from {} (not in creative mode) for module {} into the {} slot",
+                ID, name, module, slot.getName());
         return false;
     }
 }
