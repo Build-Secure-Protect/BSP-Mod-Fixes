@@ -1,0 +1,137 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+    id 'org.spongepowered.mixin' version '0.7.+'
+}
+
+version = mod_version
+group = mod_group_id
+
+base {
+    archivesName = mod_archive_name
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+            // Other mods' mixins carry obfuscated names: remap their reference maps in a dev run.
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            // ./gradlew <run> -PmixinVerbose: Mixin logs every injection it applies
+            if (project.hasProperty('mixinVerbose')) {
+                property 'mixin.debug.verbose', 'true'
+            }
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+        }
+
+        // ./gradlew runGameTestServer: runs every registered GameTest headlessly and exits.
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            // holds each test back until its chunks tick (1.20.1's runner starts the clock before they do); this run only, never in the jar's MixinConfigs
+            args '--mixin.config', 'bsp_mod_fixes.gametest.mixins.json'
+        }
+
+        data {
+            workingDirectory project.file('run-data')
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+// Mixins: the refmap is written beside the classes; `config` hands the mixin config to every run (the jar names it in MixinConfigs below).
+mixin {
+    add sourceSets.main, 'bsp_mod_fixes.refmap.json'
+    config 'bsp_mod_fixes.mixins.json'
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    mavenCentral()
+    // CurseMaven: the exact Numina and Modular Powersuits files the pack ships (project id and file id in gradle.properties).
+    maven {
+        name = 'CurseMaven'
+        url = 'https://cursemaven.com'
+        content { includeGroup 'curse.maven' }
+    }
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // Writes the mixin refmap (obfuscated names for the mixins' targets) at compile time.
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+
+    // The two mods this mod patches: compiled against and loaded in every dev run (mandatory in mods.toml, exact versions).
+    implementation fg.deobf("curse.maven:${numina_curse}")
+    implementation fg.deobf("curse.maven:${powersuits_curse}")
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version: minecraft_version, minecraft_version_range: minecraft_version_range,
+            forge_version: forge_version, forge_version_range: forge_version_range,
+            loader_version_range: loader_version_range,
+            mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
+            mod_authors: mod_authors, mod_description: mod_description,
+            numina_version_range: numina_version_range, powersuits_version_range: powersuits_version_range,
+    ]
+    inputs.properties replaceProperties
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+// The two lang files this jar ships (tools/gen_lang.py) must parse and carry every module category name.
+tasks.register('checkLang', Exec) {
+    description = 'Checks the shipped Numina and Powersuits lang files.'
+    commandLine 'python3', '-I', 'tools/check_lang.py'
+}
+check.dependsOn 'checkLang'
+
+// The GameTests, their helpers and the GameTest server's own mixins (bsp_mod_fixes.gametest.mixins.json) stay out of the jar.
+def gameTestMixin = ['bsp_mod_fixes.gametest.mixins.json', 'com/mrgregles/bsp_mod_fixes/mixin/gametest/**', 'com/mrgregles/bsp_mod_fixes/gametest/**']
+
+tasks.named('jar', Jar).configure {
+    exclude gameTestMixin
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+                'MixinConfigs'            : 'bsp_mod_fixes.mixins.json'
+        ])
+    }
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

@@ -1,0 +1,28 @@
+# Gradle and build output
+.gradle/
+build/
+out/
+classes/
+
+# Dev runs
+run/
+run-data/
+logs/
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+bin/
+eclipse/
+
+# Dev-run-only jars
+libs/
+
+# Mac
+.DS_Store
