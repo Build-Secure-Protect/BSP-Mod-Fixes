@@ -47,3 +47,12 @@ description='''${mod_description}'''
     versionRange="[0,)"
     ordering="NONE"
     side="CLIENT"
+
+# JEI is optional and client-side: the JEI fix (F-19) applies only when a JEI 15.74 build is loaded (checked by the mixin
+# config plugin, which logs one WARN line and skips it for any other JEI). The range stays open for the same reason as EMI's.
+[[dependencies.${mod_id}]]
+    modId="jei"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="NONE"
+    side="CLIENT"

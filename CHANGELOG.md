@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 Nothing yet.
 
+## [0.4.0] - 2026-11-06
+
+### Added
+- F-19 (JEI 15.74, client only): JEI starts only after the server's tags have arrived. At login Minecraft 1.20.1 sends the recipe packet before the tag packet, and JEI 15.74's start observer starts JEI inside the recipe packet's handler without waiting for the tag sync, so every JEI plugin that resolves a tag ingredient while registering its recipes saw an empty tag on a dedicated server: Mekanism dropped such recipes as incomplete (every Metallurgic Infuser recipe, the alloys and steel among them, and most of its ore processing: 1,212 of the pack's 4,711 Mekanism recipes), Voltaic's categories threw on them (83 Electrodynamics, Nuclear Science, Blastcraft and JAOPCA fluid recipes, "Found a broken recipe" in the log), and other plugins showed Forge's "Empty Tag" barrier. Single player was unaffected, because the integrated server binds the tags before either packet. The mixin cancels JEI's `startIfReady` while the current login's tag packet has not been handled and has it run again on the next client tick once it has (one INFO line each), remembered per login (the client's packet listener, new for every login and every Velocity switch) so each login holds again. JEI is an optional client-side dependency; the mixin applies to any JEI 15.74 build whose start observer still has the two patched methods, and is skipped with one WARN line otherwise, and on a dedicated server.
+- `./gradlew runClient -PwithMekanism`, `-PwithAu`, `-PwithCrt` load the pack's Mekanism, AlmostUnified, CraftTweaker and JEITweaker in a dev run, and `-PrecipeProbe` runs a dev-only probe that logs what JEI and EMI hold for Mekanism once a world is open (never in the jar).
+
 ## [0.3.0] - 2026-11-06
 
 ### Added

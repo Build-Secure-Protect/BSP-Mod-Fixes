@@ -26,20 +26,23 @@ public class BSPModFixes {
         Fixes.registerEvents();
         context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> Fixes.report());
         if (Boolean.getBoolean("bsp_mod_fixes.emiProbe")) {
-            context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runEmiProbe());
+            context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("EmiClientProbe", "run"));
+        }
+        if (Boolean.getBoolean("bsp_mod_fixes.recipeProbe")) {
+            context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("EmiRecipeProbe", "install"));
         }
         LOGGER.info("BSP-Mod Fixes {} loaded (Numina {}, Modular Powersuits {})", version(MODID), version("numina"), version("powersuits"));
     }
 
     /**
-     * Dev only ({@code -PemiProbe} on a client run): the probe class of the gametest package, which is not in the jar, is
-     * loaded by name and run, so the EMI fixes' methods are called headlessly on EMI's real classes.
+     * Dev only ({@code -PemiProbe} or {@code -PrecipeProbe} on a client run): a probe class of the gametest package, which
+     * is not in the jar, is loaded by name and its static method called, so EMI's real classes are exercised headlessly.
      */
-    private static void runEmiProbe() {
+    private static void runProbe(String probe, String method) {
         try {
-            Class.forName("com.mrgregles.bsp_mod_fixes.gametest.EmiClientProbe").getMethod("run").invoke(null);
+            Class.forName("com.mrgregles.bsp_mod_fixes.gametest." + probe).getMethod(method).invoke(null);
         } catch (Throwable t) {
-            LOGGER.error("BSP-Mod Fixes probe FAILED to run", t);
+            LOGGER.error("BSP-Mod Fixes probe {} FAILED to run", probe, t);
         }
     }
 

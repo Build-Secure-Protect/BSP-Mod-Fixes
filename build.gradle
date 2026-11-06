@@ -50,6 +50,11 @@ minecraft {
             if (project.hasProperty('emiProbe')) {
                 property 'bsp_mod_fixes.emiProbe', 'true'
             }
+            // ./gradlew runClient -PwithEmi -PwithMekanism -PrecipeProbe -PquickPlay=emitest: runs gametest/EmiRecipeProbe
+            // once the world is open and EMI has reloaded (what EMI and JEI hold for Mekanism), then closes the client.
+            if (project.hasProperty('recipeProbe')) {
+                property 'bsp_mod_fixes.recipeProbe', 'true'
+            }
         }
 
         server {
@@ -109,6 +114,18 @@ dependencies {
         runtimeOnly fg.deobf("curse.maven:${jei_curse}")
         runtimeOnly fg.deobf("curse.maven:${tconstruct_curse}")
         runtimeOnly fg.deobf("curse.maven:${mantle_curse}")
+    }
+    // Investigation runs (the pack's exact files): -PwithMekanism loads Mekanism, -PwithAu AlmostUnified (its config goes in
+    // run/config/almostunified), -PwithCrt CraftTweaker and JEITweaker (scripts in run/scripts).
+    if (project.hasProperty('withMekanism')) {
+        runtimeOnly fg.deobf("curse.maven:${mekanism_curse}")
+    }
+    if (project.hasProperty('withAu')) {
+        runtimeOnly fg.deobf("curse.maven:${almostunified_curse}")
+    }
+    if (project.hasProperty('withCrt')) {
+        runtimeOnly fg.deobf("curse.maven:${crafttweaker_curse}")
+        runtimeOnly fg.deobf("curse.maven:${jeitweaker_curse}")
     }
 }
 

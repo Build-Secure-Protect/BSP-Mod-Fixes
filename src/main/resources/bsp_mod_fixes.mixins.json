@@ -23,7 +23,8 @@
     "EmiPlaceableMixin",
     "EmiTextWidgetMixin",
     "ConnectionStalePacketMixin",
-    "DisconnectedScreenThreadMixin"
+    "DisconnectedScreenThreadMixin",
+    "JeiStartObserverMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -180,3 +180,38 @@ In game, for the owner (the dev client cannot reach the Velocity network), a cli
 5. Single player with the jar: both fixes listed as applied; nothing is logged by either (the local connection never moves protocol behind a queued send, and no disconnected screen is set off the render thread).
 
 Untested at the time of writing: all of 1 to 5 in the pack (the headless server stands in for 4; the dev client stands in for the applied lines of 1 and 5).
+
+## 2026-11-06: MF-18, JEI starts after the tag sync (F-19)
+
+Headless: 2 new GameTests (31 in all) pass: `jei_start_is_held_until_the_connections_tags_arrive_whatever_the_order` (the pure session: held with no connection and until this connection's tags; released by them and staying released for a later recipe sync; a new connection held again and the old one no longer counting; tags before recipes not held; only a client tag packet counts) and `jei_gate_applies_the_fix_to_any_15_74_build_and_skips_it_on_a_dedicated_server` (15.74.0.234, 15.74.0.229 and a later 15.74 apply; 15.20 and 15.75 do not; absent; the report's view). The test server's report: "18 fixes in this build, 8 already applied, 7 skipped", F-19 "[skipped: client-side only, nothing to patch on a dedicated server]".
+
+Dev client (headless, `./gradlew runClient -PwithEmi -PwithMekanism -PrecipeProbe -PquickPlay=emitest`, EMI 1.1.24, JEI 15.74.0.234, Mekanism 10.4.16.80, single player): "JEI 15.74.0.234 is loaded, the JEI fix applies" and "F-19 applied to mezz.jei.forge.startup.StartEventObserver" at startup, the report "18 fixes in this build, 14 already applied, 0 skipped"; in the world, in this order: "[EMI] Recipes synchronized, waiting for tags to reload EMI...", "F-19: holding JEI's start until the server's tags arrive", "[EMI] Tags synchronized...", "F-19: the server's tags arrived, JEI may start", "Starting JEI..." (1.3 s), "[JEMI] JEI reloaded!". The probe then reports the same as without the fix (run of 15:33): JEI and EMI both hold 26 Metallurgic Infuser recipes, Infused, Reinforced and Atomic Alloy each made by their infusing recipe, 0 "Found a broken recipe". (The first build of the mixin injected at the tail of JEI's `register` and failed verification, "Bad type on operand stack", because JEI's R8-optimised bytecode reuses the `this` slot there; the shipped mixin injects at the head.)
+
+In game, for the owner, a client with this jar on the network (Forge 47.4.23 backends behind Velocity):
+1. The startup report lists F-19 (JEI 15.74) as applied; `latest.log` has "BSP-Mod Fixes: JEI 15.74.0.234 is loaded, the JEI fix applies".
+2. Join a backend. `latest.log` shows, in this order: "F-19: holding JEI's start until the server's tags arrive", "F-19: the server's tags arrived, JEI may start", then "Starting JEI...". No "Found a broken recipe" block follows (the 2026-11-06 02:23 log had 83 per join).
+3. Look up Infused Alloy: the Metallurgic Infuser tab shows its recipe (iron ingot + redstone infusion). Reinforced and Atomic Alloy, Enriched Iron and Steel likewise; a Mekanism ore-processing look-up (Purification Chamber, Chemical Injection Chamber) shows the tag-based recipes; the Mineral Washer and Chemical Crystallizer show the sulfate chain.
+4. Switch servers through a portal: the two F-19 lines appear again for the new connection and the recipes are still there.
+5. Single player with the jar: the same two lines, then "Starting JEI..."; recipes as before.
+6. A client with another JEI build (not 15.74): one WARN "JEI <version> is loaded but the JEI fix was built for 15.74.x; it is skipped", the game runs, the recipes are missing again on a server (JEI's behaviour).
+7. A dedicated Forge 47.4.23 server with the jar: the report lists F-19 skipped "client-side only"; nothing else changes.
+
+Untested at the time of writing: 1 to 4, 6 and 7 in the pack (the dev client stands in for 5; the headless server for 7). Whether the pack's other client mods behave with JEI starting a few milliseconds later than before is the owner's observation in 2.
+
+## 2026-11-06: audit of F-19 before the commit
+
+Two independent reviews, handed the code and the jars (not conclusions): one over the F-19 classes against the JEI 15.74.0.234, Forge 47.4.23, Client Reset Packet and Mekanism jars; one a scripted scan of the pack's 295 jars plus 120 nested ones (311 mixin configs, 100 JEI plugins) for anything touching JEI's start or the tag and recipe events. Every finding verified against the bytecode before a change.
+
+Fixed:
+1. The gate remembered the tag sync per netty `Connection`, which a Velocity switch through Client Reset Packet keeps (same `Connection`, moved to LOGIN and back, with a new `ClientPacketListener`), so the new backend's recipe packet would have started JEI before its tags on every switch. It now keys on the client's packet listener, new for every login (`Minecraft.getConnection()` is `player.connection`, set in `handleLogin` before Forge fires the login event). Found by me and by the reviewer; the earlier dev-client lines came from that build.
+2. The "tags arrived" line and counter fired on every later client tag packet of the same login (a server `/reload` sends tags, then recipes); now only while a hold is pending (GameTest).
+3. JEI started inside the tag event's dispatch, ahead of every tag listener registered after the mixin's; Thermal rebuilds the recipe lists its JEI plugin reads on that event. JEI's start is now queued for the next client tick (`Minecraft.tell`, which always queues; `execute` would run at once on the render thread), after every listener of the event. The hold is re-checked when it runs.
+4. Any 15.74 build (D33) with a renamed `startIfReady` or `register` would have stopped the client with a Mixin injection failure (the config is `required`). The gate now reads the target class through Mixin's bytecode provider and skips the fix with a WARN when either method is missing (`JeiGate.hasMethods`, GameTest).
+5. The dev probe used a `ResourceLocation` constructor marked for removal.
+
+Documented, not changed:
+- JEI's own fallback (a container screen opening before JEI has started: ERROR line "A Screen is opening but JEI hasn't started yet", then an immediate start) bypasses the hold; nothing opens a container screen between the recipe and the tag packet of a login, which the client handles in order on the render thread.
+- A pack scan found no other mixin into JEI's start classes (EMI and AllTheLeaks wrap `PluginCaller.callOnPlugins` only) and no mod calling JEI's start by reflection. Thirteen JEI plugins resolve tags while registering (ae2, create, electrodynamics, industrialforegoing, jeresources, mekanism, mekanismtools, pneumaticcraft, railcraft, sophisticatedbackpacks, sophisticatedstorage, tconstruct, zeta) and JEI itself resolves every recipe's ingredients at registration; all of them see bound tags with F-19. Recipe Essentials replaces the client recipe manager at listener construction, before either packet; unaffected.
+
+Headless after the audit: `./gradlew build` clean, `runGameTestServer` 31/31 (the two F-19 tests now also drive the static gate: one held line per login, one release, none for a later tag packet; and the target-method check over an ASM class node). Dev client with EMI, JEI and Mekanism after the audit (same command as above): F-19 applied, "holding JEI's start until the server's tags arrive" after the recipe packet, "the server's tags arrived, JEI may start" at the tag packet, "Starting JEI..." on the next tick (after EMI's own "reloading EMI" line, as the deferral intends), 1.1 s; the probe again reports 26 Metallurgic Infuser recipes in JEI and EMI with the three alloys, 0 broken recipes.
+

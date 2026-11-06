@@ -1,3 +1,13 @@
+# BSP-Mod Fixes 0.4.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the new fix.
+
+## Added
+
+**Mekanism's recipes show on a server as they do in single player.** On a dedicated server, JEI showed no Metallurgic Infuser recipe for Infused Alloy, nor most of Mekanism's ore processing, and the Electrodynamics family's fluid recipes (sulfates, acids, ethanol, the nuclear fuel chain) were missing too. The cause is in JEI 15.74: it starts the moment the server's recipes arrive, which in Minecraft 1.20.1 is just before the server's tags arrive, so every mod that looks a tag up while handing JEI its recipes saw an empty tag. Mekanism quietly dropped every recipe with a tag input, and Electrodynamics' failed on the way in. Single player was fine because the local server has its tags ready first.
+
+- F-19: JEI starts only after the server's tags have arrived. Two lines in the client log mark the hold and the release; JEI then starts a moment later than it did, with everything in place. Applies to any JEI 15.74 build whose start code is as expected; with another JEI it is skipped and one log line says why. Client only; a dedicated server skips it.
+
 # BSP-Mod Fixes 0.3.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234. Nothing extra for the two new fixes; they matter on clients that switch servers through a Velocity proxy with Forge Client Reset Packet.
