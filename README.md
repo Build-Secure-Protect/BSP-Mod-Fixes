@@ -6,6 +6,8 @@ The mod patches bugs and exploits in **Numina 2.3.13** and **Modular Powersuits 
 
 It also patches **EMI 1.1.24+1.20.1+forge**'s JEI compatibility layer so that Tinkers' Construct 3.12.1.231 recipes render in EMI. EMI is optional and client-side: those fixes apply only when exactly that EMI build is loaded, and any other EMI (or none) costs them and nothing else, with one line in the log.
 
+And it patches two spots of **Minecraft 1.20.1** itself for the pack's Velocity network, where players switch servers with Forge Client Reset Packet: a packet queued just before the switch changed the connection's protocol no longer closes the connection, and a disconnected screen is only ever opened on the render thread. Mixins into Minecraft classes are remapped for production; the one into a client-only class is skipped on dedicated servers.
+
 What each fix does is in `CHANGELOG.md`; the server settings that go with it are in `docs/CONFIG.md`; the checks are in `docs/TESTING.md`. The server log lists the fixes once loading is complete.
 
 | Fix | Mod at fault | What changes |
@@ -25,12 +27,15 @@ What each fix does is in `CHANGELOG.md`; the server settings that go with it are
 | F-13 | EMI | A fluid's amount line is offered to a JEI rich tooltip callback under JEI's key, so Tinkers' unit lines ("1 Ingot") replace EMI's "mB" line as they do in JEI. |
 | F-14 | EMI | EMI's JEI recipe extras builder gains the JEI 15.56 widget methods (drawables, arrows, plus signs, flames, tooltip areas, buttons) with their tooltips, so Tinkers' arrows and icons draw. |
 | F-15 | EMI | JEI text widgets are drawn (EMI returned them without drawing them), so Tinkers' titles, temperatures and times show. |
+| F-16 | Minecraft | A packet sent just before a server switch moved the connection to another protocol is dropped and logged with its class and channel, instead of "Can't serialize unregistered packet" closing the connection. |
+| F-17 | Minecraft (set by Client Reset Packet) | A disconnected screen set from the network thread is opened on the render thread, so clients with the Fabric Screen API no longer crash on a failed switch. |
 
 ## Requirements
 
 - Minecraft 1.20.1 with Forge 47.3.10 or newer (the network runs 47.4.23).
 - Numina 2.3.13 and Modular Powersuits 2.3.13, on the client and on the server.
 - Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes (F-11 onward); they are skipped with any other EMI.
+- Nothing extra for the server-switch fixes (F-16, F-17); they matter on clients that switch servers through Velocity with Forge Client Reset Packet 0.3.2 and do nothing elsewhere.
 
 ## Build
 

@@ -2,6 +2,8 @@
 
 Headless checks run with `./gradlew runGameTestServer`. The sections below are the in-game checks, one per task, newest at the bottom. Every fix is checked in single player as well as on a dedicated server, because a mixin listed for one side only would be missed by the headless server.
 
+The network runs Forge 1.20.1-47.4.23 only since 2026-11-06; the Mohist checks in the older sections below no longer apply.
+
 ## 2026-11-04: MF-0, the project
 
 Headless: 1 GameTest passes (`numina_and_powersuits_are_loaded_at_the_pinned_versions_and_a_mock_player_can_be_made`).
@@ -163,3 +165,18 @@ In game, for the owner, in addition to MF-9 to MF-12:
 1. Alloying in EMI with a tag-backed input (for example an alloy that accepts any molten copper): hovering the input tank shows the picked fluid's name, Tinkers' unit lines, then the mod name, with no "mB" line of EMI's.
 2. A Tinkers recipe title or temperature draws without a drop shadow, as in JEI.
 3. A survival player spamming creative-install or tweak packets from a modified client produces one WARN line per 10 seconds with the count held back.
+
+## 2026-11-06: MF-13 and MF-14, the server-switch fixes (F-16 stale packets, F-17 disconnected screen thread)
+
+Headless: 3 new GameTests (29 in all) pass: `stale_packet_decision_drops_only_a_client_packet_queued_before_the_protocol_moved` (the pure decision over seven cases, and the log description naming a custom payload's channel), `connection_mixin_drops_a_stale_play_packet_on_a_client_channel_moved_to_login_and_sends_the_rest` (a real `Connection` on an in-memory netty channel with the mixin applied, called through the test-only `ConnectionInvoker`: moved to LOGIN, a PLAY-on-PLAY send is dropped, counted and logged "[BSP Mod Fixes] Dropped a stale PLAY packet (net.minecraft.network.protocol.game.ServerboundCustomPayloadPacket on channel bsp_mod_fixes:stale) after a server switch; the connection is now in LOGIN"; a send carrying its own protocol change switches the channel and goes out; a PLAY-on-PLAY send in PLAY goes out; a server's connection in the same state sends and counts nothing) and `disconnected_screen_is_deferred_only_off_the_render_thread_and_the_fix_is_skipped_on_a_dedicated_server`. The test server's report: "17 fixes in this build, 8 already applied, 6 skipped", F-16 "[applies when its target class loads]" then "F-16 applied to net.minecraft.network.Connection (first use of its target)", F-17 "[skipped: client-side only, nothing to patch on a dedicated server]". The production jar: the refmap maps `doSendPacket` to `m_243087_` and `setScreen` to `m_91152_`, and the mixin's shadowed fields are renamed at reobfuscation (`f_129468_`, `f_129466_`), `ATTRIBUTE_PROTOCOL` to `f_129461_`, `isSameThread` to `m_18695_` (javap on `build/libs`).
+
+Dev client (headless, `./gradlew runClient`, to the title screen): "Mixing DisconnectedScreenThreadMixin ... into net.minecraft.client.Minecraft" during bootstrap and "F-17 applied to net.minecraft.client.Minecraft", then "F-16 applied to net.minecraft.network.Connection" at mod construction and the report "17 fixes in this build, 12 already applied, 5 skipped" (the five are the EMI fixes without EMI); no Mixin warnings for either.
+
+In game, for the owner (the dev client cannot reach the Velocity network), a client with this jar and Forge Client Reset Packet 0.3.2 behind the proxy (Ambassador 1.4.5):
+1. The startup report lists F-16 and F-17 (Minecraft 1.20.1) as applied: F-17 at once, F-16 at the first connection ("F-16 applied to net.minecraft.network.Connection").
+2. Switch servers through portals ten or more times, with Oculus shaders on and Distant Horizons enabled (they lengthen the reset and widen the race window). No "Can't serialize unregistered packet" disconnect. Every switch that would have failed leaves "[BSP Mod Fixes] Dropped a stale PLAY packet (<class> on channel <id>) after a server switch; the connection is now in LOGIN" in `latest.log`. Note which packet classes and channels appear: they name the mod that sends during the reset. A switch that still fails without a "Dropped" line is not F-16 failing: a mod that sends a PLAY packet after the channel is already in LOGIN takes vanilla's protocol-change path (untouched by design) and the proxy, not the encoder, ends the connection; report such a case with the log.
+3. A switch that fails for another reason (stop the destination server mid-switch) on a client with Forgified Fabric API: the disconnected screen shows and the game does not crash; `latest.log` has "F-17: the disconnected screen was set from thread 'Netty Client IO #n'; opening it on the render thread instead".
+4. A dedicated Forge 47.4.23 server with the jar: the report lists F-16 applied at the first connection and F-17 skipped "client-side only"; no "[BSP Mod Fixes] Dropped" line ever appears there; nothing else changes.
+5. Single player with the jar: both fixes listed as applied; nothing is logged by either (the local connection never moves protocol behind a queued send, and no disconnected screen is set off the render thread).
+
+Untested at the time of writing: all of 1 to 5 in the pack (the headless server stands in for 4; the dev client stands in for the applied lines of 1 and 5).

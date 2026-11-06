@@ -6,6 +6,7 @@
   "refmap": "bsp_mod_fixes.refmap.json",
   "mixins": [
     "GameTestInfoMixin",
-    "NetworkContextInvoker"
+    "NetworkContextInvoker",
+    "ConnectionInvoker"
   ]
 }

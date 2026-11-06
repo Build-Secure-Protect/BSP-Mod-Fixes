@@ -1,3 +1,16 @@
+# BSP-Mod Fixes 0.3.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234. Nothing extra for the two new fixes; they matter on clients that switch servers through a Velocity proxy with Forge Client Reset Packet.
+
+## Added
+
+**Server switches no longer drop the connection.** Switching servers through Velocity with Forge Client Reset Packet sometimes ended in "Internal Exception: io.netty.handler.codec.EncoderException: java.io.IOException: Can't serialize unregistered packet" the instant the reset finished. The cause is a race in Minecraft 1.20.1 itself: a packet a client mod sent while the world was unloading was queued for the old protocol, the reset moved the connection to the login protocol, and vanilla then wrote the old packet anyway.
+
+- F-16: a packet queued before a server switch moved the connection to another protocol is dropped instead of closing the connection. One warning line in the client log names the packet and, for a mod channel, the channel, so the mod that sends during a switch can be found.
+- F-17: a disconnected screen set from the network thread is opened on the render thread instead. When a switch failed, Client Reset Packet opened the screen from the wrong thread, which crashed clients that carry the Fabric Screen API (Forgified Fabric API, pulled in by Enhanced Block Entities) with "The current screen (DisconnectedScreen) has not been correctly initialised". Those clients now see the disconnected screen.
+
+Both apply only to the client's own connection; on a dedicated server F-16 is inert and F-17 is skipped.
+
 # BSP-Mod Fixes 0.2.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234.

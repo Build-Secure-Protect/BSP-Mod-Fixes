@@ -21,7 +21,9 @@
     "EmiSlotTooltipMixin",
     "EmiRecipeExtrasMixin",
     "EmiPlaceableMixin",
-    "EmiTextWidgetMixin"
+    "EmiTextWidgetMixin",
+    "ConnectionStalePacketMixin",
+    "DisconnectedScreenThreadMixin"
   ],
   "injectors": {
     "defaultRequire": 1
