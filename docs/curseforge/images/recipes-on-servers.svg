@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+<rect width="1200" height="1200" fill="#0B0F14"/>
+<g transform="translate(0, 300)">
+<rect width="1200" height="600" fill="#0B0F14"/>
+<text x="40" y="64" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="40" font-weight="bold" fill="#E6EAF2" text-anchor="start">Mekanism's recipes show on a server</text>
+<text x="40" y="100" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="20" font-weight="normal" fill="#9AA3B5" text-anchor="start">JEI 15.74 starts the moment the server's recipes arrive, just before its tags do, so tag-based recipes vanished on a server.</text>
+<rect x="40" y="130" width="540" height="440" rx="10" fill="#10151C" stroke="#FF6B5C" stroke-width="2" opacity="1"/>
+<text x="62" y="170" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#FF6B5C" text-anchor="start" letter-spacing="2">BEFORE, ON A SERVER</text>
+<line x1="62" y1="186" x2="558" y2="186" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
+<rect x="70" y="200" width="480" height="230" rx="8" fill="#0C0E12" stroke="#FF6B5C" stroke-width="1.5" opacity="1"/>
+<text x="310" y="236" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" fill="#E6EAF2" text-anchor="middle">Metallurgic Infuser</text>
+<rect x="120" y="262" width="380" height="120" rx="6" fill="#10151C" stroke="#2A2F3A" stroke-width="1.5" opacity="1"/>
+<text x="310" y="316" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#FF6B5C" text-anchor="middle">no recipe for Infused Alloy</text>
+<text x="310" y="342" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="13" font-weight="normal" fill="#9AA3B5" text-anchor="middle">nor Reinforced or Atomic Alloy, Steel, most ore processing</text>
+<text x="310" y="412" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="normal" fill="#9AA3B5" text-anchor="middle">Found a broken recipe, failed to setRecipe  (x83, Electrodynamics)</text>
+<text x="70" y="464" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="start">Every recipe with a tag input ("any iron ingot") looked</text>
+<text x="70" y="486" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="start">empty to Mekanism at that moment and was dropped as</text>
+<text x="70" y="508" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="start">incomplete; Electrodynamics' fluid recipes failed on the</text>
+<text x="70" y="530" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="start">way in. Single player was fine: the local server has its</text>
+<text x="70" y="552" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="start">tags ready first.</text>
+<rect x="620" y="130" width="540" height="440" rx="10" fill="#10151C" stroke="#8FE04A" stroke-width="2" opacity="1"/>
+<text x="642" y="170" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#8FE04A" text-anchor="start" letter-spacing="2">NOW</text>
+<line x1="642" y1="186" x2="1138" y2="186" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
+<rect x="650" y="200" width="480" height="230" rx="8" fill="#0C0E12" stroke="#8FE04A" stroke-width="1.5" opacity="1"/>
+<text x="890" y="236" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="18" font-weight="bold" fill="#E6EAF2" text-anchor="middle">Metallurgic Infuser</text>
+<rect x="700" y="268" width="56" height="56" rx="4" fill="#1c1c1c" stroke="#6a6a6a" stroke-width="1.5" opacity="1"/>
+<rect x="712" y="286" width="32" height="20" rx="3" fill="#d8d8d8" opacity="1"/>
+<text x="728" y="346" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#9AA3B5" text-anchor="middle">Iron Ingot</text>
+<rect x="790" y="288" width="120" height="16" rx="3" fill="#10151C" stroke="#2A2F3A" stroke-width="1.5" opacity="1"/>
+<rect x="792" y="290" width="86" height="12" rx="2" fill="#c1272d" opacity="1"/>
+<text x="850" y="322" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#9AA3B5" text-anchor="middle">Redstone infusion 10 mB</text>
+<line x1="930" y1="296" x2="990" y2="296" stroke="#19D3B0" stroke-width="3" stroke-linecap="round"/>
+<line x1="990" y1="296" x2="977.7138441335347" y2="302.71195754045885" stroke="#19D3B0" stroke-width="3" stroke-linecap="round"/>
+<line x1="990" y1="296" x2="977.7138441335347" y2="289.28804245954115" stroke="#19D3B0" stroke-width="3" stroke-linecap="round"/>
+<rect x="1010" y="268" width="56" height="56" rx="4" fill="#1c1c1c" stroke="#6a6a6a" stroke-width="1.5" opacity="1"/>
+<rect x="1022" y="286" width="32" height="20" rx="3" fill="#b7404a" opacity="1"/>
+<text x="1038" y="346" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="12" font-weight="normal" fill="#9AA3B5" text-anchor="middle">Infused Alloy</text>
+<text x="660" y="392" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="normal" fill="#FFD23A" text-anchor="start">F-19: holding JEI's start until the server's tags arrive</text>
+<text x="660" y="412" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="normal" fill="#FFD23A" text-anchor="start">F-19: the server's tags arrived, JEI may start</text>
+<text x="650" y="464" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#E6EAF2" text-anchor="start">JEI starts a moment later, with the tags in place. Mekanism's</text>
+<text x="650" y="486" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#E6EAF2" text-anchor="start">alloys, steel and ore processing, the Electrodynamics family's</text>
+<text x="650" y="508" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#E6EAF2" text-anchor="start">sulfates, acids and fuel chain, and every other plugin's tag</text>
+<text x="650" y="530" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#E6EAF2" text-anchor="start">ingredients show on a server as they do in single player.</text>
+<text x="650" y="552" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#E6EAF2" text-anchor="start">Any JEI 15.74 build; client only.</text>
+</g>
+</svg>

@@ -277,9 +277,9 @@ def banner():
 # ------------------------------------------------------------------ 2 what it patches
 
 def patches():
-    s = Svg(1200, 600)
-    s.header("What it patches", "Three mods, pinned to the exact versions the fixes were written against. Nothing of theirs is shipped or changed.")
-    cols = [
+    s = Svg(1200, 860)
+    s.header("What it patches", "Five targets, each pinned to the version the fixes were written against. Nothing of theirs is shipped or changed.")
+    top = [
         ("Numina 2.3.13", ACCENT, ("battery", "circuit", "servo"), [
             "F-2  slider values clamped to 0..1",
             "F-3  the suit ticks once per tick",
@@ -303,12 +303,9 @@ def patches():
             "Skipped on servers and without EMI",
         ]),
     ]
-    for i, (title, color, icons, lines) in enumerate(cols):
+    for i, (title, color, icons, lines) in enumerate(top):
         x = 40 + i * 380
         s.card(x, 130, 360, 440, title, color)
-        for k, key in enumerate(icons):
-            s.icon(T[key], x + 24 + k * 60, 80 + 130 - 10 + 14, 48) if False else None
-        y = 210
         for k, key in enumerate(icons):
             s.icon(T[key], x + 24 + k * 62, 130 + 70, 48)
         y = 130 + 70 + (62 if icons else 0)
@@ -317,6 +314,31 @@ def patches():
             y += 40
         if i == 2:
             s.text(x + 24, 540, "needs JEI 15.74 beside EMI; client only", 14, MUTED, style="italic")
+    bottom = [
+        ("Minecraft 1.20.1, the client's connection", OK, [
+            "F-16 a packet queued before a server switch",
+            "        moved the protocol is dropped, not sent",
+            "F-17 the disconnected screen opens on the",
+            "        render thread (Client Reset Packet set it elsewhere)",
+        ], "matter on clients switching servers through Velocity; inert elsewhere"),
+        ("JEI 15.74, optional", BAD, [
+            "F-19 JEI starts only after the server's tags",
+            "        arrive, so Mekanism's and Electrodynamics'",
+            "        tag-based recipes show on a server",
+            "Skipped on servers and with any other JEI",
+        ], "any 15.74 build; client only"),
+    ]
+    for i, (title, color, lines, note) in enumerate(bottom):
+        x = 40 + i * 580
+        s.card(x, 600, 560, 230, title, color)
+        y = 600 + 70
+        for line in lines:
+            if line.startswith("        "):
+                s.text(x + 48, y + 6, line.strip(), 16, TEXT)
+            else:
+                s.bullet(x + 24, y + 6, line, color, 16)
+            y += 30
+        s.text(x + 24, 810, note, 14, MUTED, style="italic")
     s.save("what-it-patches")
 
 
@@ -478,6 +500,90 @@ def emi():
     s.save("tinkers-in-emi")
 
 
+# ------------------------------------------------------------------ 7b server switches
+
+def switches():
+    s = Svg(1200, 560)
+    s.header("Server switches no longer drop the connection", "A race in Minecraft 1.20.1 itself, in the window a Velocity switch opens with Forge Client Reset Packet.")
+    s.card(40, 130, 540, 400, "before", BAD)
+    s.rect(70, 200, 480, 150, INSET, BAD, r=8)
+    s.text(310, 236, "Failed to connect to the server", 20, BAD, "bold", "middle")
+    s.text(310, 266, "Internal Exception: io.netty.handler.codec.EncoderException:", 12, MUTED, anchor="middle", family=MONO)
+    s.text(310, 286, "java.io.IOException: Can't serialize unregistered packet", 12, MUTED, anchor="middle", family=MONO)
+    s.text(310, 326, "about two switches in five, the instant the reset finished", 14, MUTED, anchor="middle", style="italic")
+    for k, line in enumerate((
+        "A mod sent one last packet while the world unloaded.",
+        "The switch moved the connection to the login protocol,",
+        "vanilla wrote the old packet anyway, and the encoder threw.",
+        "Clients with the Fabric Screen API crashed on top of it:",
+        "the disconnected screen was set from the network thread.",
+    )):
+        s.text(70, 390 + k * 24, line, 15, MUTED)
+    s.card(620, 130, 540, 400, "now", OK)
+    s.rect(650, 200, 480, 150, INSET, OK, r=8)
+    s.text(660, 228, "[BSP Mod Fixes] Dropped a stale PLAY packet", 12, GOLD, family=MONO)
+    s.text(660, 248, "(ServerboundCustomPayloadPacket on channel some_mod:main)", 12, GOLD, family=MONO)
+    s.text(660, 268, "after a server switch; the connection is now in LOGIN", 12, GOLD, family=MONO)
+    s.text(660, 300, "F-17: the disconnected screen was set from thread", 12, GOLD, family=MONO)
+    s.text(660, 320, "'Netty Client IO #2'; opening it on the render thread instead", 12, GOLD, family=MONO)
+    for k, line in enumerate((
+        "F-16: the stale packet is dropped and the switch completes.",
+        "One warning line names the packet and its channel, so the",
+        "mod that sends during a switch can be found.",
+        "F-17: a failed switch shows the disconnected screen",
+        "instead of crashing. Both act on the client's own connection.",
+    )):
+        s.text(650, 390 + k * 24, line, 15, TEXT)
+    s.save("server-switch")
+
+
+# ------------------------------------------------------------------ 7c recipes on servers
+
+def recipes():
+    s = Svg(1200, 600)
+    s.header("Mekanism's recipes show on a server", "JEI 15.74 starts the moment the server's recipes arrive, just before its tags do, so tag-based recipes vanished on a server.")
+    s.card(40, 130, 540, 440, "before, on a server", BAD)
+    s.rect(70, 200, 480, 230, INSET, BAD, r=8)
+    s.text(310, 236, "Metallurgic Infuser", 18, TEXT, "bold", "middle")
+    s.rect(120, 262, 380, 120, PANEL, LINE, r=6)
+    s.text(310, 316, "no recipe for Infused Alloy", 16, BAD, "normal", "middle")
+    s.text(310, 342, "nor Reinforced or Atomic Alloy, Steel, most ore processing", 13, MUTED, anchor="middle")
+    s.text(310, 412, "Found a broken recipe, failed to setRecipe  (x83, Electrodynamics)", 12, MUTED, anchor="middle", family=MONO)
+    for k, line in enumerate((
+        "Every recipe with a tag input (\"any iron ingot\") looked",
+        "empty to Mekanism at that moment and was dropped as",
+        "incomplete; Electrodynamics' fluid recipes failed on the",
+        "way in. Single player was fine: the local server has its",
+        "tags ready first.",
+    )):
+        s.text(70, 464 + k * 22, line, 15, MUTED)
+    s.card(620, 130, 540, 440, "now", OK)
+    s.rect(650, 200, 480, 230, INSET, OK, r=8)
+    s.text(890, 236, "Metallurgic Infuser", 18, TEXT, "bold", "middle")
+    # iron ingot -> infused alloy, redstone infusion below
+    s.rect(700, 268, 56, 56, "#1c1c1c", "#6a6a6a", r=4)
+    s.rect(712, 286, 32, 20, "#d8d8d8", r=3)
+    s.text(728, 346, "Iron Ingot", 12, MUTED, anchor="middle")
+    s.rect(790, 288, 120, 16, PANEL, LINE, r=3)
+    s.rect(792, 290, 86, 12, "#c1272d", r=2)
+    s.text(850, 322, "Redstone infusion 10 mB", 12, MUTED, anchor="middle")
+    s.arrow(930, 296, 990, 296, ACCENT, 3)
+    s.rect(1010, 268, 56, 56, "#1c1c1c", "#6a6a6a", r=4)
+    s.rect(1022, 286, 32, 20, "#b7404a", r=3)
+    s.text(1038, 346, "Infused Alloy", 12, MUTED, anchor="middle")
+    s.text(660, 392, "F-19: holding JEI's start until the server's tags arrive", 12, GOLD, family=MONO)
+    s.text(660, 412, "F-19: the server's tags arrived, JEI may start", 12, GOLD, family=MONO)
+    for k, line in enumerate((
+        "JEI starts a moment later, with the tags in place. Mekanism's",
+        "alloys, steel and ore processing, the Electrodynamics family's",
+        "sulfates, acids and fuel chain, and every other plugin's tag",
+        "ingredients show on a server as they do in single player.",
+        "Any JEI 15.74 build; client only.",
+    )):
+        s.text(650, 464 + k * 22, line, 15, TEXT)
+    s.save("recipes-on-servers")
+
+
 # ------------------------------------------------------------------ 8 config
 
 def config():
@@ -557,5 +663,7 @@ if __name__ == "__main__":
     modules()
     names()
     emi()
+    switches()
+    recipes()
     config()
     avatar()

@@ -2,11 +2,12 @@
 
 # BSP-Mod Fixes
 
-**Bug and exploit fixes for Modular Powersuits, Numina and EMI, without touching their jars.** We love the power armor in the Build Secure Protect pack, and we found it ticking twice a tick, handing out free modules to anyone with a modified client, and showing raw translation keys all over the Tinker Table. This mod patches all of that in place: fifteen small fixes, each one aimed at the exact line that was wrong, each one with a test. Put it next to the two mods and the suit does what its sliders say.
+**Bug and exploit fixes for Modular Powersuits, Numina, EMI, JEI and the client's own connection, without touching their jars.** We love the power armor in the Build Secure Protect pack, and we found it ticking twice a tick, handing out free modules to anyone with a modified client, and showing raw translation keys all over the Tinker Table. Then we found server switches dropping the connection, and Mekanism's recipes missing from JEI on a server. This mod patches all of that in place: eighteen small fixes, each one aimed at the exact line that was wrong, each one with a test. Put it next to the two mods and the suit does what its sliders say.
 
 - Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server.
 - Requires **Numina 2.3.13** and **Modular Powersuits 2.3.13**, exactly. If either is updated the game refuses to start until this mod is updated too, so a fix is never applied to code it was not written for.
-- Optional, client only: **EMI 1.1.24+1.20.1+forge** with JEI 15.74 for the Tinkers' Construct recipe fixes. Without EMI, or with any other EMI version, those fixes are skipped and the log says so.
+- Optional, client only: **EMI 1.1.24+1.20.1+forge** with JEI 15.74 for the Tinkers' Construct recipe fixes, and **any JEI 15.74 build** for the recipes-on-a-server fix. Without EMI or JEI, or with another version of either, those fixes are skipped and the log says so.
+- The two server-switch fixes need nothing extra; they matter on clients that switch servers through a Velocity proxy with Forge Client Reset Packet and do nothing elsewhere.
 - MIT licence, source on [GitHub](https://github.com/Build-Secure-Protect/BSP-Mod-Fixes). Nothing of the patched mods is shipped or changed; the patches are mixins, event handlers and two small language files.
 
 ---
@@ -15,7 +16,7 @@
 
 ![What it patches](https://raw.githubusercontent.com/Build-Secure-Protect/BSP-Mod-Fixes/main/docs/curseforge/images/what-it-patches.png)
 
-Three mods, pinned to the exact versions the fixes were written against. The server log lists every fix once loading is complete, with the mod it patches and whether it is applied, skipped, or waiting for its target to load.
+Five targets, pinned to the versions the fixes were written against. The log lists every fix once loading is complete, with what it patches and whether it is applied, skipped, or waiting for its target to load.
 
 ---
 
@@ -49,10 +50,26 @@ EMI's JEI compatibility layer stopped at an older JEI API, and Tinkers' Construc
 
 ---
 
+## Server switches no longer drop the connection
+
+![Server switches](https://raw.githubusercontent.com/Build-Secure-Protect/BSP-Mod-Fixes/main/docs/curseforge/images/server-switch.png)
+
+Switching servers through Velocity with Forge Client Reset Packet sometimes ended in "Internal Exception: io.netty.handler.codec.EncoderException: java.io.IOException: Can't serialize unregistered packet" the instant the reset finished, about two switches in five. The cause is a race in Minecraft 1.20.1 itself: a packet a client mod sent while the world was unloading was queued for the old protocol, the reset moved the connection to the login protocol, and vanilla then wrote the old packet anyway. Such a packet is dropped now, with one warning line in the client log naming the packet and, for a mod channel, the channel, so the mod that sends during a switch can be found. And when a switch does fail, the disconnected screen is opened on the render thread; Client Reset Packet opened it from the network thread, which crashed clients that carry the Fabric Screen API (Forgified Fabric API, pulled in by Enhanced Block Entities) with "The current screen (DisconnectedScreen) has not been correctly initialised". Both act only on the client's own connection; a dedicated server skips them.
+
+---
+
+## Mekanism's recipes show on a server
+
+![Recipes on servers](https://raw.githubusercontent.com/Build-Secure-Protect/BSP-Mod-Fixes/main/docs/curseforge/images/recipes-on-servers.png)
+
+On a dedicated server, JEI showed no Metallurgic Infuser recipe for Infused Alloy, nor Reinforced or Atomic Alloy, Steel or most of Mekanism's ore processing, and the Electrodynamics family's fluid recipes (sulfates, acids, ethanol, the nuclear fuel chain) were missing too. In single player everything was there. The cause is in JEI 15.74: it starts the moment the server's recipes arrive, which in Minecraft 1.20.1 is just before the server's tags arrive, so every mod that looks a tag up while handing JEI its recipes saw an empty tag. Mekanism quietly dropped every recipe with a tag input as incomplete, Electrodynamics' failed on the way in, and other plugins showed an "Empty Tag" barrier. With this mod, JEI starts only after the server's tags have arrived: two lines in the client log mark the hold and the release, JEI starts a moment later than it did, and the recipes are all there. Applies to any JEI 15.74 build; with another JEI it is skipped and one log line says why. Client only.
+
+---
+
 ## For server admins: installing
 
 1. Put the jar in `mods/` on every server and every client, next to Numina 2.3.13 and Modular Powersuits 2.3.13.
-2. Start each server once. The log says `BSP-Mod Fixes: 15 fixes in this build` and lists them. `bsp_mod_fixes-server.toml` appears in the world's `serverconfig` folder with one setting, `suitClearsFire`.
+2. Start each server once. The log says `BSP-Mod Fixes: 18 fixes in this build` and lists them (the client-only ones as skipped there). `bsp_mod_fixes-server.toml` appears in the world's `serverconfig` folder with one setting, `suitClearsFire`.
 3. Re-tune Powersuits' own server config for the two fixes that change what its numbers mean (below).
 
 ![Server settings to re-tune](https://raw.githubusercontent.com/Build-Secure-Protect/BSP-Mod-Fixes/main/docs/curseforge/images/server-settings.png)
@@ -86,8 +103,9 @@ Apply them in every world's `serverconfig/powersuits-server.toml` and in `defaul
 - The Shock Absorber's old landing sound is not played (it lived in a client-only class; everything else about the module is as described).
 - The Kinetic Generator pays whole FE per tick and at most one block per tick, so a teleport or a glitch can never pay out.
 - Numina charges items in your hands before the armor, so a Power Fist in hand fills first. That is Numina's behaviour and is left alone.
-- The fixes are written for Numina 2.3.13 and Modular Powersuits 2.3.13 only, on purpose. A new version of either needs a new BSP-Mod Fixes.
+- The fixes are written for Numina 2.3.13 and Modular Powersuits 2.3.13 only, on purpose. A new version of either needs a new BSP-Mod Fixes. The EMI and JEI fixes skip themselves on any other version of those mods.
+- A mod that sends a packet after a switch has already moved the connection to the login protocol takes vanilla's own path; such a switch ends without a "Dropped" line, and that mod is the one to report.
 
 ---
 
-Part of the **Build Secure Protect** family: [BSP-Core](https://www.curseforge.com/minecraft/mc-mods/bsp-core), BSP-Teleport, BSP-Region Guard, BSP-InventorySync, BSP-Server Utilities and BSP-Mod Fixes. Modular Powersuits and Numina are by MachineMuse and lehjr (BSD-2); EMI is by emilyploszaj; nothing of theirs is copied here, only patched in place.
+Part of the **Build Secure Protect** family: [BSP-Core](https://www.curseforge.com/minecraft/mc-mods/bsp-core), BSP-Teleport, BSP-Region Guard, BSP-InventorySync, BSP-Server Utilities and BSP-Mod Fixes. Modular Powersuits and Numina are by MachineMuse and lehjr (BSD-2); EMI is by emilyploszaj; JEI is by mezz; nothing of theirs is copied here, only patched in place.

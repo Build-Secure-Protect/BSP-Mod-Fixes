@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+<rect width="1200" height="1200" fill="#0B0F14"/>
+<g transform="translate(0, 320)">
+<rect width="1200" height="560" fill="#0B0F14"/>
+<text x="40" y="64" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="40" font-weight="bold" fill="#E6EAF2" text-anchor="start">Server switches no longer drop the connection</text>
+<text x="40" y="100" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="20" font-weight="normal" fill="#9AA3B5" text-anchor="start">A race in Minecraft 1.20.1 itself, in the window a Velocity switch opens with Forge Client Reset Packet.</text>
+<rect x="40" y="130" width="540" height="400" rx="10" fill="#10151C" stroke="#FF6B5C" stroke-width="2" opacity="1"/>
+<text x="62" y="170" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#FF6B5C" text-anchor="start" letter-spacing="2">BEFORE</text>
+<line x1="62" y1="186" x2="558" y2="186" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
+<rect x="70" y="200" width="480" height="150" rx="8" fill="#0C0E12" stroke="#FF6B5C" stroke-width="1.5" opacity="1"/>
+<text x="310" y="236" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="20" font-weight="bold" fill="#FF6B5C" text-anchor="middle">Failed to connect to the server</text>
+<text x="310" y="266" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="normal" fill="#9AA3B5" text-anchor="middle">Internal Exception: io.netty.handler.codec.EncoderException:</text>
+<text x="310" y="286" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="normal" fill="#9AA3B5" text-anchor="middle">java.io.IOException: Can't serialize unregistered packet</text>
+<text x="310" y="326" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="middle" font-style="italic">about two switches in five, the instant the reset finished</text>
+<text x="70" y="390" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="start">A mod sent one last packet while the world unloaded.</text>
+<text x="70" y="414" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="start">The switch moved the connection to the login protocol,</text>
+<text x="70" y="438" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="start">vanilla wrote the old packet anyway, and the encoder threw.</text>
+<text x="70" y="462" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="start">Clients with the Fabric Screen API crashed on top of it:</text>
+<text x="70" y="486" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#9AA3B5" text-anchor="start">the disconnected screen was set from the network thread.</text>
+<rect x="620" y="130" width="540" height="400" rx="10" fill="#10151C" stroke="#8FE04A" stroke-width="2" opacity="1"/>
+<text x="642" y="170" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#8FE04A" text-anchor="start" letter-spacing="2">NOW</text>
+<line x1="642" y1="186" x2="1138" y2="186" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
+<rect x="650" y="200" width="480" height="150" rx="8" fill="#0C0E12" stroke="#8FE04A" stroke-width="1.5" opacity="1"/>
+<text x="660" y="228" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="normal" fill="#FFD23A" text-anchor="start">[BSP Mod Fixes] Dropped a stale PLAY packet</text>
+<text x="660" y="248" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="normal" fill="#FFD23A" text-anchor="start">(ServerboundCustomPayloadPacket on channel some_mod:main)</text>
+<text x="660" y="268" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="normal" fill="#FFD23A" text-anchor="start">after a server switch; the connection is now in LOGIN</text>
+<text x="660" y="300" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="normal" fill="#FFD23A" text-anchor="start">F-17: the disconnected screen was set from thread</text>
+<text x="660" y="320" font-family="Menlo, Monaco, monospace" font-size="12" font-weight="normal" fill="#FFD23A" text-anchor="start">'Netty Client IO #2'; opening it on the render thread instead</text>
+<text x="650" y="390" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#E6EAF2" text-anchor="start">F-16: the stale packet is dropped and the switch completes.</text>
+<text x="650" y="414" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#E6EAF2" text-anchor="start">One warning line names the packet and its channel, so the</text>
+<text x="650" y="438" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#E6EAF2" text-anchor="start">mod that sends during a switch can be found.</text>
+<text x="650" y="462" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#E6EAF2" text-anchor="start">F-17: a failed switch shows the disconnected screen</text>
+<text x="650" y="486" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="15" font-weight="normal" fill="#E6EAF2" text-anchor="start">instead of crashing. Both act on the client's own connection.</text>
+</g>
+</svg>

@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
 <rect width="1200" height="1200" fill="#0B0F14"/>
-<g transform="translate(0, 300)">
-<rect width="1200" height="600" fill="#0B0F14"/>
+<g transform="translate(0, 170)">
+<rect width="1200" height="860" fill="#0B0F14"/>
 <text x="40" y="64" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="40" font-weight="bold" fill="#E6EAF2" text-anchor="start">What it patches</text>
-<text x="40" y="100" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="20" font-weight="normal" fill="#9AA3B5" text-anchor="start">Three mods, pinned to the exact versions the fixes were written against. Nothing of theirs is shipped or changed.</text>
+<text x="40" y="100" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="20" font-weight="normal" fill="#9AA3B5" text-anchor="start">Five targets, each pinned to the version the fixes were written against. Nothing of theirs is shipped or changed.</text>
 <rect x="40" y="130" width="360" height="440" rx="10" fill="#10151C" stroke="#19D3B0" stroke-width="2" opacity="1"/>
 <text x="62" y="170" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#19D3B0" text-anchor="start" letter-spacing="2">NUMINA 2.3.13</text>
 <line x1="62" y1="186" x2="378" y2="186" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
@@ -1027,5 +1027,25 @@
 <circle cx="830" cy="400" r="6" fill="#FFD23A"/>
 <text x="848" y="406" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#E6EAF2" text-anchor="start">Skipped on servers and without EMI</text>
 <text x="824" y="540" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="start" font-style="italic">needs JEI 15.74 beside EMI; client only</text>
+<rect x="40" y="600" width="560" height="230" rx="10" fill="#10151C" stroke="#8FE04A" stroke-width="2" opacity="1"/>
+<text x="62" y="640" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#8FE04A" text-anchor="start" letter-spacing="2">MINECRAFT 1.20.1, THE CLIENT'S CONNECTION</text>
+<line x1="62" y1="656" x2="578" y2="656" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
+<circle cx="70" cy="670" r="6" fill="#8FE04A"/>
+<text x="88" y="676" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#E6EAF2" text-anchor="start">F-16 a packet queued before a server switch</text>
+<text x="88" y="706" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#E6EAF2" text-anchor="start">moved the protocol is dropped, not sent</text>
+<circle cx="70" cy="730" r="6" fill="#8FE04A"/>
+<text x="88" y="736" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#E6EAF2" text-anchor="start">F-17 the disconnected screen opens on the</text>
+<text x="88" y="766" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#E6EAF2" text-anchor="start">render thread (Client Reset Packet set it elsewhere)</text>
+<text x="64" y="810" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="start" font-style="italic">matter on clients switching servers through Velocity; inert elsewhere</text>
+<rect x="620" y="600" width="560" height="230" rx="10" fill="#10151C" stroke="#FF6B5C" stroke-width="2" opacity="1"/>
+<text x="642" y="640" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" font-weight="bold" fill="#FF6B5C" text-anchor="start" letter-spacing="2">JEI 15.74, OPTIONAL</text>
+<line x1="642" y1="656" x2="1158" y2="656" stroke="#2A2F3A" stroke-width="1" stroke-linecap="round"/>
+<circle cx="650" cy="670" r="6" fill="#FF6B5C"/>
+<text x="668" y="676" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#E6EAF2" text-anchor="start">F-19 JEI starts only after the server's tags</text>
+<text x="668" y="706" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#E6EAF2" text-anchor="start">arrive, so Mekanism's and Electrodynamics'</text>
+<text x="668" y="736" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#E6EAF2" text-anchor="start">tag-based recipes show on a server</text>
+<circle cx="650" cy="760" r="6" fill="#FF6B5C"/>
+<text x="668" y="766" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="16" font-weight="normal" fill="#E6EAF2" text-anchor="start">Skipped on servers and with any other JEI</text>
+<text x="644" y="810" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="14" font-weight="normal" fill="#9AA3B5" text-anchor="start" font-style="italic">any 15.74 build; client only</text>
 </g>
 </svg>
