@@ -56,3 +56,13 @@ description='''${mod_description}'''
     versionRange="[0,)"
     ordering="NONE"
     side="CLIENT"
+
+# AdvancedAE is optional, on both sides: the quantum armor fix (F-25) applies only when AdvancedAE ${aae_version} is loaded
+# (checked by the mixin config plugin, which logs one WARN line and skips it for any other build). Open range for the same
+# reason as EMI's.
+[[dependencies.${mod_id}]]
+    modId="advanced_ae"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"

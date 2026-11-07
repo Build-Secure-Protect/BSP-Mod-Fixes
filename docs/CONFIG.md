@@ -2,11 +2,22 @@
 
 ## This mod's server config: `bsp_mod_fixes-server.toml`
 
-Written into `world/serverconfig/` on first load (and `defaultconfigs/bsp_mod_fixes-server.toml` sets the default for new worlds). One setting:
+Written into `world/serverconfig/` on first load (and `defaultconfigs/bsp_mod_fixes-server.toml` sets the default for new worlds). Two settings:
 
 | Key | Default | Meaning |
 |---|---|---|
 | `[fire] suitClearsFire` | `true` | Numina puts out a burning player who wears or holds a modular item while the suit's heat is under 95 % of its maximum, so suit wearers are all but immune to fire aspect and flame. `true` keeps that Powersuits behaviour; `false` lets the fire burn as on anyone else. (Fix F-10.) |
+| `[flight] keepFlyingSpeed` | `true` | Powersuits' Glider, Sprint Assist and Jump Assist modules changed the player's creative flying speed and never put it back; vanilla saves that speed with the player, and creative flight (AdvancedAE's Flight card) then runs at it. The modules no longer change it whatever this says. `true` also puts a survival or adventure player's stored speed back to vanilla's 0.05 once a second when it is anything else, with one log line per reset (creative and spectator players are left alone, an op may have set their own); `false` leaves every stored speed as it is. (Fix F-24.) |
+
+A player already affected can also be put right at once with Catnip's command, bundled with Create: `/catnip util flySpeed reset <name>` (permission level 2). `/data get entity <name> abilities.flySpeed` shows the stored value; vanilla's is `0.05f`.
+
+## This mod's client config: `bsp_mod_fixes-client.toml`
+
+In the game's `config` folder on each client. One value, which the game writes itself:
+
+| Key | Default | Meaning |
+|---|---|---|
+| `[quantumReadout] collapsed` | `false` | Whether the quantum suit readout (the plate above the hotbar's left end while AdvancedAE's quantum armor is worn) is collapsed to its tab. Changed by the readout's key binding ("Toggle quantum suit readout" in Controls, unbound by default) or by clicking the tab while a screen such as the inventory is open; kept until changed again. (Fix F-25.) |
 
 ## Powersuits server config to re-tune: `powersuits-server.toml`
 

@@ -25,6 +25,9 @@ final class Suits {
     static final ResourceLocation KINETIC_GENERATOR = ResourceLocation.fromNamespaceAndPath("powersuits", "generator_kinetic");
     static final ResourceLocation SHOCK_ABSORBER = ResourceLocation.fromNamespaceAndPath("powersuits", "shock_absorber");
     static final ResourceLocation ENERGY_SHIELD = ResourceLocation.fromNamespaceAndPath("powersuits", "energy_shield");
+    static final ResourceLocation GLIDER = ResourceLocation.fromNamespaceAndPath("powersuits", "glider");
+    static final ResourceLocation SPRINT_ASSIST = ResourceLocation.fromNamespaceAndPath("powersuits", "sprint_assist");
+    static final ResourceLocation JUMP_ASSIST = ResourceLocation.fromNamespaceAndPath("powersuits", "jump_assist");
 
     private Suits() {}
 

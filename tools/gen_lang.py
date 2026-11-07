@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Writes the two lang files this mod ships (F-9), from the two mods' own lang files plus the keys they lack.
+"""Writes the lang files this mod ships: the two for Numina and Powersuits (F-9), from the two mods' own lang files plus the
+keys they lack, and this mod's own (the quantum suit readout of F-25).
 
     python3 -I tools/gen_lang.py <numina jar> <powersuits jar>
 
@@ -17,6 +18,15 @@ import zipfile
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT_NUMINA = ROOT / "src/main/resources/assets/numina/lang/en_us.json"
 OUT_POWERSUITS = ROOT / "src/main/resources/assets/powersuits/lang/en_us.json"
+OUT_OURS = ROOT / "src/main/resources/assets/bsp_mod_fixes/lang/en_us.json"
+
+# This mod's own text: the quantum suit readout (F-25): its key binding and the two row labels on the plate.
+OURS = {
+    "key.categories.bsp_mod_fixes": "BSP-Mod Fixes",
+    "key.bsp_mod_fixes.quantum_readout": "Toggle quantum suit readout",
+    "hud.bsp_mod_fixes.quantum_dmg": "DMG",
+    "hud.bsp_mod_fixes.quantum_ae": "AE",
+}
 
 NUMINA_EXTRA = {
     "key.categories.numina": "Numina",
@@ -94,8 +104,10 @@ def main(numina_jar: str, powersuits_jar: str) -> None:
 
     write(OUT_NUMINA, ours_numina)
     write(OUT_POWERSUITS, ours_powersuits)
+    write(OUT_OURS, OURS)
     print(f"{OUT_NUMINA.relative_to(ROOT)}: {len(ours_numina)} keys ({len(numina)} from Numina)")
     print(f"{OUT_POWERSUITS.relative_to(ROOT)}: {len(ours_powersuits)} keys, all absent from Powersuits")
+    print(f"{OUT_OURS.relative_to(ROOT)}: {len(OURS)} keys of this mod's own")
 
 
 if __name__ == "__main__":

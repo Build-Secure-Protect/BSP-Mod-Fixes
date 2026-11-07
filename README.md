@@ -8,6 +8,8 @@ It also patches **EMI 1.1.24+1.20.1+forge**'s JEI compatibility layer so that Ti
 
 And it patches two spots of **Minecraft 1.20.1** itself for the pack's Velocity network, where players switch servers with Forge Client Reset Packet: a packet queued just before the switch changed the connection's protocol no longer closes the connection, and a disconnected screen is only ever opened on the render thread. Mixins into Minecraft classes are remapped for production; the one into a client-only class is skipped on dedicated servers.
 
+It also patches **Modular Powersuits** twice more: for a value it leaves on the player (the creative flying speed its Glider, Sprint Assist and Jump Assist modules change and never restore) and for its HUD energy meter, which showed for any mod's energy-storing armor; and **AdvancedAE 1.3.6-1.20.1**'s quantum armor so its damage absorption shows on a suit readout. AdvancedAE is optional, on both sides: that fix applies only when exactly that build is loaded and is skipped with one line in the log otherwise.
+
 What each fix does is in `CHANGELOG.md`; the server settings that go with it are in `docs/CONFIG.md`; the checks are in `docs/TESTING.md`. The server log lists the fixes once loading is complete.
 
 | Fix | Mod at fault | What changes |
@@ -30,6 +32,9 @@ What each fix does is in `CHANGELOG.md`; the server settings that go with it are
 | F-16 | Minecraft | A packet sent just before a server switch moved the connection to another protocol is dropped and logged with its class and channel, instead of "Can't serialize unregistered packet" closing the connection. |
 | F-17 | Minecraft (set by Client Reset Packet) | A disconnected screen set from the network thread is opened on the render thread, so clients with the Fabric Screen API no longer crash on a failed switch. |
 | F-19 | JEI | JEI starts only after the server's tags have arrived, so Mekanism's tag-based recipes (the Metallurgic Infuser alloys among them) and the Electrodynamics family's fluid recipes show on a server as they do in single player. |
+| F-24 | Powersuits | The Glider, Sprint Assist and Jump Assist modules leave the player's creative flying speed as they found it (the Glider added 0.03 to it every tick of gliding, the assists overwrote it, none restored it; vanilla saves it with the player and creative flight then ran at it). A survival or adventure player's stored speed is put back to vanilla's once a second (`keepFlyingSpeed` in `bsp_mod_fixes-server.toml`). |
+| F-25 | AdvancedAE | The quantum armor's damage absorption is shown on a suit readout: a plate at the left edge while the armor is worn, with the suit's charge, and for three seconds after a hit the share taken off and the AE paid; a tab (or a key binding) collapses it, and collapsed stays collapsed. The arithmetic and rules are AdvancedAE's own. |
+| F-26 | Powersuits | The HUD energy meter shows only while a Powersuits modular item is worn or held (it showed for any mod's energy-storing armor). |
 
 ## Requirements
 
@@ -37,6 +42,7 @@ What each fix does is in `CHANGELOG.md`; the server settings that go with it are
 - Numina 2.3.13 and Modular Powersuits 2.3.13, on the client and on the server.
 - Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes (F-11 onward); they are skipped with any other EMI. Any JEI 15.74 build for the JEI fix (F-19); it is skipped with any other JEI.
 - Nothing extra for the server-switch fixes (F-16, F-17); they matter on clients that switch servers through Velocity with Forge Client Reset Packet 0.3.2 and do nothing elsewhere.
+- Optional, both sides: AdvancedAE 1.3.6-1.20.1 for the quantum armor fix (F-25); it is skipped with any other AdvancedAE.
 
 ## Build
 
@@ -44,4 +50,4 @@ What each fix does is in `CHANGELOG.md`; the server settings that go with it are
 ./gradlew build
 ```
 
-The jar is written to `build/libs/`. `./gradlew check` also runs `tools/check_lang.py` over the two shipped lang files (regenerate them with `tools/gen_lang.py <numina jar> <powersuits jar>` after a dependency bump). `./gradlew runGameTestServer` runs the headless tests (add `-PmixinVerbose` to see every injection Mixin applies); `./gradlew runServer` and `./gradlew runClient` start a dev server or client with both patched mods loaded; add `-PwithEmi` to any run to load EMI, JEI, Tinkers' Construct and Mantle as well (the exact pack files, from CurseMaven) for the EMI checks. `./gradlew runClient -PwithEmi -PquickPlay=<world>` opens a world from `run/saves` straight away, which is how the headless check reaches EMI's recipe reload. `-PemiProbe` on that run calls the EMI fixes' methods on EMI's real classes once loading is complete and logs one "BSP-Mod Fixes probe" line per check (the probe class lives in the gametest package and is not in the jar).
+The jar is written to `build/libs/`. `./gradlew check` also runs `tools/check_lang.py` over the two shipped lang files (regenerate them with `tools/gen_lang.py <numina jar> <powersuits jar>` after a dependency bump). `./gradlew runGameTestServer` runs the headless tests (add `-PmixinVerbose` to see every injection Mixin applies); `./gradlew runServer` and `./gradlew runClient` start a dev server or client with both patched mods loaded; add `-PwithEmi` to any run to load EMI, JEI, Tinkers' Construct and Mantle as well (the exact pack files, from CurseMaven) for the EMI checks. `./gradlew runClient -PwithEmi -PquickPlay=<world>` opens a world from `run/saves` straight away, which is how the headless check reaches EMI's recipe reload. `-PemiProbe` on that run calls the EMI fixes' methods on EMI's real classes once loading is complete and logs one "BSP-Mod Fixes probe" line per check (the probe class lives in the gametest package and is not in the jar). `-PtitleProbe` on a client run closes the client by itself once the title screen has been up for a few seconds, so a headless run that only wants the startup log ends on its own. `-PwithAae` on any run loads AdvancedAE, AE2, GuideME and GeckoLib (the exact pack files), so the quantum armor GameTests hit a dressed player through the real mod; without it they check the pure logic and the gate's skip. `-PskipFixes=<mixin class names, comma-separated>` switches those mixins off for a run (the startup report lists their fixes as skipped), which is how a test shows the patched mod's own behaviour: `./gradlew runGameTestServer -PwithAae -PskipFixes=AaeDamageAbsorptionMixin` runs the quantum armor hit against AdvancedAE's own handler.

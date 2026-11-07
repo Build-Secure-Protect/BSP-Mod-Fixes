@@ -30,6 +30,11 @@ minecraft {
             if (project.hasProperty('mixinVerbose')) {
                 property 'mixin.debug.verbose', 'true'
             }
+            // ./gradlew <run> -PskipFixes=AaeDamageAbsorptionMixin,...: the named mixins are switched off for this run (the
+            // startup report lists their fixes as skipped), so a test can show the patched mod's own behaviour.
+            if (project.hasProperty('skipFixes')) {
+                property 'bsp_mod_fixes.skipMixins', project.property('skipFixes')
+            }
 
             mods {
                 "${mod_id}" {
@@ -54,6 +59,16 @@ minecraft {
             // once the world is open and EMI has reloaded (what EMI and JEI hold for Mekanism), then closes the client.
             if (project.hasProperty('recipeProbe')) {
                 property 'bsp_mod_fixes.recipeProbe', 'true'
+            }
+            // ./gradlew runClient -PtitleProbe: the client closes itself a few seconds after the title screen is up, so a
+            // headless run that only wants the startup log ends on its own (gametest/TitleProbe).
+            if (project.hasProperty('titleProbe')) {
+                property 'bsp_mod_fixes.titleProbe', 'true'
+            }
+            // ./gradlew runClient -PwithAae -PreadoutProbe -PquickPlay=emitest: dresses the player in a charged quantum set,
+            // hurts them, collapses and reopens the suit readout, screenshotting each state to run/screenshots (gametest/ReadoutProbe).
+            if (project.hasProperty('readoutProbe')) {
+                property 'bsp_mod_fixes.readoutProbe', 'true'
             }
         }
 
@@ -108,6 +123,12 @@ dependencies {
     compileOnly fg.deobf("curse.maven:${emi_curse}")
     compileOnly fg.deobf("curse.maven:${jei_curse}")
 
+    // AdvancedAE and AE2, compiled against for the quantum armor fix (F-25); optional at runtime, gated to aae_version.
+    compileOnly fg.deobf("curse.maven:${ae2_curse}")
+    compileOnly fg.deobf("curse.maven:${aae_curse}")
+    compileOnly fg.deobf("curse.maven:${geckolib_curse}")
+    compileOnly fg.deobf("${ae2addonlib_maven}")
+
     // ./gradlew runClient -PwithEmi (or any run): EMI, JEI, Tinkers' Construct and Mantle load, for the in-game checks of docs/TESTING.md.
     if (project.hasProperty('withEmi')) {
         runtimeOnly fg.deobf("curse.maven:${emi_curse}")
@@ -127,6 +148,14 @@ dependencies {
         runtimeOnly fg.deobf("curse.maven:${crafttweaker_curse}")
         runtimeOnly fg.deobf("curse.maven:${jeitweaker_curse}")
     }
+    // ./gradlew runGameTestServer -PwithAae (or any run): AdvancedAE, AE2 and GuideME load, so the quantum armor tests run
+    // against the real mod; without it those tests only check the pure logic and the gate's skip.
+    if (project.hasProperty('withAae')) {
+        runtimeOnly fg.deobf("curse.maven:${aae_curse}")
+        runtimeOnly fg.deobf("curse.maven:${ae2_curse}")
+        runtimeOnly fg.deobf("curse.maven:${guideme_curse}")
+        runtimeOnly fg.deobf("curse.maven:${geckolib_curse}")
+    }
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -137,7 +166,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
             numina_version_range: numina_version_range, powersuits_version_range: powersuits_version_range,
-            emi_version: emi_version,
+            emi_version: emi_version, aae_version: aae_version,
     ]
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {

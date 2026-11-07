@@ -2,6 +2,8 @@ package com.mrgregles.bsp_mod_fixes;
 
 import com.mojang.logging.LogUtils;
 import com.mrgregles.bsp_mod_fixes.fix.Fixes;
+import com.mrgregles.bsp_mod_fixes.net.FixesNetwork;
+import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.common.Mod;
@@ -23,7 +25,12 @@ public class BSPModFixes {
 
     public BSPModFixes(FMLJavaModLoadingContext context) {
         context.registerConfig(ModConfig.Type.SERVER, FixesConfig.SPEC);
+        context.registerConfig(ModConfig.Type.CLIENT, FixesClientConfig.SPEC);
+        FixesNetwork.register();
         Fixes.registerEvents();
+        if (FMLEnvironment.dist.isClient()) {
+            com.mrgregles.bsp_mod_fixes.client.ClientSetup.init(context.getModEventBus()); // named here only, so a server never loads it
+        }
         context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> Fixes.report());
         if (Boolean.getBoolean("bsp_mod_fixes.emiProbe")) {
             context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("EmiClientProbe", "run"));
@@ -31,11 +38,17 @@ public class BSPModFixes {
         if (Boolean.getBoolean("bsp_mod_fixes.recipeProbe")) {
             context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("EmiRecipeProbe", "install"));
         }
+        if (Boolean.getBoolean("bsp_mod_fixes.titleProbe")) {
+            context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("TitleProbe", "install"));
+        }
+        if (Boolean.getBoolean("bsp_mod_fixes.readoutProbe")) {
+            context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("ReadoutProbe", "install"));
+        }
         LOGGER.info("BSP-Mod Fixes {} loaded (Numina {}, Modular Powersuits {})", version(MODID), version("numina"), version("powersuits"));
     }
 
     /**
-     * Dev only ({@code -PemiProbe} or {@code -PrecipeProbe} on a client run): a probe class of the gametest package, which
+     * Dev only ({@code -PemiProbe}, {@code -PrecipeProbe}, {@code -PtitleProbe} or {@code -PreadoutProbe} on a client run): a probe class of the gametest package, which
      * is not in the jar, is loaded by name and its static method called, so EMI's real classes are exercised headlessly.
      */
     private static void runProbe(String probe, String method) {

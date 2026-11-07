@@ -1,3 +1,20 @@
+# BSP-Mod Fixes 0.5.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional: AdvancedAE 1.3.6-1.20.1 (client and server) for the quantum armor fix; with any other AdvancedAE it is skipped and one log line says why. Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**Modular Powersuits no longer leaves a flying speed on the player.** A player who had used Powersuits' Glider, Sprint Assist or Jump Assist could later fly at absurd speed in anyone's creative flight (AdvancedAE's Flight card, for one): those modules change the player's creative flying speed every tick they run and never put it back, and the game saves that speed with the player. Powersuits' own flight never uses it.
+
+- F-24: the three modules leave the flying speed as they found it, and a survival or adventure player's stored speed is put back to vanilla's once a second, with one line in the server log per reset, so every player already affected heals on their next join. Creative and spectator players are left alone. `keepFlyingSpeed` in `bsp_mod_fixes-server.toml` turns the reset off.
+
+**The quantum armor shows what it absorbs.** AdvancedAE's quantum armor takes 30 % of the damage left after the armor out of the four pieces' AE charge, a quarter each, and never said so; against the armor's own 80 % and a buffer of hundreds of millions of AE nobody could see it work.
+
+- F-25: a suit readout. While any quantum piece is worn, a plate slides in at the screen's left edge above the hotbar with the suit's charge as a bar and figure; for three seconds after a hit a damage row shows the hit, the share the suit took and the AE it paid. A tab on the plate's edge collapses it to the tab alone, by the key binding "Toggle quantum suit readout" (unbound by default, under BSP-Mod Fixes in Controls) or a click on the tab with the inventory open; collapsed stays collapsed until opened again (`bsp_mod_fixes-client.toml`). The absorption itself is unchanged.
+- F-26: Powersuits' HUD energy meter shows only while a Powersuits piece is worn or a Power Fist held. It used to appear for anyone wearing energy-storing armor from any mod, the quantum set included.
+
+The new server setting is in `docs/CONFIG.md`. An affected player can also be put right at once with `/catnip util flySpeed reset <name>` (Create's bundled Catnip, operators).
+
 # BSP-Mod Fixes 0.4.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the new fix.

@@ -24,7 +24,12 @@
     "EmiTextWidgetMixin",
     "ConnectionStalePacketMixin",
     "DisconnectedScreenThreadMixin",
-    "JeiStartObserverMixin"
+    "JeiStartObserverMixin",
+    "GliderFlyingSpeedMixin",
+    "SprintAssistFlyingSpeedMixin",
+    "JumpAssistFlyingSpeedMixin",
+    "AaeDamageAbsorptionMixin",
+    "PowersuitsMeterMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -12,8 +12,8 @@ import java.util.Set;
  * the skip for the startup report. Pure {@link #applies(boolean)} for the tests.
  */
 public final class ClientGate {
-    /** The mixins of bsp_mod_fixes.mixins.json whose target class exists on a client only (simple names). */
-    public static final Set<String> MIXINS = Set.of("DisconnectedScreenThreadMixin");
+    /** The mixins of bsp_mod_fixes.mixins.json whose target class exists on a client only (simple names): F-17's into Minecraft, F-26's into Powersuits' meter overlay. */
+    public static final Set<String> MIXINS = Set.of("DisconnectedScreenThreadMixin", "PowersuitsMeterMixin");
     public static final String SERVER_REASON = "client-side only, nothing to patch on a dedicated server";
 
     private ClientGate() {}

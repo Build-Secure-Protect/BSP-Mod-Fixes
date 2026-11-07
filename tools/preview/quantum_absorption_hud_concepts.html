@@ -1,0 +1,327 @@
+<title>Quantum Absorption HUD</title>
+<style>
+  /* Layout: three mock game screens side by side (one column on a phone), each a 480 x 270 HUD at 1080p auto scale, with its notes beneath. */
+  :root {
+    --board: #0B0F15;      /* page ground, a shade under the panel */
+    --panel: #10151C;      /* BSP dark board */
+    --slot: #0C0E12;
+    --dim: #2A2F3A;
+    --muted: #9AA3B5;
+    --text: #E6EAF2;
+    --teal: #19D3B0;       /* player things: the damage taken off */
+    --violet: #B58CFF;
+    --gold: #FFD23A;       /* energy */
+    --hit: #C4323A;        /* the hit */
+    --font-display: "Press Start 2P", "Courier New", monospace;
+    --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+    --font-data: "IBM Plex Mono", "Menlo", monospace;
+    color-scheme: dark;
+  }
+  body {
+    margin: 0;
+    background: var(--board);
+    color: var(--text);
+    font-family: var(--font-body);
+    padding-block: 28px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+  header { max-width: 1480px; margin: 0 auto 20px; }
+  h1 { font-family: var(--font-display); font-size: 15px; letter-spacing: 1px; color: var(--teal); margin: 0 0 10px; text-wrap: balance; }
+  header p { margin: 0; max-width: 72ch; color: var(--muted); line-height: 1.5; }
+  .toolbar { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin: 16px 0 0; }
+  button.replay {
+    font-family: var(--font-display); font-size: 10px; letter-spacing: 1px; color: var(--board);
+    background: var(--teal); border: 0; padding: 10px 14px; cursor: pointer;
+  }
+  button.replay:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .legend { color: var(--muted); font-size: 13px; }
+  .legend b { font-weight: 600; }
+  .legend .sw { display: inline-block; width: 10px; height: 10px; vertical-align: -1px; margin-right: 4px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; max-width: 1480px; margin: 0 auto; }
+  .concept { background: var(--panel); border: 1px solid var(--dim); padding: 14px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .concept h2 { font-family: var(--font-display); font-size: 11px; letter-spacing: 1px; margin: 0; color: var(--gold); }
+  .concept h2 span { color: var(--muted); font-family: var(--font-body); font-size: 13px; letter-spacing: 0; font-weight: 400; margin-left: 8px; }
+  .screen { width: 100%; aspect-ratio: 16 / 9; max-width: 100%; display: block; background: var(--slot); border: 1px solid var(--dim); }
+  .notes { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 13.5px; line-height: 1.45; color: var(--text); }
+  .notes li { padding-left: 14px; position: relative; }
+  .notes li::before { content: ""; position: absolute; left: 0; top: 8px; width: 6px; height: 6px; background: var(--dim); }
+  .notes b { color: var(--muted); font-weight: 600; }
+  .zoom { display: block; width: 100%; max-width: 100%; background: var(--slot); border: 1px solid var(--dim); }
+  .caption { font-size: 12px; color: var(--muted); margin: 0; }
+  text { font-family: var(--font-display); }
+  text.data { font-family: var(--font-data); }
+  /* the overlay appears on a hit and fades after three seconds (reduced motion: shown steady) */
+  .hit { opacity: 1; }
+  .playing .hit { animation: hit-fade 4.2s ease-out forwards; }
+  .playing .float { animation: float-up 1.6s ease-out forwards; }
+  .playing .slide { animation: slide-in 4.2s ease-out forwards; }
+  @keyframes hit-fade { 0% { opacity: 0 } 6% { opacity: 1 } 72% { opacity: 1 } 100% { opacity: 0 } }
+  @keyframes float-up { 0% { opacity: 0; transform: translateY(6px) } 15% { opacity: 1 } 100% { opacity: 0; transform: translateY(-14px) } }
+  @keyframes slide-in { 0% { opacity: 0; transform: translateX(-12px) } 8% { opacity: 1; transform: translateX(0) } 72% { opacity: 1 } 100% { opacity: 0 } }
+  @media (prefers-reduced-motion: reduce) {
+    .playing .hit, .playing .float, .playing .slide { animation: none; }
+  }
+  footer { max-width: 1480px; margin: 24px auto 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+  footer code { font-family: var(--font-data); color: var(--text); }
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono&display=swap">
+
+<header>
+  <h1>Quantum armor absorption: three HUD concepts</h1>
+  <p>The hit in every mock-up is the one the headless test dealt: a cactus for 10 on a charged quantum set. The armor leaves 2.0, the suit takes 0.6 of that and pays 600 AE from a charge of 950,000,000. Every concept has to show two things: how much of the hit the suit took, and what that cost against the energy it has. The AE slice is one part in a million and a half, so each concept draws the cost as a notch no narrower than two pixels, with the number beside it.</p>
+  <div class="toolbar">
+    <button class="replay" id="replay" type="button">Replay the hit</button>
+    <span class="legend"><span class="sw" style="background: var(--hit)"></span><b>hit</b> after the armor &nbsp; <span class="sw" style="background: var(--teal)"></span><b>absorbed</b> &nbsp; <span class="sw" style="background: var(--gold)"></span><b>suit charge</b>, the paid slice brighter</span>
+  </div>
+</header>
+
+<div class="grid" id="grid">
+
+  <!-- Concept A: twin bars above the hotbar -->
+  <section class="concept">
+    <h2>A <span>Twin bars over the hotbar</span></h2>
+    <svg class="screen" viewBox="0 0 480 270" role="img" aria-label="Concept A: two thin bars centred above the hearts, the damage bar and the energy bar">
+      <defs>
+        <linearGradient id="skyA" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A2230"/><stop offset="1" stop-color="#0C0E12"/></linearGradient>
+      </defs>
+      <rect width="480" height="270" fill="url(#skyA)"/>
+      <!-- ground line and a zombie silhouette for scale -->
+      <rect x="0" y="190" width="480" height="80" fill="#121A14"/>
+      <rect x="300" y="128" width="16" height="62" fill="#2F6B3F"/><rect x="302" y="116" width="12" height="12" fill="#3C8A52"/>
+      <!-- crosshair -->
+      <path d="M240 131 v8 M240 131 v-8 M231 135 h8 M249 135 h-8" stroke="#D9DEE8" stroke-width="1.5" opacity=".8"/>
+      <!-- hotbar: 9 slots, 182 wide -->
+      <rect x="149" y="247" width="182" height="22" fill="#0C0E12" stroke="#2A2F3A"/>
+      <g fill="#171C24" stroke="#2A2F3A">
+        <rect x="150" y="248" width="20" height="20"/><rect x="170" y="248" width="20" height="20"/><rect x="190" y="248" width="20" height="20"/><rect x="210" y="248" width="20" height="20"/><rect x="230" y="248" width="20" height="20"/><rect x="250" y="248" width="20" height="20"/><rect x="270" y="248" width="20" height="20"/><rect x="290" y="248" width="20" height="20"/><rect x="310" y="248" width="20" height="20"/>
+      </g>
+      <rect x="148" y="246" width="24" height="24" fill="none" stroke="#E6EAF2" stroke-width="1.5"/>
+      <!-- xp bar -->
+      <rect x="149" y="240" width="182" height="4" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/><rect x="149" y="240" width="90" height="4" fill="#7CE68A"/>
+      <!-- hearts (left) and armor (above hearts) -->
+      <g fill="#C4323A">
+        <rect x="150" y="229" width="7" height="7"/><rect x="158" y="229" width="7" height="7"/><rect x="166" y="229" width="7" height="7"/><rect x="174" y="229" width="7" height="7"/><rect x="182" y="229" width="7" height="7"/><rect x="190" y="229" width="7" height="7"/><rect x="198" y="229" width="7" height="7"/><rect x="206" y="229" width="7" height="7"/><rect x="214" y="229" width="7" height="7"/>
+      </g>
+      <rect x="222" y="229" width="7" height="7" fill="#C4323A" opacity=".45"/>
+      <g fill="#B8C0CC">
+        <rect x="150" y="219" width="7" height="7"/><rect x="158" y="219" width="7" height="7"/><rect x="166" y="219" width="7" height="7"/><rect x="174" y="219" width="7" height="7"/><rect x="182" y="219" width="7" height="7"/><rect x="190" y="219" width="7" height="7"/><rect x="198" y="219" width="7" height="7"/><rect x="206" y="219" width="7" height="7"/><rect x="214" y="219" width="7" height="7"/><rect x="222" y="219" width="7" height="7"/>
+      </g>
+      <!-- hunger (right) -->
+      <g fill="#B4793A">
+        <rect x="251" y="229" width="7" height="7"/><rect x="259" y="229" width="7" height="7"/><rect x="267" y="229" width="7" height="7"/><rect x="275" y="229" width="7" height="7"/><rect x="283" y="229" width="7" height="7"/><rect x="291" y="229" width="7" height="7"/><rect x="299" y="229" width="7" height="7"/><rect x="307" y="229" width="7" height="7"/><rect x="315" y="229" width="7" height="7"/><rect x="323" y="229" width="7" height="7"/>
+      </g>
+      <!-- the overlay: two bars, hotbar width, above the armor row -->
+      <g class="hit">
+        <!-- damage bar: track = the hit after the armor, fill = absorbed share -->
+        <rect x="149" y="203" width="182" height="5" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+        <rect x="149.5" y="203.5" width="181" height="4" fill="#C4323A" opacity=".55"/>
+        <rect x="149.5" y="203.5" width="54.3" height="4" fill="#19D3B0"/>
+        <text x="149" y="200" font-size="5" fill="#9AA3B5">HIT 2.0</text>
+        <text x="331" y="200" font-size="5" fill="#19D3B0" text-anchor="end">ABSORBED 0.6</text>
+        <!-- energy bar: track = suit charge (full), bright notch = the slice paid, at least 2 px -->
+        <rect x="149" y="212" width="182" height="5" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+        <rect x="149.5" y="212.5" width="181" height="4" fill="#FFD23A" opacity=".55"/>
+        <rect x="328.5" y="212.5" width="2" height="4" fill="#FFF4B8"/>
+        <text x="149" y="224" font-size="5" fill="#9AA3B5" dy="-1">SUIT 950M AE</text>
+        <text x="331" y="224" font-size="5" fill="#FFD23A" text-anchor="end" dy="-1">-600 AE</text>
+      </g>
+    </svg>
+    <svg class="zoom" viewBox="140 196 200 32" role="img" aria-label="Concept A at four times the size">
+      <rect x="140" y="196" width="200" height="32" fill="#0C0E12"/>
+      <rect x="149" y="203" width="182" height="5" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+      <rect x="149.5" y="203.5" width="181" height="4" fill="#C4323A" opacity=".55"/>
+      <rect x="149.5" y="203.5" width="54.3" height="4" fill="#19D3B0"/>
+      <text x="149" y="200" font-size="5" fill="#9AA3B5">HIT 2.0</text>
+      <text x="331" y="200" font-size="5" fill="#19D3B0" text-anchor="end">ABSORBED 0.6</text>
+      <rect x="149" y="212" width="182" height="5" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+      <rect x="149.5" y="212.5" width="181" height="4" fill="#FFD23A" opacity=".55"/>
+      <rect x="328.5" y="212.5" width="2" height="4" fill="#FFF4B8"/>
+      <text x="149" y="223" font-size="5" fill="#9AA3B5">SUIT 950M AE</text>
+      <text x="331" y="223" font-size="5" fill="#FFD23A" text-anchor="end">-600 AE</text>
+    </svg>
+    <p class="caption">The same overlay at four times the size.</p>
+    <ul class="notes">
+      <li><b>Where</b> Two bars the width of the hotbar, between the crosshair and the armor row, where vanilla leaves a gap. Nothing else moves.</li>
+      <li><b>Damage bar</b> The hit after the armor is the whole track in dull red; the share the suit took fills in from the left in teal. Both numbers sit on the bar's ends.</li>
+      <li><b>Energy bar</b> The suit's charge, all four pieces together, fills the track in gold; the slice paid is a brighter notch at the fill's edge, never under two pixels, with the number at the right.</li>
+      <li><b>When</b> Appears on a hit, holds for three seconds, fades. Another hit refreshes it. Nothing is drawn when nothing was absorbed.</li>
+      <li><b>Cost</b> One packet from the server per absorption (hit, absorbed, paid, charge, capacity) and one HUD overlay on the client; the smallest of the three to draw.</li>
+    </ul>
+  </section>
+
+  <!-- Concept B: suit plate, bottom-left -->
+  <section class="concept">
+    <h2>B <span>Suit plate by the armor icons</span></h2>
+    <svg class="screen" viewBox="0 0 480 270" role="img" aria-label="Concept B: a small dark plate above the hotbar's left end with two labelled bars and the numbers">
+      <defs>
+        <linearGradient id="skyB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A2230"/><stop offset="1" stop-color="#0C0E12"/></linearGradient>
+      </defs>
+      <rect width="480" height="270" fill="url(#skyB)"/>
+      <rect x="0" y="190" width="480" height="80" fill="#121A14"/>
+      <rect x="300" y="128" width="16" height="62" fill="#2F6B3F"/><rect x="302" y="116" width="12" height="12" fill="#3C8A52"/>
+      <path d="M240 131 v8 M240 131 v-8 M231 135 h8 M249 135 h-8" stroke="#D9DEE8" stroke-width="1.5" opacity=".8"/>
+      <rect x="149" y="247" width="182" height="22" fill="#0C0E12" stroke="#2A2F3A"/>
+      <g fill="#171C24" stroke="#2A2F3A">
+        <rect x="150" y="248" width="20" height="20"/><rect x="170" y="248" width="20" height="20"/><rect x="190" y="248" width="20" height="20"/><rect x="210" y="248" width="20" height="20"/><rect x="230" y="248" width="20" height="20"/><rect x="250" y="248" width="20" height="20"/><rect x="270" y="248" width="20" height="20"/><rect x="290" y="248" width="20" height="20"/><rect x="310" y="248" width="20" height="20"/>
+      </g>
+      <rect x="148" y="246" width="24" height="24" fill="none" stroke="#E6EAF2" stroke-width="1.5"/>
+      <rect x="149" y="240" width="182" height="4" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/><rect x="149" y="240" width="90" height="4" fill="#7CE68A"/>
+      <g fill="#C4323A">
+        <rect x="150" y="229" width="7" height="7"/><rect x="158" y="229" width="7" height="7"/><rect x="166" y="229" width="7" height="7"/><rect x="174" y="229" width="7" height="7"/><rect x="182" y="229" width="7" height="7"/><rect x="190" y="229" width="7" height="7"/><rect x="198" y="229" width="7" height="7"/><rect x="206" y="229" width="7" height="7"/><rect x="214" y="229" width="7" height="7"/>
+      </g>
+      <rect x="222" y="229" width="7" height="7" fill="#C4323A" opacity=".45"/>
+      <g fill="#B8C0CC">
+        <rect x="150" y="219" width="7" height="7"/><rect x="158" y="219" width="7" height="7"/><rect x="166" y="219" width="7" height="7"/><rect x="174" y="219" width="7" height="7"/><rect x="182" y="219" width="7" height="7"/><rect x="190" y="219" width="7" height="7"/><rect x="198" y="219" width="7" height="7"/><rect x="206" y="219" width="7" height="7"/><rect x="214" y="219" width="7" height="7"/><rect x="222" y="219" width="7" height="7"/>
+      </g>
+      <g fill="#B4793A">
+        <rect x="251" y="229" width="7" height="7"/><rect x="259" y="229" width="7" height="7"/><rect x="267" y="229" width="7" height="7"/><rect x="275" y="229" width="7" height="7"/><rect x="283" y="229" width="7" height="7"/><rect x="291" y="229" width="7" height="7"/><rect x="299" y="229" width="7" height="7"/><rect x="307" y="229" width="7" height="7"/><rect x="315" y="229" width="7" height="7"/><rect x="323" y="229" width="7" height="7"/>
+      </g>
+      <!-- the plate: left of the hotbar, above the armor row, slides in -->
+      <g class="slide">
+        <rect x="8" y="196" width="130" height="40" fill="#10151C" stroke="#2A2F3A"/>
+        <rect x="8" y="196" width="130" height="1.5" fill="#19D3B0"/>
+        <!-- chestplate glyph -->
+        <path d="M16 206 h3 v-3 h8 v3 h3 v12 h-3 v2 h-8 v-2 h-3 z" fill="#2A2F3A" stroke="#9AA3B5" stroke-width=".6"/>
+        <rect x="21" y="206" width="4" height="4" fill="#B58CFF"/>
+        <!-- DMG row -->
+        <text x="36" y="207" font-size="5" fill="#9AA3B5">DMG</text>
+        <rect x="52" y="202.5" width="56" height="5" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+        <rect x="52.5" y="203" width="55" height="4" fill="#C4323A" opacity=".55"/>
+        <rect x="52.5" y="203" width="16.5" height="4" fill="#19D3B0"/>
+        <text class="data" x="133" y="207.5" font-size="6" fill="#19D3B0" text-anchor="end">0.6/2.0</text>
+        <!-- AE row -->
+        <text x="36" y="219" font-size="5" fill="#9AA3B5">AE</text>
+        <rect x="52" y="214.5" width="56" height="5" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+        <rect x="52.5" y="215" width="55" height="4" fill="#FFD23A" opacity=".55"/>
+        <rect x="105.5" y="215" width="2" height="4" fill="#FFF4B8"/>
+        <text class="data" x="133" y="219.5" font-size="6" fill="#FFD23A" text-anchor="end">-600</text>
+        <!-- charge line -->
+        <text class="data" x="36" y="230" font-size="5" fill="#9AA3B5">950,000,000 AE  100%</text>
+      </g>
+    </svg>
+    <svg class="zoom" viewBox="4 192 140 48" role="img" aria-label="Concept B at four times the size">
+      <rect x="4" y="192" width="140" height="48" fill="#0C0E12"/>
+      <rect x="8" y="196" width="130" height="40" fill="#10151C" stroke="#2A2F3A"/>
+      <rect x="8" y="196" width="130" height="1.5" fill="#19D3B0"/>
+      <path d="M16 206 h3 v-3 h8 v3 h3 v12 h-3 v2 h-8 v-2 h-3 z" fill="#2A2F3A" stroke="#9AA3B5" stroke-width=".6"/>
+      <rect x="21" y="206" width="4" height="4" fill="#B58CFF"/>
+      <text x="36" y="207" font-size="5" fill="#9AA3B5">DMG</text>
+      <rect x="52" y="202.5" width="56" height="5" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+      <rect x="52.5" y="203" width="55" height="4" fill="#C4323A" opacity=".55"/>
+      <rect x="52.5" y="203" width="16.5" height="4" fill="#19D3B0"/>
+      <text class="data" x="133" y="207.5" font-size="6" fill="#19D3B0" text-anchor="end">0.6/2.0</text>
+      <text x="36" y="219" font-size="5" fill="#9AA3B5">AE</text>
+      <rect x="52" y="214.5" width="56" height="5" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+      <rect x="52.5" y="215" width="55" height="4" fill="#FFD23A" opacity=".55"/>
+      <rect x="105.5" y="215" width="2" height="4" fill="#FFF4B8"/>
+      <text class="data" x="133" y="219.5" font-size="6" fill="#FFD23A" text-anchor="end">-600</text>
+      <text class="data" x="36" y="230" font-size="5" fill="#9AA3B5">950,000,000 AE  100%</text>
+    </svg>
+    <p class="caption">The plate at four times the size.</p>
+    <ul class="notes">
+      <li><b>Where</b> A small dark-board plate above the hotbar's left end, beside the armor icons it belongs with; a teal rule on top, the chestplate glyph at the left. Slides in from the edge on a hit.</li>
+      <li><b>Damage row</b> "DMG": the hit after the armor in dull red, the absorbed share in teal, the figure "0.6/2.0" at the right.</li>
+      <li><b>Energy row</b> "AE": the suit's charge in gold with the paid slice as a bright notch, "-600" at the right, and the full charge with its percentage on a line beneath, so the player reads the charge too.</li>
+      <li><b>When</b> Three seconds, then it slides away. The plate is the only one of the three with a frame, so it reads as a card and can later take more rows (a reach or jump card's state, say).</li>
+      <li><b>Cost</b> The same packet as A; the overlay draws the frame and three rows; the font is Minecraft's own.</li>
+    </ul>
+  </section>
+
+  <!-- Concept C: corner card, always on -->
+  <section class="concept">
+    <h2>C <span>Corner readout, always on while wearing the set</span></h2>
+    <svg class="screen" viewBox="0 0 480 270" role="img" aria-label="Concept C: a persistent card in the top-right corner with the suit's charge bar; on a hit a damage bar appears beneath it and the AE paid floats up">
+      <defs>
+        <linearGradient id="skyC" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1A2230"/><stop offset="1" stop-color="#0C0E12"/></linearGradient>
+      </defs>
+      <rect width="480" height="270" fill="url(#skyC)"/>
+      <rect x="0" y="190" width="480" height="80" fill="#121A14"/>
+      <rect x="300" y="128" width="16" height="62" fill="#2F6B3F"/><rect x="302" y="116" width="12" height="12" fill="#3C8A52"/>
+      <path d="M240 131 v8 M240 131 v-8 M231 135 h8 M249 135 h-8" stroke="#D9DEE8" stroke-width="1.5" opacity=".8"/>
+      <rect x="149" y="247" width="182" height="22" fill="#0C0E12" stroke="#2A2F3A"/>
+      <g fill="#171C24" stroke="#2A2F3A">
+        <rect x="150" y="248" width="20" height="20"/><rect x="170" y="248" width="20" height="20"/><rect x="190" y="248" width="20" height="20"/><rect x="210" y="248" width="20" height="20"/><rect x="230" y="248" width="20" height="20"/><rect x="250" y="248" width="20" height="20"/><rect x="270" y="248" width="20" height="20"/><rect x="290" y="248" width="20" height="20"/><rect x="310" y="248" width="20" height="20"/>
+      </g>
+      <rect x="148" y="246" width="24" height="24" fill="none" stroke="#E6EAF2" stroke-width="1.5"/>
+      <rect x="149" y="240" width="182" height="4" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/><rect x="149" y="240" width="90" height="4" fill="#7CE68A"/>
+      <g fill="#C4323A">
+        <rect x="150" y="229" width="7" height="7"/><rect x="158" y="229" width="7" height="7"/><rect x="166" y="229" width="7" height="7"/><rect x="174" y="229" width="7" height="7"/><rect x="182" y="229" width="7" height="7"/><rect x="190" y="229" width="7" height="7"/><rect x="198" y="229" width="7" height="7"/><rect x="206" y="229" width="7" height="7"/><rect x="214" y="229" width="7" height="7"/>
+      </g>
+      <rect x="222" y="229" width="7" height="7" fill="#C4323A" opacity=".45"/>
+      <g fill="#B8C0CC">
+        <rect x="150" y="219" width="7" height="7"/><rect x="158" y="219" width="7" height="7"/><rect x="166" y="219" width="7" height="7"/><rect x="174" y="219" width="7" height="7"/><rect x="182" y="219" width="7" height="7"/><rect x="190" y="219" width="7" height="7"/><rect x="198" y="219" width="7" height="7"/><rect x="206" y="219" width="7" height="7"/><rect x="214" y="219" width="7" height="7"/><rect x="222" y="219" width="7" height="7"/>
+      </g>
+      <g fill="#B4793A">
+        <rect x="251" y="229" width="7" height="7"/><rect x="259" y="229" width="7" height="7"/><rect x="267" y="229" width="7" height="7"/><rect x="275" y="229" width="7" height="7"/><rect x="283" y="229" width="7" height="7"/><rect x="291" y="229" width="7" height="7"/><rect x="299" y="229" width="7" height="7"/><rect x="307" y="229" width="7" height="7"/><rect x="315" y="229" width="7" height="7"/><rect x="323" y="229" width="7" height="7"/>
+      </g>
+      <!-- the card: top-right, always on -->
+      <g>
+        <rect x="360" y="8" width="112" height="22" fill="#10151C" stroke="#2A2F3A"/>
+        <rect x="360" y="8" width="112" height="1.5" fill="#FFD23A"/>
+        <text x="365" y="18" font-size="5" fill="#9AA3B5">QUANTUM</text>
+        <text class="data" x="467" y="18" font-size="6" fill="#FFD23A" text-anchor="end">100%</text>
+        <rect x="365" y="22" width="102" height="4" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+        <rect x="365.5" y="22.5" width="101" height="3" fill="#FFD23A" opacity=".6"/>
+        <!-- the hit row, below the card, appears on a hit -->
+        <g class="hit">
+          <rect x="365.5" y="22.5" width="101" height="3" fill="#FFD23A" opacity=".6"/>
+          <rect x="464.5" y="22.5" width="2" height="3" fill="#FFF4B8"/>
+          <rect x="360" y="32" width="112" height="14" fill="#10151C" stroke="#2A2F3A"/>
+          <text x="365" y="39" font-size="5" fill="#9AA3B5">HIT</text>
+          <rect x="381" y="35" width="56" height="4" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+          <rect x="381.5" y="35.5" width="55" height="3" fill="#C4323A" opacity=".55"/>
+          <rect x="381.5" y="35.5" width="16.5" height="3" fill="#19D3B0"/>
+          <text class="data" x="467" y="39.5" font-size="6" fill="#19D3B0" text-anchor="end">-0.6</text>
+          <text class="data" x="365" y="44.5" font-size="4.5" fill="#9AA3B5">2.0 hit, 0.6 absorbed</text>
+        </g>
+        <g class="float">
+          <text class="data" x="467" y="56" font-size="6" fill="#FFD23A" text-anchor="end">-600 AE</text>
+        </g>
+      </g>
+    </svg>
+    <svg class="zoom" viewBox="354 2 124 60" role="img" aria-label="Concept C at four times the size">
+      <rect x="354" y="2" width="124" height="60" fill="#0C0E12"/>
+      <rect x="360" y="8" width="112" height="22" fill="#10151C" stroke="#2A2F3A"/>
+      <rect x="360" y="8" width="112" height="1.5" fill="#FFD23A"/>
+      <text x="365" y="18" font-size="5" fill="#9AA3B5">QUANTUM</text>
+      <text class="data" x="467" y="18" font-size="6" fill="#FFD23A" text-anchor="end">100%</text>
+      <rect x="365" y="22" width="102" height="4" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+      <rect x="365.5" y="22.5" width="101" height="3" fill="#FFD23A" opacity=".6"/>
+      <rect x="464.5" y="22.5" width="2" height="3" fill="#FFF4B8"/>
+      <rect x="360" y="32" width="112" height="14" fill="#10151C" stroke="#2A2F3A"/>
+      <text x="365" y="39" font-size="5" fill="#9AA3B5">HIT</text>
+      <rect x="381" y="35" width="56" height="4" fill="#0C0E12" stroke="#2A2F3A" stroke-width=".5"/>
+      <rect x="381.5" y="35.5" width="55" height="3" fill="#C4323A" opacity=".55"/>
+      <rect x="381.5" y="35.5" width="16.5" height="3" fill="#19D3B0"/>
+      <text class="data" x="467" y="39.5" font-size="6" fill="#19D3B0" text-anchor="end">-0.6</text>
+      <text class="data" x="365" y="44.5" font-size="4.5" fill="#9AA3B5">2.0 hit, 0.6 absorbed</text>
+      <text class="data" x="467" y="56" font-size="6" fill="#FFD23A" text-anchor="end">-600 AE</text>
+    </svg>
+    <p class="caption">The card at four times the size, with the hit row and the floating figure held.</p>
+    <ul class="notes">
+      <li><b>Where</b> A card in the top-right corner, shown the whole time a quantum piece is worn: the suit's charge as a gold bar with its percentage. The player gets the readout the armor never had.</li>
+      <li><b>On a hit</b> A second row appears under the card: the hit in dull red, the absorbed share in teal, "-0.6" at the right and the words beneath; the paid slice flashes as a notch at the charge bar's edge and "-600 AE" floats up from the card and fades.</li>
+      <li><b>When</b> The charge card stays; the hit row fades after three seconds. A hit with nothing absorbed shows nothing.</li>
+      <li><b>Cost</b> The charge needs the client to read the worn pieces every few ticks (it has them; no packet) plus the same hit packet as A; the overlay is the largest of the three. The card's corner would need to agree with any other HUD mod the pack puts there (Jade, map mods).</li>
+    </ul>
+  </section>
+</div>
+
+<footer>
+  All three take the same server packet on each absorption (the hit after the armor, the absorbed amount, the AE paid, the suit's charge and capacity) and draw with a Forge GUI overlay on the client, gated like F-17 so a dedicated server never loads the class. The action-bar line of the current F-25 would go. Colours are the BSP dark-board set: panel <code>#10151C</code>, slots <code>#0C0E12</code>, dim <code>#2A2F3A</code>, muted <code>#9AA3B5</code>, teal <code>#19D3B0</code>, gold <code>#FFD23A</code>; in the game the text is Minecraft's font at GUI scale, drawn here with a pixel face of the same feel.
+</footer>
+
+<script>
+  (function () {
+    var grid = document.getElementById('grid');
+    var button = document.getElementById('replay');
+    function replay() {
+      grid.classList.remove('playing');
+      // force a reflow so the animations restart from the beginning
+      void grid.offsetWidth;
+      grid.classList.add('playing');
+    }
+    button.addEventListener('click', replay);
+  })();
+</script>

@@ -1,6 +1,7 @@
 package com.mrgregles.bsp_mod_fixes.fix;
 
 import com.mojang.logging.LogUtils;
+import com.mrgregles.bsp_mod_fixes.fix.aae.QuantumAbsorption;
 import com.mrgregles.bsp_mod_fixes.fix.emi.AmountLine;
 import com.mrgregles.bsp_mod_fixes.fix.emi.EmiGate;
 import com.mrgregles.bsp_mod_fixes.fix.emi.ExtrasFix;
@@ -27,8 +28,9 @@ import java.util.Map;
  * are patched before the report; module classes load the first time such a module exists in a world, so the report says that
  * those fixes apply when their target loads, and the application is logged then. The EMI fixes are gated by the plugin
  * ({@link EmiGate}) and are reported as skipped, with the reason, when EMI is absent or another version; so is the JEI fix
- * ({@code fix/jei/JeiGate}) without a JEI 15.74 build, and the fixes into client-only classes on a dedicated server
- * ({@code fix/proxy/ClientGate}). Ids are the F-n of the vault's Fix Log.
+ * ({@code fix/jei/JeiGate}) without a JEI 15.74 build, the AdvancedAE fix ({@code fix/aae/AaeGate}) without AdvancedAE at
+ * the pinned version, and the fixes into client-only classes on a dedicated server ({@code fix/proxy/ClientGate}). Ids are
+ * the F-n of the vault's Fix Log.
  */
 public final class Fixes {
     /** The fixes' own logger, usable from the mixin plugin while classes are still being transformed. */
@@ -57,7 +59,12 @@ public final class Fixes {
             Map.entry("EmiTextWidgetMixin", new Fix(TextWidgets.ID, TextWidgets.WHAT, TextWidgets.TARGET)),
             Map.entry("ConnectionStalePacketMixin", new Fix(StalePacketDrop.ID, StalePacketDrop.WHAT, StalePacketDrop.TARGET)),
             Map.entry("DisconnectedScreenThreadMixin", new Fix(DeferredDisconnectScreen.ID, DeferredDisconnectScreen.WHAT, DeferredDisconnectScreen.TARGET)),
-            Map.entry("JeiStartObserverMixin", new Fix(JeiStartGate.ID, JeiStartGate.WHAT, JeiStartGate.TARGET)));
+            Map.entry("JeiStartObserverMixin", new Fix(JeiStartGate.ID, JeiStartGate.WHAT, JeiStartGate.TARGET)),
+            Map.entry("GliderFlyingSpeedMixin", new Fix(FlyingSpeedKeeper.ID, FlyingSpeedKeeper.WHAT, FlyingSpeedKeeper.TARGET)),
+            Map.entry("SprintAssistFlyingSpeedMixin", new Fix(FlyingSpeedKeeper.ID, FlyingSpeedKeeper.WHAT, FlyingSpeedKeeper.TARGET)),
+            Map.entry("JumpAssistFlyingSpeedMixin", new Fix(FlyingSpeedKeeper.ID, FlyingSpeedKeeper.WHAT, FlyingSpeedKeeper.TARGET)),
+            Map.entry("AaeDamageAbsorptionMixin", new Fix(QuantumAbsorption.ID, QuantumAbsorption.WHAT, QuantumAbsorption.TARGET)),
+            Map.entry("PowersuitsMeterMixin", new Fix(MeterGuard.ID, MeterGuard.WHAT, MeterGuard.TARGET)));
 
     private static final List<Fix> ACTIVE = Collections.synchronizedList(new ArrayList<>());
     /** Fixes the mixin plugin skipped, by id, with the reason (the EMI fixes without EMI at the pinned version; client-only fixes on a dedicated server). */
@@ -71,6 +78,7 @@ public final class Fixes {
         active(Lang.ID, Lang.WHAT, Lang.TARGET);                     // F-9, the lang files in this jar
         MinecraftForge.EVENT_BUS.addListener(ShockAbsorber::onFall); // F-7, whose mixin cancels Powersuits' handler
         MinecraftForge.EVENT_BUS.addListener(EnergyShield::onHurt);  // F-8 (c)
+        MinecraftForge.EVENT_BUS.addListener(FlyingSpeedKeeper::onPlayerTick); // F-24, the guard (the mixins do the rest)
     }
 
     /** Called by the mixin config plugin after a mixin of bsp_mod_fixes.mixins.json has been applied. */
