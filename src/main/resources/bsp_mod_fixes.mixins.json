@@ -29,7 +29,8 @@
     "SprintAssistFlyingSpeedMixin",
     "JumpAssistFlyingSpeedMixin",
     "AaeDamageAbsorptionMixin",
-    "PowersuitsMeterMixin"
+    "PowersuitsMeterMixin",
+    "GobberDragonFlightMixin"
   ],
   "injectors": {
     "defaultRequire": 1

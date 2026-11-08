@@ -129,6 +129,9 @@ dependencies {
     compileOnly fg.deobf("curse.maven:${geckolib_curse}")
     compileOnly fg.deobf("${ae2addonlib_maven}")
 
+    // Gobber 2, compiled against for the dragon armour flight fix (F-27); optional at runtime, gated to gobber_version.
+    compileOnly fg.deobf("curse.maven:${gobber_curse}")
+
     // ./gradlew runClient -PwithEmi (or any run): EMI, JEI, Tinkers' Construct and Mantle load, for the in-game checks of docs/TESTING.md.
     if (project.hasProperty('withEmi')) {
         runtimeOnly fg.deobf("curse.maven:${emi_curse}")
@@ -156,6 +159,11 @@ dependencies {
         runtimeOnly fg.deobf("curse.maven:${guideme_curse}")
         runtimeOnly fg.deobf("curse.maven:${geckolib_curse}")
     }
+    // ./gradlew runGameTestServer -PwithGobber (or any run): Gobber 2 loads (the exact pack file), so the dragon armour test
+    // ticks a dressed player through the real item; without it that test only checks the pure rule and the gate's skip.
+    if (project.hasProperty('withGobber')) {
+        runtimeOnly fg.deobf("curse.maven:${gobber_curse}")
+    }
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -166,7 +174,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
             numina_version_range: numina_version_range, powersuits_version_range: powersuits_version_range,
-            emi_version: emi_version, aae_version: aae_version,
+            emi_version: emi_version, aae_version: aae_version, gobber_version: gobber_version,
     ]
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {

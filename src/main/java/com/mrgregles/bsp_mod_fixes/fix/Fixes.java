@@ -8,6 +8,7 @@ import com.mrgregles.bsp_mod_fixes.fix.emi.ExtrasFix;
 import com.mrgregles.bsp_mod_fixes.fix.emi.NullStack;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TextWidgets;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TooltipBuilderFix;
+import com.mrgregles.bsp_mod_fixes.fix.gobber.DragonFlightSends;
 import com.mrgregles.bsp_mod_fixes.fix.jei.JeiStartGate;
 import com.mrgregles.bsp_mod_fixes.fix.proxy.DeferredDisconnectScreen;
 import com.mrgregles.bsp_mod_fixes.fix.proxy.StalePacketDrop;
@@ -29,7 +30,7 @@ import java.util.Map;
  * those fixes apply when their target loads, and the application is logged then. The EMI fixes are gated by the plugin
  * ({@link EmiGate}) and are reported as skipped, with the reason, when EMI is absent or another version; so is the JEI fix
  * ({@code fix/jei/JeiGate}) without a JEI 15.74 build, the AdvancedAE fix ({@code fix/aae/AaeGate}) without AdvancedAE at
- * the pinned version, and the fixes into client-only classes on a dedicated server ({@code fix/proxy/ClientGate}). Ids are
+ * the pinned version, the Gobber fix ({@code fix/gobber/GobberGate}) without Gobber 2 at its pinned version, and the fixes into client-only classes on a dedicated server ({@code fix/proxy/ClientGate}). Ids are
  * the F-n of the vault's Fix Log.
  */
 public final class Fixes {
@@ -64,7 +65,8 @@ public final class Fixes {
             Map.entry("SprintAssistFlyingSpeedMixin", new Fix(FlyingSpeedKeeper.ID, FlyingSpeedKeeper.WHAT, FlyingSpeedKeeper.TARGET)),
             Map.entry("JumpAssistFlyingSpeedMixin", new Fix(FlyingSpeedKeeper.ID, FlyingSpeedKeeper.WHAT, FlyingSpeedKeeper.TARGET)),
             Map.entry("AaeDamageAbsorptionMixin", new Fix(QuantumAbsorption.ID, QuantumAbsorption.WHAT, QuantumAbsorption.TARGET)),
-            Map.entry("PowersuitsMeterMixin", new Fix(MeterGuard.ID, MeterGuard.WHAT, MeterGuard.TARGET)));
+            Map.entry("PowersuitsMeterMixin", new Fix(MeterGuard.ID, MeterGuard.WHAT, MeterGuard.TARGET)),
+            Map.entry("GobberDragonFlightMixin", new Fix(DragonFlightSends.ID, DragonFlightSends.WHAT, DragonFlightSends.TARGET)));
 
     private static final List<Fix> ACTIVE = Collections.synchronizedList(new ArrayList<>());
     /** Fixes the mixin plugin skipped, by id, with the reason (the EMI fixes without EMI at the pinned version; client-only fixes on a dedicated server). */

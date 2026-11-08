@@ -66,3 +66,13 @@ description='''${mod_description}'''
     versionRange="[0,)"
     ordering="AFTER"
     side="BOTH"
+
+# Gobber 2 is optional, on both sides: the dragon armour flight fix (F-27) applies only when Gobber ${gobber_version} is loaded
+# (checked by the mixin config plugin, which logs one WARN line and skips it for any other build). Open range for the same
+# reason as EMI's.
+[[dependencies.${mod_id}]]
+    modId="gobber2"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"

@@ -1,3 +1,15 @@
+# BSP-Mod Fixes 0.6.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional: AdvancedAE 1.3.6-1.20.1 (client and server) for the quantum armor fix, and Gobber 2 2.8.9 (client and server) for the dragon armour fix; with any other build of either, that fix is skipped and one log line says why. Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**Gobber 2's dragon armour flight holds on a server.** Players in the full dragon set found that creative flight made them vibrate and often refused to come on with the double tap. Gobber's armour sends the player's abilities to the other side every tick, for every piece worn, from the client and from the server alike, and the game then overwrites each side's "flying" flag with the other side's stale copy; on a server, where a message takes a moment to cross, the flag echoes on and off for ever. Single player never showed it. Gobber's own tracker has the same reports for this build, which is the last one for 1.20.1.
+
+- F-27: the dragon armour sends the update only when something changed (the grant when the set is completed, the revoke when a piece comes off), and never from the client. The double tap turns flight on and it stays on. `fixDragonFlight` in `bsp_mod_fixes-server.toml` turns the fix off, for the day Gobber fixes it itself; a change there reaches each client at its next login.
+
+The new server setting is in `docs/CONFIG.md`.
+
 # BSP-Mod Fixes 0.5.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional: AdvancedAE 1.3.6-1.20.1 (client and server) for the quantum armor fix; with any other AdvancedAE it is skipped and one log line says why. Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.

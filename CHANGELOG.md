@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 Nothing yet.
 
+## [0.6.0] - 2026-11-08
+
+### Added
+- F-27 (Gobber 2 2.8.9, optional, both sides): the dragon armour sends the player's abilities only when they changed, so its creative flight holds on a server. Gobber's dragon armour tick set the "may fly" flag and called `Player.onUpdateAbilities()` every tick for every piece worn, with no side check; Forge runs the armour tick from the inventory tick on the client and on the server, so with the full set on the server sent four abilities packets a tick and the client four back, and vanilla's two handlers overwrite the `flying` flag with whatever the other side last sent (harmless in vanilla, which only sends on a change). With any latency the flag became a loop with no damping: the double tap turned flight on for one tick in every round trip, the player vibrated and flight never held (fine in single player; Gobber's open issues #14 and #25, where players roll back to 2.8.7). The mixin remembers the two flags at the head of the tick and redirects its `onUpdateAbilities()` calls: on the server the update goes out only when `mayfly` or `flying` changed in that call (the grant when the set is completed, the revoke when a piece comes off), on the client never (the double tap sends its own packet). `fixDragonFlight` in `bsp_mod_fixes-server.toml` (default on, synced to clients) turns the rule off and lets every call through as Gobber makes it, for the day Gobber fixes it itself. The mixin applies only when exactly Gobber 2 2.8.9 is loaded and its dragon armour class still has the patched method, and is skipped with one WARN line otherwise.
+- `./gradlew <run> -PwithGobber` loads Gobber 2 (the exact pack file) in a dev run, so the dragon armour test ticks a dressed player through the real item.
+
 ## [0.5.0] - 2026-11-07
 
 ### Added

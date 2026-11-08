@@ -3,6 +3,7 @@ package com.mrgregles.bsp_mod_fixes;
 import com.mrgregles.bsp_mod_fixes.fix.Fixes;
 import com.mrgregles.bsp_mod_fixes.fix.aae.AaeGate;
 import com.mrgregles.bsp_mod_fixes.fix.emi.EmiGate;
+import com.mrgregles.bsp_mod_fixes.fix.gobber.GobberGate;
 import com.mrgregles.bsp_mod_fixes.fix.jei.JeiGate;
 import com.mrgregles.bsp_mod_fixes.fix.proxy.ClientGate;
 import org.objectweb.asm.tree.ClassNode;
@@ -18,7 +19,8 @@ import java.util.Set;
  * the config is {@code required}, so a mixin that fails stops the game); the EMI mixins go through {@link EmiGate}, which
  * skips them unless EMI is loaded at the exact build they were written for; the JEI mixin goes through {@link JeiGate}, which
  * skips it unless a JEI 15.74 build is loaded on a client; the AdvancedAE mixin goes through {@link AaeGate}, which skips it
- * unless AdvancedAE is loaded at the exact build it was written for; the mixins into client-only Minecraft classes go through
+ * unless AdvancedAE is loaded at the exact build it was written for; the Gobber mixin goes through {@link GobberGate}, which skips
+ * it unless Gobber 2 is loaded at the exact build it was written for with the patched method in place; the mixins into client-only Minecraft classes go through
  * {@link ClientGate}, which skips them on a dedicated server, where their target does not exist.
  */
 public final class MixinFixPlugin implements IMixinConfigPlugin {
@@ -50,6 +52,9 @@ public final class MixinFixPlugin implements IMixinConfigPlugin {
         }
         if (AaeGate.gates(simpleName)) {
             return AaeGate.allows(simpleName);
+        }
+        if (GobberGate.gates(simpleName)) {
+            return GobberGate.allows(simpleName);
         }
         if (ClientGate.gates(simpleName)) {
             return ClientGate.allows(simpleName);

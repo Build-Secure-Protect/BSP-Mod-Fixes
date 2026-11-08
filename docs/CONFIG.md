@@ -2,12 +2,13 @@
 
 ## This mod's server config: `bsp_mod_fixes-server.toml`
 
-Written into `world/serverconfig/` on first load (and `defaultconfigs/bsp_mod_fixes-server.toml` sets the default for new worlds). Two settings:
+Written into `world/serverconfig/` on first load (and `defaultconfigs/bsp_mod_fixes-server.toml` sets the default for new worlds). Forge sends it to each client at login, and only then: the clients need no copy, and a change on a running server (Forge re-reads a saved file within seconds; `/reload` does not) reaches each client at its next login. Three settings:
 
 | Key | Default | Meaning |
 |---|---|---|
 | `[fire] suitClearsFire` | `true` | Numina puts out a burning player who wears or holds a modular item while the suit's heat is under 95 % of its maximum, so suit wearers are all but immune to fire aspect and flame. `true` keeps that Powersuits behaviour; `false` lets the fire burn as on anyone else. (Fix F-10.) |
 | `[flight] keepFlyingSpeed` | `true` | Powersuits' Glider, Sprint Assist and Jump Assist modules changed the player's creative flying speed and never put it back; vanilla saves that speed with the player, and creative flight (AdvancedAE's Flight card) then runs at it. The modules no longer change it whatever this says. `true` also puts a survival or adventure player's stored speed back to vanilla's 0.05 once a second when it is anything else, with one log line per reset (creative and spectator players are left alone, an op may have set their own); `false` leaves every stored speed as it is. (Fix F-24.) |
+| `[gobber] fixDragonFlight` | `true` | Gobber 2's dragon armour sends the player's abilities to the other side every tick, for every piece worn, on the client and on the server; each side then overwrites its flying flag with the other's stale copy, so on a server creative flight flickers on and off and the double tap will not hold. `true` sends the update only when the flags changed, and never from the client; `false` leaves Gobber's behaviour as it is, for when Gobber fixes it itself (no rebuild of this mod needed). Only read while exactly Gobber 2 2.8.9 is loaded; any other Gobber skips the fix whatever this says. (Fix F-27.) |
 
 A player already affected can also be put right at once with Catnip's command, bundled with Create: `/catnip util flySpeed reset <name>` (permission level 2). `/data get entity <name> abilities.flySpeed` shows the stored value; vanilla's is `0.05f`.
 
