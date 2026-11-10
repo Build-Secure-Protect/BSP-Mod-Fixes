@@ -12,7 +12,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 NUMINA = ROOT / "src/main/resources/assets/numina/lang/en_us.json"
 POWERSUITS = ROOT / "src/main/resources/assets/powersuits/lang/en_us.json"
 OURS = ROOT / "src/main/resources/assets/bsp_mod_fixes/lang/en_us.json"
-OUR_KEYS = ("key.categories.bsp_mod_fixes", "key.bsp_mod_fixes.quantum_readout", "hud.bsp_mod_fixes.quantum_dmg", "hud.bsp_mod_fixes.quantum_ae")
+OUR_KEYS = ("key.categories.bsp_mod_fixes", "key.bsp_mod_fixes.quantum_readout", "hud.bsp_mod_fixes.quantum_dmg", "hud.bsp_mod_fixes.quantum_ae",
+            "message.bsp_mod_fixes.preview_off", "message.bsp_mod_fixes.preview_too_large")
 CATEGORIES = ("none", "debug", "armor", "energystorage", "energygeneration", "tool", "weapon", "movement", "cosmetic", "vision",
               "environment", "special", "miningenhancement", "miningenchantment")
 

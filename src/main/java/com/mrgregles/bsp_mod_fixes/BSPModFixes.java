@@ -44,11 +44,14 @@ public class BSPModFixes {
         if (Boolean.getBoolean("bsp_mod_fixes.readoutProbe")) {
             context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("ReadoutProbe", "install"));
         }
+        if (Boolean.getBoolean("bsp_mod_fixes.previewProbe")) {
+            context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("PreviewProbe", "install"));
+        }
         LOGGER.info("BSP-Mod Fixes {} loaded (Numina {}, Modular Powersuits {})", version(MODID), version("numina"), version("powersuits"));
     }
 
     /**
-     * Dev only ({@code -PemiProbe}, {@code -PrecipeProbe}, {@code -PtitleProbe} or {@code -PreadoutProbe} on a client run): a probe class of the gametest package, which
+     * Dev only ({@code -PemiProbe}, {@code -PrecipeProbe}, {@code -PtitleProbe}, {@code -PreadoutProbe} or {@code -PpreviewProbe} on a client run): a probe class of the gametest package, which
      * is not in the jar, is loaded by name and its static method called, so EMI's real classes are exercised headlessly.
      */
     private static void runProbe(String probe, String method) {

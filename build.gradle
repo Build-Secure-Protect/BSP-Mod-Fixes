@@ -70,11 +70,20 @@ minecraft {
             if (project.hasProperty('readoutProbe')) {
                 property 'bsp_mod_fixes.readoutProbe', 'true'
             }
+            // ./gradlew runClient -PwithCm -PpreviewProbe -PquickPlay=cmtest: opens Compact Machines' room preview thirty
+            // times and logs the OpenGL objects and memory before and after (gametest/PreviewProbe). The world must be one
+            // kept for Compact Machines runs: its room dimension is written into the save.
+            if (project.hasProperty('previewProbe')) {
+                property 'bsp_mod_fixes.previewProbe', 'true'
+            }
         }
 
         server {
             property 'forge.enabledGameTestNamespaces', mod_id
             args '--nogui'
+            if (project.hasProperty('withCm')) {
+                args '--world', 'world_cm'
+            }
         }
 
         // ./gradlew runGameTestServer: runs every registered GameTest headlessly and exits.
@@ -82,6 +91,11 @@ minecraft {
             property 'forge.enabledGameTestNamespaces', mod_id
             // holds each test back until its chunks tick (1.20.1's runner starts the clock before they do); this run only, never in the jar's MixinConfigs
             args '--mixin.config', 'bsp_mod_fixes.gametest.mixins.json'
+            // Compact Machines adds a datapack dimension, which is written into the world's level.dat; a world that has it
+            // cannot load without the mod, so -PwithCm runs keep a world folder of their own (run/world_cm).
+            if (project.hasProperty('withCm')) {
+                args '--world', 'world_cm'
+            }
         }
 
         data {
@@ -132,6 +146,9 @@ dependencies {
     // Gobber 2, compiled against for the dragon armour flight fix (F-27); optional at runtime, gated to gobber_version.
     compileOnly fg.deobf("curse.maven:${gobber_curse}")
 
+    // Compact Machines, compiled against for its fixes (F-28 onward); optional at runtime, gated to cm_version.
+    compileOnly fg.deobf("curse.maven:${cm_curse}")
+
     // ./gradlew runClient -PwithEmi (or any run): EMI, JEI, Tinkers' Construct and Mantle load, for the in-game checks of docs/TESTING.md.
     if (project.hasProperty('withEmi')) {
         runtimeOnly fg.deobf("curse.maven:${emi_curse}")
@@ -164,6 +181,11 @@ dependencies {
     if (project.hasProperty('withGobber')) {
         runtimeOnly fg.deobf("curse.maven:${gobber_curse}")
     }
+    // ./gradlew runGameTestServer -PwithCm (or any run): Compact Machines loads (the exact pack file, with the Gander
+    // libraries nested in it), so its tests call the real mod; without it they check the pure rules and the gate's skip.
+    if (project.hasProperty('withCm')) {
+        runtimeOnly fg.deobf("curse.maven:${cm_curse}")
+    }
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -174,7 +196,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
             numina_version_range: numina_version_range, powersuits_version_range: powersuits_version_range,
-            emi_version: emi_version, aae_version: aae_version, gobber_version: gobber_version,
+            emi_version: emi_version, aae_version: aae_version, gobber_version: gobber_version, cm_version: cm_version,
     ]
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {

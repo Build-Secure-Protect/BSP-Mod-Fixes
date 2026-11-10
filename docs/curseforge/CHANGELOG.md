@@ -1,3 +1,18 @@
+# BSP-Mod Fixes 0.7.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9 and Compact Machines 6.0.3 (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**Compact Machines stops costing the server and the client what it did.** An audit of Compact Machines 6.0.3, the last build for 1.20.1, found four ways it wastes time and memory. Each has its own switch in the config.
+
+- F-28: a machine block loading no longer makes the server write every loaded room to disk and wait for the disk. It did, once per machine, each time a chunk holding machines loaded.
+- F-29: a room runs only while a machine block bound to it is itself loaded (a player nearby, a chunk loader, an anchor), or while a player is inside it. Compact Machines kept every room that had a tunnel loaded for good, from server start, whether or not anyone was online, even after its machine was broken. **Players who relied on a room running with nobody near and nothing keeping its machine loaded will see it stop a few seconds after they leave.**
+- F-30 (client): the room preview, the look inside a machine on a right click with an empty hand, gives back its memory when it closes. It kept about 54 MB of working memory and several screen-sized images per look for the rest of the session. This is what the Compact Machines Preview Fixer mod does for 1.21.1.
+- F-31: the server sends a player at most one preview a second, without the contents of the room's chests and machines (signs keep their text), refuses a room too large to send, and can have previews turned off. Before, any player could have any room captured, contents and all, on every click.
+
+The settings are in `docs/CONFIG.md`: eight under `[compactMachines]` in `bsp_mod_fixes-server.toml`, one in `bsp_mod_fixes-client.toml`.
+
 # BSP-Mod Fixes 0.6.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional: AdvancedAE 1.3.6-1.20.1 (client and server) for the quantum armor fix, and Gobber 2 2.8.9 (client and server) for the dragon armour fix; with any other build of either, that fix is skipped and one log line says why. Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.

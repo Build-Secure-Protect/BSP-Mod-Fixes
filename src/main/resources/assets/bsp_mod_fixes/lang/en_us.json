@@ -2,5 +2,7 @@
   "hud.bsp_mod_fixes.quantum_ae": "AE",
   "hud.bsp_mod_fixes.quantum_dmg": "DMG",
   "key.bsp_mod_fixes.quantum_readout": "Toggle quantum suit readout",
-  "key.categories.bsp_mod_fixes": "BSP-Mod Fixes"
+  "key.categories.bsp_mod_fixes": "BSP-Mod Fixes",
+  "message.bsp_mod_fixes.preview_off": "Room previews are off on this server",
+  "message.bsp_mod_fixes.preview_too_large": "This room is too large to preview"
 }

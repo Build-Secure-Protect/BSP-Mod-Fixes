@@ -30,7 +30,14 @@
     "JumpAssistFlyingSpeedMixin",
     "AaeDamageAbsorptionMixin",
     "PowersuitsMeterMixin",
-    "GobberDragonFlightMixin"
+    "GobberDragonFlightMixin",
+    "CmTunnelSaveMixin",
+    "CmChunkloadSaveMixin",
+    "CmRoomHoldMixin",
+    "CmChunkloadRuleMixin",
+    "CmPreviewCleanupMixin",
+    "BufferBuilderAccessor",
+    "CmPreviewRequestMixin"
   ],
   "injectors": {
     "defaultRequire": 1

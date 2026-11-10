@@ -20,8 +20,11 @@ OUT_NUMINA = ROOT / "src/main/resources/assets/numina/lang/en_us.json"
 OUT_POWERSUITS = ROOT / "src/main/resources/assets/powersuits/lang/en_us.json"
 OUT_OURS = ROOT / "src/main/resources/assets/bsp_mod_fixes/lang/en_us.json"
 
-# This mod's own text: the quantum suit readout (F-25): its key binding and the two row labels on the plate.
+# This mod's own text: the quantum suit readout (F-25): its key binding and the two row labels on the plate; and the two
+# lines a player is shown about Compact Machines' room preview (F-31).
 OURS = {
+    "message.bsp_mod_fixes.preview_off": "Room previews are off on this server",
+    "message.bsp_mod_fixes.preview_too_large": "This room is too large to preview",
     "key.categories.bsp_mod_fixes": "BSP-Mod Fixes",
     "key.bsp_mod_fixes.quantum_readout": "Toggle quantum suit readout",
     "hud.bsp_mod_fixes.quantum_dmg": "DMG",

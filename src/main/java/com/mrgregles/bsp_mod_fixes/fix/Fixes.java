@@ -2,6 +2,12 @@ package com.mrgregles.bsp_mod_fixes.fix;
 
 import com.mojang.logging.LogUtils;
 import com.mrgregles.bsp_mod_fixes.fix.aae.QuantumAbsorption;
+import com.mrgregles.bsp_mod_fixes.fix.cm.CmGate;
+import com.mrgregles.bsp_mod_fixes.fix.cm.LoadSaves;
+import com.mrgregles.bsp_mod_fixes.fix.cm.PreviewLeak;
+import com.mrgregles.bsp_mod_fixes.fix.cm.PreviewRules;
+import com.mrgregles.bsp_mod_fixes.fix.cm.RoomHolds;
+import com.mrgregles.bsp_mod_fixes.fix.cm.RoomLoader;
 import com.mrgregles.bsp_mod_fixes.fix.emi.AmountLine;
 import com.mrgregles.bsp_mod_fixes.fix.emi.EmiGate;
 import com.mrgregles.bsp_mod_fixes.fix.emi.ExtrasFix;
@@ -30,7 +36,7 @@ import java.util.Map;
  * those fixes apply when their target loads, and the application is logged then. The EMI fixes are gated by the plugin
  * ({@link EmiGate}) and are reported as skipped, with the reason, when EMI is absent or another version; so is the JEI fix
  * ({@code fix/jei/JeiGate}) without a JEI 15.74 build, the AdvancedAE fix ({@code fix/aae/AaeGate}) without AdvancedAE at
- * the pinned version, the Gobber fix ({@code fix/gobber/GobberGate}) without Gobber 2 at its pinned version, and the fixes into client-only classes on a dedicated server ({@code fix/proxy/ClientGate}). Ids are
+ * the pinned version, the Gobber fix ({@code fix/gobber/GobberGate}) without Gobber 2 at its pinned version, the Compact Machines fixes ({@code fix/cm/CmGate}) without Compact Machines at its pinned version, and the fixes into client-only classes on a dedicated server ({@code fix/proxy/ClientGate}). Ids are
  * the F-n of the vault's Fix Log.
  */
 public final class Fixes {
@@ -66,7 +72,14 @@ public final class Fixes {
             Map.entry("JumpAssistFlyingSpeedMixin", new Fix(FlyingSpeedKeeper.ID, FlyingSpeedKeeper.WHAT, FlyingSpeedKeeper.TARGET)),
             Map.entry("AaeDamageAbsorptionMixin", new Fix(QuantumAbsorption.ID, QuantumAbsorption.WHAT, QuantumAbsorption.TARGET)),
             Map.entry("PowersuitsMeterMixin", new Fix(MeterGuard.ID, MeterGuard.WHAT, MeterGuard.TARGET)),
-            Map.entry("GobberDragonFlightMixin", new Fix(DragonFlightSends.ID, DragonFlightSends.WHAT, DragonFlightSends.TARGET)));
+            Map.entry("GobberDragonFlightMixin", new Fix(DragonFlightSends.ID, DragonFlightSends.WHAT, DragonFlightSends.TARGET)),
+            Map.entry("CmTunnelSaveMixin", new Fix(LoadSaves.ID, LoadSaves.WHAT, LoadSaves.TARGET)),
+            Map.entry("CmChunkloadSaveMixin", new Fix(LoadSaves.ID, LoadSaves.WHAT, LoadSaves.TARGET)),
+            Map.entry("CmRoomHoldMixin", new Fix(RoomHolds.ID, RoomHolds.WHAT, RoomHolds.TARGET)),
+            Map.entry("CmChunkloadRuleMixin", new Fix(RoomHolds.ID, RoomHolds.WHAT, RoomHolds.TARGET)),
+            Map.entry("CmPreviewCleanupMixin", new Fix(PreviewLeak.ID, PreviewLeak.WHAT, PreviewLeak.TARGET)),
+            Map.entry("BufferBuilderAccessor", new Fix(PreviewLeak.ID, PreviewLeak.WHAT, PreviewLeak.TARGET)),
+            Map.entry("CmPreviewRequestMixin", new Fix(PreviewRules.ID, PreviewRules.WHAT, PreviewRules.TARGET)));
 
     private static final List<Fix> ACTIVE = Collections.synchronizedList(new ArrayList<>());
     /** Fixes the mixin plugin skipped, by id, with the reason (the EMI fixes without EMI at the pinned version; client-only fixes on a dedicated server). */
@@ -81,6 +94,13 @@ public final class Fixes {
         MinecraftForge.EVENT_BUS.addListener(ShockAbsorber::onFall); // F-7, whose mixin cancels Powersuits' handler
         MinecraftForge.EVENT_BUS.addListener(EnergyShield::onHurt);  // F-8 (c)
         MinecraftForge.EVENT_BUS.addListener(FlyingSpeedKeeper::onPlayerTick); // F-24, the guard (the mixins do the rest)
+        // F-29, only beside the Compact Machines build it was written for, and only when its mixins were not skipped (the plugin
+        // has decided by now): without them Compact Machines forces rooms itself, and clearing its flags at start would undo that
+        if (CmGate.installedVersion().map(CmGate.VERSION::equals).orElse(false) && !SKIPPED.containsKey(RoomHolds.ID)) {
+            MinecraftForge.EVENT_BUS.addListener(RoomLoader::onServerTick);
+            MinecraftForge.EVENT_BUS.addListener(RoomLoader::onServerStarted);
+            MinecraftForge.EVENT_BUS.addListener(RoomLoader::onServerStopped);
+        }
     }
 
     /** Called by the mixin config plugin after a mixin of bsp_mod_fixes.mixins.json has been applied. */

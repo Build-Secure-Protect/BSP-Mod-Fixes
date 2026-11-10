@@ -8,6 +8,8 @@
     "GameTestInfoMixin",
     "NetworkContextInvoker",
     "ConnectionInvoker",
-    "ServerPlayerAccessor"
+    "ServerPlayerAccessor",
+    "ServerChunkCacheSaveCounterMixin",
+    "ServerLevelEmptyTimeAccessor"
   ]
 }
