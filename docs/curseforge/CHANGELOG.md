@@ -1,3 +1,17 @@
+# BSP-Mod Fixes 0.8.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3 and MFFS (Modular Force Field System) 5.1.29 (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**MFFS force fields stop stalling the server and freezing players.** Three fixes for Modular Force Field System 5.1.29, each with its own switch in `bsp_mod_fixes-server.toml` under `[mffs]`.
+
+- F-34: the sponge module drains fluids by sampling. It used to copy every position inside the field every three seconds, shuffle the copy and walk it, loading parts of the world as it went: a field eight chunks across each way is seventeen million positions and about a gigabyte of memory, and the server stalled on every pass. Now it picks a few hundred random spots inside the field in loaded chunks and dries what it finds there, waterlogged blocks included (which it never dried before). Modded fluids were always handled. `fixSponge` turns it off; `spongeMaxInteriorBlocks` can forbid the sponge in fields over a chosen size.
+- F-35: a force field over the server's size limit is not projected. MFFS put no bound on a field. The limits are `maxFieldBlocks` (default 100,000 field blocks, about a cube four chunks across each way; 0 for none) and `maxFieldRadius` (default off). A projector asked for a bigger field builds nothing, removes what it had built, and players within fifteen blocks of it read "This force field is too large for this server" once a minute; the server log says so once. **Fields built before the limit go the next time their projector starts up or has a module changed.**
+- F-36: a force field block's projector, camouflage and glow travel in the chunk data. Every field block is a block entity, and as each chunk arrived the player's game asked the server for every one of them one by one, then re-drew and re-lit each as its answer came: thousands of round trips per chunk near a large field, and a player near a field of twenty chunks froze. Now the data arrives with the chunk and the game asks for nothing; a block placed in front of a watching player still asks once, as before. `syncFieldBlocksInChunks` turns it off.
+
+The settings are in `docs/CONFIG.md`: five under `[mffs]` in `bsp_mod_fixes-server.toml`.
+
 # BSP-Mod Fixes 0.7.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9 and Compact Machines 6.0.3 (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.

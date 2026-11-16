@@ -10,6 +10,8 @@
     "ConnectionInvoker",
     "ServerPlayerAccessor",
     "ServerChunkCacheSaveCounterMixin",
-    "ServerLevelEmptyTimeAccessor"
+    "ServerLevelEmptyTimeAccessor",
+    "ServerChunkCacheDistanceManagerAccessor",
+    "DistanceManagerTicketsAccessor"
   ]
 }

@@ -15,6 +15,10 @@ import com.mrgregles.bsp_mod_fixes.fix.emi.NullStack;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TextWidgets;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TooltipBuilderFix;
 import com.mrgregles.bsp_mod_fixes.fix.gobber.DragonFlightSends;
+import com.mrgregles.bsp_mod_fixes.fix.mffs.FieldLimit;
+import com.mrgregles.bsp_mod_fixes.fix.mffs.FieldSync;
+import com.mrgregles.bsp_mod_fixes.fix.mffs.MffsGate;
+import com.mrgregles.bsp_mod_fixes.fix.mffs.SpongeSampling;
 import com.mrgregles.bsp_mod_fixes.fix.jei.JeiStartGate;
 import com.mrgregles.bsp_mod_fixes.fix.proxy.DeferredDisconnectScreen;
 import com.mrgregles.bsp_mod_fixes.fix.proxy.StalePacketDrop;
@@ -79,7 +83,10 @@ public final class Fixes {
             Map.entry("CmChunkloadRuleMixin", new Fix(RoomHolds.ID, RoomHolds.WHAT, RoomHolds.TARGET)),
             Map.entry("CmPreviewCleanupMixin", new Fix(PreviewLeak.ID, PreviewLeak.WHAT, PreviewLeak.TARGET)),
             Map.entry("BufferBuilderAccessor", new Fix(PreviewLeak.ID, PreviewLeak.WHAT, PreviewLeak.TARGET)),
-            Map.entry("CmPreviewRequestMixin", new Fix(PreviewRules.ID, PreviewRules.WHAT, PreviewRules.TARGET)));
+            Map.entry("CmPreviewRequestMixin", new Fix(PreviewRules.ID, PreviewRules.WHAT, PreviewRules.TARGET)),
+            Map.entry("MffsSpongeMixin", new Fix(SpongeSampling.ID, SpongeSampling.WHAT, SpongeSampling.TARGET)),
+            Map.entry("MffsFieldLimitMixin", new Fix(FieldLimit.ID, FieldLimit.WHAT, FieldLimit.TARGET)),
+            Map.entry("MffsForceFieldSyncMixin", new Fix(FieldSync.ID, FieldSync.WHAT, FieldSync.TARGET)));
 
     private static final List<Fix> ACTIVE = Collections.synchronizedList(new ArrayList<>());
     /** Fixes the mixin plugin skipped, by id, with the reason (the EMI fixes without EMI at the pinned version; client-only fixes on a dedicated server). */
@@ -100,6 +107,11 @@ public final class Fixes {
             MinecraftForge.EVENT_BUS.addListener(RoomLoader::onServerTick);
             MinecraftForge.EVENT_BUS.addListener(RoomLoader::onServerStarted);
             MinecraftForge.EVENT_BUS.addListener(RoomLoader::onServerStopped);
+        }
+        // F-36, the client's end of tick: the held onLoad calls are replayed for field blocks whose chunk brought nothing; only
+        // beside the MFFS build the mixin was written for and when the mixin was not skipped (nothing is held otherwise)
+        if (MffsGate.installedVersion().map(MffsGate.VERSION::equals).orElse(false) && !SKIPPED.containsKey(FieldSync.ID)) {
+            MinecraftForge.EVENT_BUS.addListener(FieldSync::onClientTick);
         }
     }
 

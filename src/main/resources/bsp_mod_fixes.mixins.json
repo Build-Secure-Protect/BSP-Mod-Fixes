@@ -37,7 +37,10 @@
     "CmChunkloadRuleMixin",
     "CmPreviewCleanupMixin",
     "BufferBuilderAccessor",
-    "CmPreviewRequestMixin"
+    "CmPreviewRequestMixin",
+    "MffsSpongeMixin",
+    "MffsFieldLimitMixin",
+    "MffsForceFieldSyncMixin"
   ],
   "injectors": {
     "defaultRequire": 1

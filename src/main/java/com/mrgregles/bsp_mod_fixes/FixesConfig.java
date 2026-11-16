@@ -16,6 +16,11 @@ public final class FixesConfig {
     public static final ForgeConfigSpec.IntValue CM_PREVIEW_INTERVAL_SECONDS;
     public static final ForgeConfigSpec.BooleanValue CM_PREVIEW_HIDES_CONTENTS;
     public static final ForgeConfigSpec.IntValue CM_PREVIEW_MAX_KILOBYTES;
+    public static final ForgeConfigSpec.BooleanValue MFFS_FIX_SPONGE;
+    public static final ForgeConfigSpec.IntValue MFFS_SPONGE_MAX_INTERIOR_BLOCKS;
+    public static final ForgeConfigSpec.IntValue MFFS_MAX_FIELD_BLOCKS;
+    public static final ForgeConfigSpec.IntValue MFFS_MAX_FIELD_RADIUS;
+    public static final ForgeConfigSpec.BooleanValue MFFS_SYNC_FIELD_BLOCKS;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -90,6 +95,43 @@ public final class FixesConfig {
                 "The largest preview that is sent, in kilobytes of room data. A larger one is not sent and the player is told the",
                 "room is too large to preview. The game cannot carry more than 1,048 kilobytes in one such packet.")
                 .defineInRange("previewMaxKilobytes", 1000, 10, 1040);
+        b.pop();
+        b.push("mffs");
+        MFFS_FIX_SPONGE = b.comment(
+                "MFFS's sponge module copies every position inside the force field, shuffles the copy on the server thread and walks",
+                "it every three seconds, loading chunks as it goes: a field of eight chunks' radius is seventeen million positions and",
+                "about a gigabyte of memory, and the server stalls on every pass. true has the sponge draw a few hundred random",
+                "positions inside the field in loaded chunks instead and drain the fluid it finds there, source and flowing alike, and",
+                "empty waterlogged blocks; false leaves MFFS's behaviour as it is. Only read while exactly MFFS 5.1.29 is loaded; any",
+                "other MFFS skips the fix whatever this says.")
+                .define("fixSponge", true);
+        MFFS_SPONGE_MAX_INTERIOR_BLOCKS = b.comment(
+                "The largest field interior, in blocks, the sponge module works in while fixSponge is on: a sponge in a larger field",
+                "drains nothing and the server logs one line a while. 0 means no limit. A cube of radius r has (2r+1)^3 interior",
+                "blocks: 35,937 at one chunk, 2,146,689 at four chunks, 16,974,593 at eight.")
+                .defineInRange("spongeMaxInteriorBlocks", 0, 0, Integer.MAX_VALUE);
+        MFFS_MAX_FIELD_BLOCKS = b.comment(
+                "The largest force field a projector may project, in field blocks (the positions its shape would fill). MFFS puts",
+                "no bound on a field, and every field block is a block entity that each nearby client asks the server about one by",
+                "one as its chunk arrives: a cube of eight chunks' radius is about 396,000 of them and froze a player's client. A",
+                "projector whose field is over this limit projects nothing, removes what it had built, tells the players within 15",
+                "blocks on their action bar once a minute and logs one line. 0 means no limit. A cube of radius r has about 24 r^2",
+                "field blocks: 6,000 at one chunk, 98,000 at four chunks, 393,000 at eight. Only read while exactly MFFS 5.1.29 is",
+                "loaded; any other MFFS skips the fix whatever this says.")
+                .defineInRange("maxFieldBlocks", 100000, 0, Integer.MAX_VALUE);
+        MFFS_MAX_FIELD_RADIUS = b.comment(
+                "The largest radius a projector may project, in blocks from the field's centre along any axis (the largest Scale",
+                "count on any side), judged beside maxFieldBlocks with the same effect. 0 means no limit; 128 is eight chunks.")
+                .defineInRange("maxFieldRadius", 0, 0, Integer.MAX_VALUE);
+        MFFS_SYNC_FIELD_BLOCKS = b.comment(
+                "Every MFFS force field block is a block entity holding its projector's position, its camouflage and its glow, and",
+                "MFFS sends none of that in the chunk packet: as each chunk arrives, the client asks the server for every field block",
+                "one by one, the server answers each, and the client re-renders and relights each block as its answer comes (about",
+                "4,100 round trips for one wall chunk of a field at eight chunks' radius); a client near a large field freezes. true",
+                "puts each block's data into the chunk packet itself and has the client use it from there, asking only for a block",
+                "placed into a chunk it already has; false leaves MFFS's behaviour as it is. Both sides read it (Forge sends this file",
+                "to each client at login). Only read while exactly MFFS 5.1.29 is loaded; any other MFFS skips the fix whatever this says.")
+                .define("syncFieldBlocksInChunks", true);
         b.pop();
         SPEC = b.build();
     }
