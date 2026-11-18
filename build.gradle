@@ -60,6 +60,12 @@ minecraft {
             if (project.hasProperty('recipeProbe')) {
                 property 'bsp_mod_fixes.recipeProbe', 'true'
             }
+            // ./gradlew runClient -PwithEmi -PwithMekanism -PjemiProbe -PquickPlay=emitest: runs gametest/JemiSlotsProbe, which
+            // calls EMI's real JEI transfer layout on Mekanism's Laser Tractor Beam and a few other recipes and logs the slots or
+            // the exception; add -PskipFixes=EmiJemiSlotsViewMixin to see EMI as shipped crash (F-37).
+            if (project.hasProperty('jemiProbe')) {
+                property 'bsp_mod_fixes.jemiProbe', 'true'
+            }
             // ./gradlew runClient -PtitleProbe: the client closes itself a few seconds after the title screen is up, so a
             // headless run that only wants the startup log ends on its own (gametest/TitleProbe).
             if (project.hasProperty('titleProbe')) {

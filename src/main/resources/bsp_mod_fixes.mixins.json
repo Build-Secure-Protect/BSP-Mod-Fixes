@@ -22,6 +22,7 @@
     "EmiRecipeExtrasMixin",
     "EmiPlaceableMixin",
     "EmiTextWidgetMixin",
+    "EmiJemiSlotsViewMixin",
     "ConnectionStalePacketMixin",
     "DisconnectedScreenThreadMixin",
     "JeiStartObserverMixin",

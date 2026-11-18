@@ -14,6 +14,7 @@ import com.mrgregles.bsp_mod_fixes.fix.emi.ExtrasFix;
 import com.mrgregles.bsp_mod_fixes.fix.emi.NullStack;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TextWidgets;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TooltipBuilderFix;
+import com.mrgregles.bsp_mod_fixes.fix.emi.TransferSlots;
 import com.mrgregles.bsp_mod_fixes.fix.gobber.DragonFlightSends;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.FieldLimit;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.FieldSync;
@@ -68,6 +69,7 @@ public final class Fixes {
             Map.entry("EmiRecipeExtrasMixin", new Fix(ExtrasFix.ID, ExtrasFix.WHAT, ExtrasFix.TARGET)),
             Map.entry("EmiPlaceableMixin", new Fix(ExtrasFix.ID, ExtrasFix.WHAT, ExtrasFix.TARGET)),
             Map.entry("EmiTextWidgetMixin", new Fix(TextWidgets.ID, TextWidgets.WHAT, TextWidgets.TARGET)),
+            Map.entry("EmiJemiSlotsViewMixin", new Fix(TransferSlots.ID, TransferSlots.WHAT, TransferSlots.TARGET)),
             Map.entry("ConnectionStalePacketMixin", new Fix(StalePacketDrop.ID, StalePacketDrop.WHAT, StalePacketDrop.TARGET)),
             Map.entry("DisconnectedScreenThreadMixin", new Fix(DeferredDisconnectScreen.ID, DeferredDisconnectScreen.WHAT, DeferredDisconnectScreen.TARGET)),
             Map.entry("JeiStartObserverMixin", new Fix(JeiStartGate.ID, JeiStartGate.WHAT, JeiStartGate.TARGET)),

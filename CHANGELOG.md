@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 Nothing yet.
 
+## [0.9.0] - 2026-11-18
+
+### Added
+- F-37 (EMI 1.1.24+1.20.1+forge, optional, client only): a shaped crafting recipe with fewer than nine inputs no longer crashes EMI's JEI transfer layout. EMI wraps every JEI recipe transfer handler (Refined Storage's grid, Mekanism's QIO crafting window and Formulaic Assemblicator) in its own handler, which lays a shaped `EmiCraftingRecipe` out for JEI as `inputs.subList(0, max(9, inputs.size()) - blankedSlots)`, assuming nine inputs. EMI's own shaped recipes have nine, but the fallback EMI builds for a crafting recipe of another mod's class pads each row to three and the list no further, so Mekanism's Laser Tractor Beam (six entries, cut at eight), EnderStorage's three recolour recipes (one entry, cut at eight) and Quark's dirty glass (six entries, cut at nine) threw `IndexOutOfBoundsException` while the recipe screen rendered, outside EMI's own catch: a crash to the desktop as soon as such a recipe was viewed with one of those screens open. The one `subList` call is redirected to a handler that holds both bounds within the list; EMI then pads the layout to nine as it does for every other crafting recipe; on a dev client the Laser Tractor Beam's nine slots come out in the same order as EMI's own one-wide stick recipe, so a "+" transfer should fill the same slots (the transfer itself is on the in-game checklist). The first clamp of each recipe in a session is logged at WARN with the recipe id and the bounds. Switched off by `[emi] clampJeiTransferSlots = false` in `bsp_mod_fixes-client.toml`; applied only beside the pinned EMI, like the other EMI fixes.
+- `./gradlew runClient -PwithEmi -PwithMekanism -PjemiProbe -PquickPlay=emitest` calls EMI's real JEI transfer layout on Mekanism's Laser Tractor Beam and a few other recipes on a dev client and logs the slots or the exception (`-PskipFixes=EmiJemiSlotsViewMixin` shows EMI as shipped crash). Never in the jar.
+
 ## [0.8.0] - 2026-11-15
 
 ### Added

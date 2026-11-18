@@ -12,6 +12,8 @@ public final class FixesClientConfig {
     public static final ForgeConfigSpec.BooleanValue QUANTUM_READOUT_COLLAPSED;
     /** F-30: whether Compact Machines' room preview releases its memory when it closes. */
     public static final ForgeConfigSpec.BooleanValue FREE_PREVIEW_MEMORY;
+    /** F-37: whether EMI's JEI transfer layout clamps a shaped recipe's input bounds to the list it has. */
+    public static final ForgeConfigSpec.BooleanValue CLAMP_JEI_TRANSFER_SLOTS;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -30,6 +32,15 @@ public final class FixesClientConfig {
                 "exactly Compact Machines 6.0.3 is installed.")
                 .define("freePreviewMemory", true);
         b.pop();
+        b.push("emi");
+        CLAMP_JEI_TRANSFER_SLOTS = b.comment(
+                "EMI lays a shaped crafting recipe out for a JEI transfer handler (Refined Storage's grid, Mekanism's QIO crafting",
+                "window and Formulaic Assemblicator) as if it always had nine inputs; a shaped recipe of another mod's class with",
+                "fewer (Mekanism's Laser Tractor Beam, EnderStorage's recolour recipes, Quark's dirty glass) crashes the game to",
+                "the desktop when viewed with one of those screens open. true holds EMI's bounds within the recipe's input list;",
+                "false leaves EMI's behaviour as it is. Only read while exactly EMI 1.1.24+1.20.1+forge is installed.")
+                .define("clampJeiTransferSlots", true);
+        b.pop();
         SPEC = b.build();
     }
 
@@ -43,6 +54,11 @@ public final class FixesClientConfig {
     /** Whether the room preview's memory is released on close (F-30); true before the config has loaded. */
     public static boolean freePreviewMemory() {
         return !SPEC.isLoaded() || FREE_PREVIEW_MEMORY.get();
+    }
+
+    /** Whether EMI's JEI transfer layout bounds are clamped (F-37); true before the config has loaded. */
+    public static boolean clampJeiTransferSlots() {
+        return !SPEC.isLoaded() || CLAMP_JEI_TRANSFER_SLOTS.get();
     }
 
     /** Sets and saves the collapsed state. */

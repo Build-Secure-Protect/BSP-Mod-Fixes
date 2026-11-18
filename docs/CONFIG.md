@@ -27,12 +27,13 @@ A player already affected can also be put right at once with Catnip's command, b
 
 ## This mod's client config: `bsp_mod_fixes-client.toml`
 
-In the game's `config` folder on each client. Two values:
+In the game's `config` folder on each client. Three values:
 
 | Key | Default | Meaning |
 |---|---|---|
 | `[quantumReadout] collapsed` | `false` | Whether the quantum suit readout (the plate above the hotbar's left end while AdvancedAE's quantum armor is worn) is collapsed to its tab. Changed by the readout's key binding ("Toggle quantum suit readout" in Controls, unbound by default) or by clicking the tab while a screen such as the inventory is open; kept until changed again. (Fix F-25.) |
 | `[compactMachines] freePreviewMemory` | `true` | Compact Machines' room preview (right click on a machine with an empty hand) keeps most of the video and native memory it takes for the rest of the session, more with every preview and every window resize while one is open. `true` releases it when the preview closes; `false` leaves Compact Machines' behaviour as it is. Only read while exactly Compact Machines 6.0.3 is installed. (Fix F-30.) |
+| `[emi] clampJeiTransferSlots` | `true` | EMI lays a shaped crafting recipe out for a JEI transfer handler (Refined Storage's grid, Mekanism's QIO crafting window and Formulaic Assemblicator) as if it always had nine inputs; a shaped recipe of another mod's class with fewer (Mekanism's Laser Tractor Beam, EnderStorage's recolour recipes, Quark's dirty glass) crashes the game to the desktop when viewed with one of those screens open. `true` holds EMI's bounds within the recipe's input list and logs the first clamp of each recipe per session at WARN; `false` leaves EMI's behaviour as it is. Only read while exactly EMI 1.1.24+1.20.1+forge is installed; any other EMI skips the fix whatever this says. (Fix F-37.) |
 
 ## Powersuits server config to re-tune: `powersuits-server.toml`
 

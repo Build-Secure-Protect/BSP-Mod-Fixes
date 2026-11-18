@@ -38,6 +38,9 @@ public class BSPModFixes {
         if (Boolean.getBoolean("bsp_mod_fixes.recipeProbe")) {
             context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("EmiRecipeProbe", "install"));
         }
+        if (Boolean.getBoolean("bsp_mod_fixes.jemiProbe")) {
+            context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("JemiSlotsProbe", "install"));
+        }
         if (Boolean.getBoolean("bsp_mod_fixes.titleProbe")) {
             context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("TitleProbe", "install"));
         }
@@ -54,7 +57,7 @@ public class BSPModFixes {
     }
 
     /**
-     * Dev only ({@code -PemiProbe}, {@code -PrecipeProbe}, {@code -PtitleProbe}, {@code -PreadoutProbe}, {@code -PpreviewProbe} or {@code -PfieldProbe} on a client run): a probe class of the gametest package, which
+     * Dev only ({@code -PemiProbe}, {@code -PrecipeProbe}, {@code -PjemiProbe}, {@code -PtitleProbe}, {@code -PreadoutProbe}, {@code -PpreviewProbe} or {@code -PfieldProbe} on a client run): a probe class of the gametest package, which
      * is not in the jar, is loaded by name and its static method called, so EMI's real classes are exercised headlessly.
      */
     private static void runProbe(String probe, String method) {
