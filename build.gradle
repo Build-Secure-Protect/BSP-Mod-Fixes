@@ -173,6 +173,12 @@ dependencies {
     // MFFS (Modular Force Field System), compiled against for its fixes (F-34 onward); optional at runtime, gated to mffs_version.
     compileOnly fg.deobf("curse.maven:${mffs_curse}")
 
+    // Deep Resonance, compiled against for its fix (F-38); optional at runtime, gated to dr_version.
+    compileOnly fg.deobf("curse.maven:${dr_curse}")
+
+    // Iron Furnaces, compiled against for its fix (F-39); optional at runtime, gated to if_version.
+    compileOnly fg.deobf("curse.maven:${if_curse}")
+
     // ./gradlew runClient -PwithEmi (or any run): EMI, JEI, Tinkers' Construct and Mantle load, for the in-game checks of docs/TESTING.md.
     if (project.hasProperty('withEmi')) {
         runtimeOnly fg.deobf("curse.maven:${emi_curse}")
@@ -218,6 +224,19 @@ dependencies {
     if (project.hasProperty('withMffs')) {
         runtimeOnly fg.deobf("curse.maven:${mffs_curse}")
     }
+    // ./gradlew runGameTestServer -PwithDr (or any run): Deep Resonance, McJtyLib and RFTools Base load (the exact pack files), so
+    // its test posts a real place event with no entity through the mod's real handler; without it the test checks the pure rule
+    // and the gate's skip.
+    if (project.hasProperty('withDr')) {
+        runtimeOnly fg.deobf("curse.maven:${dr_curse}")
+        runtimeOnly fg.deobf("curse.maven:${mcjtylib_curse}")
+        runtimeOnly fg.deobf("curse.maven:${rftoolsbase_curse}")
+    }
+    // ./gradlew runGameTestServer -PwithIf (or any run): Iron Furnaces loads (the exact pack file), so its test loads a real
+    // furnace-list provider twice from a duplicated tag; without it the test checks the pure rule and the gate's skip.
+    if (project.hasProperty('withIf')) {
+        runtimeOnly fg.deobf("curse.maven:${if_curse}")
+    }
     if (project.hasProperty('withBallistix')) {
         runtimeOnly fg.deobf("curse.maven:${voltaic_curse}")
         runtimeOnly fg.deobf("curse.maven:${electrodynamics_curse}")
@@ -235,7 +254,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
             numina_version_range: numina_version_range, powersuits_version_range: powersuits_version_range,
-            emi_version: emi_version, aae_version: aae_version, gobber_version: gobber_version, cm_version: cm_version, mffs_version: mffs_version,
+            emi_version: emi_version, aae_version: aae_version, gobber_version: gobber_version, cm_version: cm_version, mffs_version: mffs_version, dr_version: dr_version, if_version: if_version,
     ]
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {

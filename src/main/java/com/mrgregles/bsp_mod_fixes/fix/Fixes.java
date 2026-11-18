@@ -8,6 +8,7 @@ import com.mrgregles.bsp_mod_fixes.fix.cm.PreviewLeak;
 import com.mrgregles.bsp_mod_fixes.fix.cm.PreviewRules;
 import com.mrgregles.bsp_mod_fixes.fix.cm.RoomHolds;
 import com.mrgregles.bsp_mod_fixes.fix.cm.RoomLoader;
+import com.mrgregles.bsp_mod_fixes.fix.deepresonance.PlaceEventLevel;
 import com.mrgregles.bsp_mod_fixes.fix.emi.AmountLine;
 import com.mrgregles.bsp_mod_fixes.fix.emi.EmiGate;
 import com.mrgregles.bsp_mod_fixes.fix.emi.ExtrasFix;
@@ -16,6 +17,9 @@ import com.mrgregles.bsp_mod_fixes.fix.emi.TextWidgets;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TooltipBuilderFix;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TransferSlots;
 import com.mrgregles.bsp_mod_fixes.fix.gobber.DragonFlightSends;
+import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.FurnaceListNames;
+import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.FurnaceListRepair;
+import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.IronFurnacesGate;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.FieldLimit;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.FieldSync;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.MffsGate;
@@ -41,7 +45,7 @@ import java.util.Map;
  * those fixes apply when their target loads, and the application is logged then. The EMI fixes are gated by the plugin
  * ({@link EmiGate}) and are reported as skipped, with the reason, when EMI is absent or another version; so is the JEI fix
  * ({@code fix/jei/JeiGate}) without a JEI 15.74 build, the AdvancedAE fix ({@code fix/aae/AaeGate}) without AdvancedAE at
- * the pinned version, the Gobber fix ({@code fix/gobber/GobberGate}) without Gobber 2 at its pinned version, the Compact Machines fixes ({@code fix/cm/CmGate}) without Compact Machines at its pinned version, and the fixes into client-only classes on a dedicated server ({@code fix/proxy/ClientGate}). Ids are
+ * the pinned version, the Gobber fix ({@code fix/gobber/GobberGate}) without Gobber 2 at its pinned version, the Compact Machines fixes ({@code fix/cm/CmGate}) without Compact Machines at its pinned version, the MFFS fixes ({@code fix/mffs/MffsGate}) and the Deep Resonance fix ({@code fix/deepresonance/DeepResonanceGate}) and the Iron Furnaces fix ({@code fix/ironfurnaces/IronFurnacesGate}) the same way, and the fixes into client-only classes on a dedicated server ({@code fix/proxy/ClientGate}). Ids are
  * the F-n of the vault's Fix Log.
  */
 public final class Fixes {
@@ -88,7 +92,9 @@ public final class Fixes {
             Map.entry("CmPreviewRequestMixin", new Fix(PreviewRules.ID, PreviewRules.WHAT, PreviewRules.TARGET)),
             Map.entry("MffsSpongeMixin", new Fix(SpongeSampling.ID, SpongeSampling.WHAT, SpongeSampling.TARGET)),
             Map.entry("MffsFieldLimitMixin", new Fix(FieldLimit.ID, FieldLimit.WHAT, FieldLimit.TARGET)),
-            Map.entry("MffsForceFieldSyncMixin", new Fix(FieldSync.ID, FieldSync.WHAT, FieldSync.TARGET)));
+            Map.entry("MffsForceFieldSyncMixin", new Fix(FieldSync.ID, FieldSync.WHAT, FieldSync.TARGET)),
+            Map.entry("DeepResonancePlaceEventMixin", new Fix(PlaceEventLevel.ID, PlaceEventLevel.WHAT, PlaceEventLevel.TARGET)),
+            Map.entry("IronFurnacesListLoadMixin", new Fix(FurnaceListRepair.ID, FurnaceListRepair.WHAT, FurnaceListRepair.TARGET)));
 
     private static final List<Fix> ACTIVE = Collections.synchronizedList(new ArrayList<>());
     /** Fixes the mixin plugin skipped, by id, with the reason (the EMI fixes without EMI at the pinned version; client-only fixes on a dedicated server). */
@@ -114,6 +120,11 @@ public final class Fixes {
         // beside the MFFS build the mixin was written for and when the mixin was not skipped (nothing is held otherwise)
         if (MffsGate.installedVersion().map(MffsGate.VERSION::equals).orElse(false) && !SKIPPED.containsKey(FieldSync.ID)) {
             MinecraftForge.EVENT_BUS.addListener(FieldSync::onClientTick);
+        }
+        // F-39, the server's end of tick: a repaired furnace list is logged with its player's name; the handler names Iron
+        // Furnaces' classes, so only beside the build the mixin was written for and when the mixin was not skipped
+        if (IronFurnacesGate.installedVersion().map(IronFurnacesGate.VERSION::equals).orElse(false) && !SKIPPED.containsKey(FurnaceListRepair.ID)) {
+            MinecraftForge.EVENT_BUS.addListener(FurnaceListNames::onServerTick);
         }
     }
 

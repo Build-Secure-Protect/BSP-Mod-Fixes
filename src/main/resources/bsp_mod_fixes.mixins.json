@@ -41,7 +41,9 @@
     "CmPreviewRequestMixin",
     "MffsSpongeMixin",
     "MffsFieldLimitMixin",
-    "MffsForceFieldSyncMixin"
+    "MffsForceFieldSyncMixin",
+    "DeepResonancePlaceEventMixin",
+    "IronFurnacesListLoadMixin"
   ],
   "injectors": {
     "defaultRequire": 1

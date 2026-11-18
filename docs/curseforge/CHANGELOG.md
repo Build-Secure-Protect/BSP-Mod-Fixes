@@ -1,3 +1,21 @@
+# BSP-Mod Fixes 0.10.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6 and Iron Furnaces 4.1.8 (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**Ballistix blast debris no longer trips Deep Resonance.** F-38, for Deep Resonance 1.20-5.0.6: Deep Resonance watches every block placed, to notice shielding blocks (obsidian, dense obsidian, dense glass, lead blocks) going up near a radiation source, and reads the world from whoever placed the block. A block placed by nobody, which is what a Ballistix blast's debris is when the blast was set off by redstone or by another blast, made it throw an error on the server; Neruina then froze the falling block and told every player about an error, and a server without Neruina would have crashed. The handler now reads the world from the event itself when nobody placed the block, so the block is still noticed as shielding. `placeEventsWithoutPlacer` under `[deepResonance]` in `bsp_mod_fixes-server.toml` turns it off.
+
+**A player's Iron Furnaces list no longer grows on every login.** F-39, for Iron Furnaces 4.1.8: the mod remembers on each player where they placed their furnaces, for the Million Furnace, and when that memory loads it adds the saved entries to what it already has instead of replacing it. With the inventory sync restoring a player's data at login on top of the server's own copy, the list doubled every login; one player's file reached two million entries for two furnaces and froze the server for four minutes whenever they joined. The list is now replaced when it loads and duplicates are dropped, with one line in the server log naming the player when anything was dropped, and a warning when a player has more furnaces than `maxFurnacesPerPlayer` (4096; nothing is removed). `repairFurnaceList` under `[ironFurnaces]` in `bsp_mod_fixes-server.toml` turns it off.
+
+# BSP-Mod Fixes 0.9.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3 and MFFS (Modular Force Field System) 5.1.29 (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**Viewing certain recipes with a storage screen open no longer crashes the game.** F-37, for EMI 1.1.24, client only: with a Refined Storage grid, a Mekanism QIO crafting window or a Formulaic Assemblicator open, looking at Mekanism's Laser Tractor Beam, EnderStorage's three recolour recipes or Quark's dirty glass in EMI crashed the game to the desktop. EMI's layer for those screens assumed every shaped recipe has nine ingredient slots, and these have fewer. The layout now uses the slots there are and pads the rest, as EMI does for its own recipes. `clampJeiTransferSlots` in `bsp_mod_fixes-client.toml` turns it off.
+
 # BSP-Mod Fixes 0.8.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3 and MFFS (Modular Force Field System) 5.1.29 (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.

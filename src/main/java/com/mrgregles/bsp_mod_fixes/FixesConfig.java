@@ -21,6 +21,9 @@ public final class FixesConfig {
     public static final ForgeConfigSpec.IntValue MFFS_MAX_FIELD_BLOCKS;
     public static final ForgeConfigSpec.IntValue MFFS_MAX_FIELD_RADIUS;
     public static final ForgeConfigSpec.BooleanValue MFFS_SYNC_FIELD_BLOCKS;
+    public static final ForgeConfigSpec.BooleanValue DR_PLACE_EVENTS_WITHOUT_PLACER;
+    public static final ForgeConfigSpec.BooleanValue IF_REPAIR_FURNACE_LIST;
+    public static final ForgeConfigSpec.IntValue IF_MAX_FURNACES_PER_PLAYER;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -132,6 +135,34 @@ public final class FixesConfig {
                 "placed into a chunk it already has; false leaves MFFS's behaviour as it is. Both sides read it (Forge sends this file",
                 "to each client at login). Only read while exactly MFFS 5.1.29 is loaded; any other MFFS skips the fix whatever this says.")
                 .define("syncFieldBlocksInChunks", true);
+        b.pop();
+        b.push("deepResonance");
+        DR_PLACE_EVENTS_WITHOUT_PLACER = b.comment(
+                "Deep Resonance watches every block placed, to notice a shielding block (obsidian, dense obsidian, dense glass, a",
+                "lead block) going up near a radiation source, and reads the level from the entity that placed it. Forge allows",
+                "that entity to be missing: a block placed by no entity (Ballistix blast debris landing, when the blast was lit by",
+                "redstone or a chain and has no owner) crashes the handler on the server thread; Neruina then suspends the debris",
+                "and announces an error to every player, and a server without Neruina would crash. true has the handler read the",
+                "level from the event itself when there is no entity, so the block is recorded as before; false dereferences the",
+                "missing entity as Deep Resonance's own code did, so the same exception leaves the handler. Read on both sides (Forge sends this file to each client at login). Only read while",
+                "exactly Deep Resonance 1.20-5.0.6 is loaded; any other build skips the fix whatever this says.")
+                .define("placeEventsWithoutPlacer", true);
+        b.pop();
+        b.push("ironFurnaces");
+        IF_REPAIR_FURNACE_LIST = b.comment(
+                "Iron Furnaces keeps on every player the positions of the furnaces they placed (its Million Furnace reads them), and",
+                "when that list loads from the player's data it adds the saved entries to whatever the list already holds instead of",
+                "replacing it. A second load of the same player doubles the list: BSP-InventorySync's restore at login is one, so",
+                "the list doubled on every login, and one player's file reached two million entries for two furnaces and froze the",
+                "server for minutes at each login. true has the list replaced when it loads, keeping the first entry of each",
+                "position and dropping duplicates, with one log line per load naming the player when anything was dropped; false leaves",
+                "Iron Furnaces' behaviour as it is. Read on both sides (Forge sends this file to each client at login). Only read",
+                "while exactly Iron Furnaces 4.1.8 is loaded; any other build skips the fix whatever this says.")
+                .define("repairFurnaceList", true);
+        IF_MAX_FURNACES_PER_PLAYER = b.comment(
+                "How many furnaces one player's list may hold, after duplicates are dropped, before the server logs a warning naming",
+                "the player. Nothing is removed. 0 means no warning.")
+                .defineInRange("maxFurnacesPerPlayer", 4096, 0, Integer.MAX_VALUE);
         b.pop();
         SPEC = b.build();
     }

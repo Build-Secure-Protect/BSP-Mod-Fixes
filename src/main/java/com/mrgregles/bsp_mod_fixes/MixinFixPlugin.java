@@ -3,8 +3,10 @@ package com.mrgregles.bsp_mod_fixes;
 import com.mrgregles.bsp_mod_fixes.fix.Fixes;
 import com.mrgregles.bsp_mod_fixes.fix.aae.AaeGate;
 import com.mrgregles.bsp_mod_fixes.fix.cm.CmGate;
+import com.mrgregles.bsp_mod_fixes.fix.deepresonance.DeepResonanceGate;
 import com.mrgregles.bsp_mod_fixes.fix.emi.EmiGate;
 import com.mrgregles.bsp_mod_fixes.fix.gobber.GobberGate;
+import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.IronFurnacesGate;
 import com.mrgregles.bsp_mod_fixes.fix.jei.JeiGate;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.MffsGate;
 import com.mrgregles.bsp_mod_fixes.fix.proxy.ClientGate;
@@ -23,7 +25,7 @@ import java.util.Set;
  * skips it unless a JEI 15.74 build is loaded on a client; the AdvancedAE mixin goes through {@link AaeGate}, which skips it
  * unless AdvancedAE is loaded at the exact build it was written for; the Gobber mixin goes through {@link GobberGate}, which skips
  * it unless Gobber 2 is loaded at the exact build it was written for with the patched method in place; the Compact Machines mixins go
- * through {@link CmGate}, which skips them unless Compact Machines is loaded at the exact build they were written for; the MFFS mixins go through {@link MffsGate}, the same way; the mixins into client-only Minecraft classes go through
+ * through {@link CmGate}, which skips them unless Compact Machines is loaded at the exact build they were written for; the MFFS mixins go through {@link MffsGate}, the same way; the Deep Resonance mixin goes through {@link DeepResonanceGate}, the same way; the Iron Furnaces mixin goes through {@link IronFurnacesGate}, the same way; the mixins into client-only Minecraft classes go through
  * {@link ClientGate}, which skips them on a dedicated server, where their target does not exist.
  */
 public final class MixinFixPlugin implements IMixinConfigPlugin {
@@ -64,6 +66,12 @@ public final class MixinFixPlugin implements IMixinConfigPlugin {
         }
         if (MffsGate.gates(simpleName)) {
             return MffsGate.allows(simpleName);
+        }
+        if (DeepResonanceGate.gates(simpleName)) {
+            return DeepResonanceGate.allows(simpleName);
+        }
+        if (IronFurnacesGate.gates(simpleName)) {
+            return IronFurnacesGate.allows(simpleName);
         }
         if (ClientGate.gates(simpleName)) {
             return ClientGate.allows(simpleName);
