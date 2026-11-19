@@ -1,6 +1,7 @@
 package com.mrgregles.bsp_mod_fixes.gametest;
 
 import com.mrgregles.bsp_mod_fixes.fix.Fixes;
+import com.mrgregles.bsp_mod_fixes.fix.emi.SlotViews;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TransferSlots;
 import dev.emi.emi.api.EmiApi;
 import dev.emi.emi.api.recipe.EmiCraftingRecipe;
@@ -90,7 +91,7 @@ public final class JemiSlotsProbe {
 
     private static void report(Minecraft mc) {
         Fixes.LOGGER.info("BSP-Mod Fixes jemi probe: the F-37 switch reads {}", TransferSlots.enabled() ? "on" : "off");
-        int crashes = 0, viewed = 0;
+        int crashes = 0, viewed = 0, membersAnswered = 0, membersRefused = 0;
         for (String idText : RECIPES) {
             ResourceLocation id = ResourceLocation.tryParse(idText);
             EmiRecipe emiRecipe = EmiApi.getRecipeManager().getRecipe(id);
@@ -120,6 +121,24 @@ public final class JemiSlotsProbe {
                 continue;
             }
             viewed++;
+            // F-41: JEI 15.34 to 15.53's members on EMI's slot views, the first of them read by JEI's own transfer handlers
+            int answered = 0, refused = 0;
+            for (IRecipeSlotView slot : view.getSlotViews()) {
+                try {
+                    int all = slot.getAllIngredientsList().size();
+                    long displayed = slot.getDisplayedIngredients().count();
+                    boolean tagged = slot.getTagKey().isPresent();
+                    Fixes.LOGGER.info("BSP-Mod Fixes jemi probe:   slot {} answers JEI 15.74: {} in the list, {} displayed, tag {}", answered + refused, all, displayed, tagged);
+                    answered++;
+                } catch (AbstractMethodError e) {
+                    refused++;
+                    if (refused == 1) {
+                        Fixes.LOGGER.error("BSP-Mod Fixes jemi probe:   slot views REFUSE JEI 15.74's members (as shipped): {}", e.toString());
+                    }
+                }
+            }
+            membersAnswered += answered;
+            membersRefused += refused;
             try {
                 List<IRecipeSlotView> inputs = view.getSlotViews(RecipeIngredientRole.INPUT);
                 Fixes.LOGGER.info("BSP-Mod Fixes jemi probe: {} laid out: {} slot widgets, {} slots in the view, {} INPUT, {} OUTPUT, {} CATALYST",
@@ -136,7 +155,9 @@ public final class JemiSlotsProbe {
             }
         }
         // the mixin's target loads at the first call above, so the fix's state is known only now
-        Fixes.LOGGER.info("BSP-Mod Fixes jemi probe: done, {} recipes laid out, {} crashed; F-37 {} in this run", viewed, crashes,
-                Fixes.active().stream().anyMatch(f -> f.id().equals(TransferSlots.ID)) ? "applied" : "NOT applied");
+        Fixes.LOGGER.info("BSP-Mod Fixes jemi probe: done, {} recipes laid out, {} crashed; {} slot views answered JEI 15.74's members, {} refused; F-37 {}, F-41 {} in this run", viewed, crashes,
+                membersAnswered, membersRefused,
+                Fixes.active().stream().anyMatch(f -> f.id().equals(TransferSlots.ID)) ? "applied" : "NOT applied",
+                Fixes.active().stream().anyMatch(f -> f.id().equals(SlotViews.ID)) ? "applied" : "NOT applied");
     }
 }

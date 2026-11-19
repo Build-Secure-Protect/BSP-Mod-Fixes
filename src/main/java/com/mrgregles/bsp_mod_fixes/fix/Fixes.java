@@ -13,6 +13,7 @@ import com.mrgregles.bsp_mod_fixes.fix.emi.AmountLine;
 import com.mrgregles.bsp_mod_fixes.fix.emi.EmiGate;
 import com.mrgregles.bsp_mod_fixes.fix.emi.ExtrasFix;
 import com.mrgregles.bsp_mod_fixes.fix.emi.NullStack;
+import com.mrgregles.bsp_mod_fixes.fix.emi.SlotViews;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TextWidgets;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TooltipBuilderFix;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TransferSlots;
@@ -75,6 +76,8 @@ public final class Fixes {
             Map.entry("EmiPlaceableMixin", new Fix(ExtrasFix.ID, ExtrasFix.WHAT, ExtrasFix.TARGET)),
             Map.entry("EmiTextWidgetMixin", new Fix(TextWidgets.ID, TextWidgets.WHAT, TextWidgets.TARGET)),
             Map.entry("EmiJemiSlotsViewMixin", new Fix(TransferSlots.ID, TransferSlots.WHAT, TransferSlots.TARGET)),
+            Map.entry("EmiJemiSlotViewMixin", new Fix(SlotViews.ID, SlotViews.WHAT, SlotViews.TARGET)),
+            Map.entry("EmiJemiSlotDrawableMixin", new Fix(SlotViews.ID, SlotViews.WHAT, SlotViews.TARGET)),
             Map.entry("ConnectionStalePacketMixin", new Fix(StalePacketDrop.ID, StalePacketDrop.WHAT, StalePacketDrop.TARGET)),
             Map.entry("DisconnectedScreenThreadMixin", new Fix(DeferredDisconnectScreen.ID, DeferredDisconnectScreen.WHAT, DeferredDisconnectScreen.TARGET)),
             Map.entry("JeiStartObserverMixin", new Fix(JeiStartGate.ID, JeiStartGate.WHAT, JeiStartGate.TARGET)),

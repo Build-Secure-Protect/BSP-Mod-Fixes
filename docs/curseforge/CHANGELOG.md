@@ -1,3 +1,11 @@
+# BSP-Mod Fixes 0.12.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8 and Voltaic 1.20.1-1.2.2 with Mekanism and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**No more "Error Rendering" cards in EMI from a machine's screen.** F-41, for EMI 1.1.24, client only: open a machine such as Ender IO's Enchanter, Alloy Smelter, SAG Mill, Slice'N'Splice or Soul Binder, look up its recipes in EMI, and every recipe showed "Error Rendering". EMI's JEI layer was written against an older JEI and lacks three things the pack's JEI asks of it when a machine has a JEI recipe transfer, the "+" button; the same happened in the machine screens of Apotheosis, Botania, Farmer's Delight, Integrated Dynamics, Mekanism, Railcraft and RFTools Control. The three are now supplied, the recipes show, and the "+" transfer works from those screens.
+
 # BSP-Mod Fixes 0.11.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8 and Voltaic 1.20.1-1.2.2 with Mekanism and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.

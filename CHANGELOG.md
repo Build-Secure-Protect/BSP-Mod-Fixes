@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 Nothing yet.
 
+## [0.12.0] - 2026-11-19
+
+### Added
+- F-41 (EMI 1.1.24+1.20.1+forge, optional, client only): EMI's JEI recipe slot views gain the members JEI added after EMI was written. EMI's `JemiRecipeSlot` implements JEI's `IRecipeSlotView` with the members of an older JEI, and JEI has since added three abstract ones: `getAllIngredientsList()` (15.34), `getDisplayedIngredients()` (15.52) and `getTagKey()` (15.53); the pack's JEI is 15.74.0.234. JEI's own `BasicRecipeTransferHandler`, the handler a mod gets from `addRecipeTransferHandler(menu, menuType, recipeType, slot indices)`, reads the first of them: when EMI's recipe screen opens over a container screen with such a handler for the recipe's type, EMI's fill button asks `canCraft`, JEI runs the transfer in simulation, EMI's slot throws `AbstractMethodError`, and every recipe of that machine shows an "Error Rendering" card. In the pack that is Ender IO's Enchanter, Alloy Smelter, Primitive Alloy Smelter, SAG Mill, Slice'N'Splice and Soul Binder, and the machine screens of Apotheosis, Botania, Farmer's Delight, Integrated Dynamics, Mekanism, Railcraft Reborn and RFTools Control; custom transfer handlers (Refined Storage, Mekanism's QIO, AE2, Create, Tinkers) never call those members and were fine. Two mixins, in the F-14 pattern, add the three members to EMI's slot (the slot's ingredients as an unmodifiable list, as JEI's own slot gives them; the displayed ingredients, the slot's one ingredient unfiltered; the tag key when EMI's ingredient is a tag) and to its slot drawable, which also gains `IRecipeSlotDrawable.drawTooltip`; EMI 1.1.24 never constructs that drawable, so the second mixin is defensive and its tooltip draw is untested. The JEI versions are the API source's `@since` tags. No switch, as F-11 to F-15: a method, once added, cannot be taken back by a config read. Applied only beside the pinned EMI on a client, like the other EMI fixes.
+- `./gradlew runClient -PwithEmi -PwithMekanism -PjemiProbe -PquickPlay=emitest` now also calls the three members on every slot view of the recipes it lays out: `AbstractMethodError` with `-PskipFixes=EmiJemiSlotViewMixin,EmiJemiSlotDrawableMixin`, lists with the fix.
+
 ## [0.11.0] - 2026-11-19
 
 ### Added

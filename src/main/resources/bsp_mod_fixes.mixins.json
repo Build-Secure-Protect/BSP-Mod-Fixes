@@ -23,6 +23,8 @@
     "EmiPlaceableMixin",
     "EmiTextWidgetMixin",
     "EmiJemiSlotsViewMixin",
+    "EmiJemiSlotViewMixin",
+    "EmiJemiSlotDrawableMixin",
     "ConnectionStalePacketMixin",
     "DisconnectedScreenThreadMixin",
     "JeiStartObserverMixin",
