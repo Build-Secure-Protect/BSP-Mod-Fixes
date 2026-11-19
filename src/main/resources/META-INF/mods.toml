@@ -124,3 +124,23 @@ description='''${mod_description}'''
     versionRange="[0,)"
     ordering="AFTER"
     side="BOTH"
+
+# Evolved Mekanism is optional, on both sides: its fix (F-42) applies only when Evolved Mekanism ${evolvedmekanism_version} is
+# loaded together with Elytra Slot and Curios (checked by the mixin config plugin, which logs one line and skips it otherwise).
+# Open range for the same reason as EMI's.
+[[dependencies.${mod_id}]]
+    modId="evolvedmekanism"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"
+
+# Elytra Slot is optional, on both sides: the Evolved Mekanism fix (F-42) reads its elytra predicate from inside Evolved Mekanism's
+# deferred setup work, by which time Elytra Slot has long filled it (in its constructor), so the ordering here is for the record only.
+# Any version: the member the fix reads is checked in bytecode.
+[[dependencies.${mod_id}]]
+    modId="elytraslot"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"

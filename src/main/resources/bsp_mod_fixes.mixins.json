@@ -46,7 +46,8 @@
     "MffsForceFieldSyncMixin",
     "DeepResonancePlaceEventMixin",
     "IronFurnacesListLoadMixin",
-    "VoltaicCurioShieldingMixin"
+    "VoltaicCurioShieldingMixin",
+    "EvolvedMekanismElytraCurioMixin"
   ],
   "injectors": {
     "defaultRequire": 1

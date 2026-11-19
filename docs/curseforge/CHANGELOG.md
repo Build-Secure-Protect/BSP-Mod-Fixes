@@ -1,3 +1,11 @@
+# BSP-Mod Fixes 0.13.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, and Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**The HDPE Reinforced Elytra no longer crashes the game.** F-42, for Evolved Mekanism 1.3.0-fix3 beside Elytra Slot: Evolved Mekanism makes fourteen items wearable in Curios slots, thirteen of Mekanism's and its own Portable Hazmat Suit, Mekanism's HDPE Reinforced Elytra among them, and Elytra Slot already makes every elytra wearable in its back slot. Both gave that one item the same Curios capability, which Forge refuses, so the first time anything looked at an HDPE Reinforced Elytra the game crashed: typing in the creative inventory's search, a tooltip in JEI or EMI, or a server handling one in an inventory. Evolved Mekanism now leaves the elytra to Elytra Slot; the other thirteen items are untouched. From the code, the elytra still fits and flies from either mod's slot; the in-game check is on the list.
+
 # BSP-Mod Fixes 0.12.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8 and Voltaic 1.20.1-1.2.2 with Mekanism and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.

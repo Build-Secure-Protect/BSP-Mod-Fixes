@@ -17,6 +17,7 @@ import com.mrgregles.bsp_mod_fixes.fix.emi.SlotViews;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TextWidgets;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TooltipBuilderFix;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TransferSlots;
+import com.mrgregles.bsp_mod_fixes.fix.evolvedmekanism.ElytraCurioRegistration;
 import com.mrgregles.bsp_mod_fixes.fix.gobber.DragonFlightSends;
 import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.FurnaceListNames;
 import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.FurnaceListRepair;
@@ -47,7 +48,7 @@ import java.util.Map;
  * those fixes apply when their target loads, and the application is logged then. The EMI fixes are gated by the plugin
  * ({@link EmiGate}) and are reported as skipped, with the reason, when EMI is absent or another version; so is the JEI fix
  * ({@code fix/jei/JeiGate}) without a JEI 15.74 build, the AdvancedAE fix ({@code fix/aae/AaeGate}) without AdvancedAE at
- * the pinned version, the Gobber fix ({@code fix/gobber/GobberGate}) without Gobber 2 at its pinned version, the Compact Machines fixes ({@code fix/cm/CmGate}) without Compact Machines at its pinned version, the MFFS fixes ({@code fix/mffs/MffsGate}) and the Deep Resonance fix ({@code fix/deepresonance/DeepResonanceGate}) and the Iron Furnaces fix ({@code fix/ironfurnaces/IronFurnacesGate}) the same way, the Voltaic fix ({@code fix/voltaic/VoltaicGate}) without Voltaic at its pinned version or without Mekanism and Curios, and the fixes into client-only classes on a dedicated server ({@code fix/proxy/ClientGate}). Ids are
+ * the pinned version, the Gobber fix ({@code fix/gobber/GobberGate}) without Gobber 2 at its pinned version, the Compact Machines fixes ({@code fix/cm/CmGate}) without Compact Machines at its pinned version, the MFFS fixes ({@code fix/mffs/MffsGate}) and the Deep Resonance fix ({@code fix/deepresonance/DeepResonanceGate}) and the Iron Furnaces fix ({@code fix/ironfurnaces/IronFurnacesGate}) the same way, the Voltaic fix ({@code fix/voltaic/VoltaicGate}) without Voltaic at its pinned version or without Mekanism and Curios, the Evolved Mekanism fix ({@code fix/evolvedmekanism/EvolvedMekanismGate}) without Evolved Mekanism at its pinned version or without Elytra Slot and Curios, and the fixes into client-only classes on a dedicated server ({@code fix/proxy/ClientGate}). Ids are
  * the F-n of the vault's Fix Log.
  */
 public final class Fixes {
@@ -99,7 +100,8 @@ public final class Fixes {
             Map.entry("MffsForceFieldSyncMixin", new Fix(FieldSync.ID, FieldSync.WHAT, FieldSync.TARGET)),
             Map.entry("DeepResonancePlaceEventMixin", new Fix(PlaceEventLevel.ID, PlaceEventLevel.WHAT, PlaceEventLevel.TARGET)),
             Map.entry("IronFurnacesListLoadMixin", new Fix(FurnaceListRepair.ID, FurnaceListRepair.WHAT, FurnaceListRepair.TARGET)),
-            Map.entry("VoltaicCurioShieldingMixin", new Fix(CurioShielding.ID, CurioShielding.WHAT, CurioShielding.TARGET)));
+            Map.entry("VoltaicCurioShieldingMixin", new Fix(CurioShielding.ID, CurioShielding.WHAT, CurioShielding.TARGET)),
+            Map.entry("EvolvedMekanismElytraCurioMixin", new Fix(ElytraCurioRegistration.ID, ElytraCurioRegistration.WHAT, ElytraCurioRegistration.TARGET)));
 
     private static final List<Fix> ACTIVE = Collections.synchronizedList(new ArrayList<>());
     /** Fixes the mixin plugin skipped, by id, with the reason (the EMI fixes without EMI at the pinned version; client-only fixes on a dedicated server). */

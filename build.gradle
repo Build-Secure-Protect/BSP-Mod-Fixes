@@ -200,6 +200,11 @@ dependencies {
     compileOnly fg.deobf("curse.maven:${curios_curse}")
     compileOnly fg.deobf("curse.maven:${mekanism_curse}")
 
+    // Evolved Mekanism and Elytra Slot, compiled against for the Evolved Mekanism fix (F-42); optional at runtime, gated to
+    // evolvedmekanism_version with Elytra Slot and Curios present.
+    compileOnly fg.deobf("curse.maven:${evolvedmekanism_curse}")
+    compileOnly fg.deobf("curse.maven:${elytraslot_curse}")
+
     // ./gradlew runClient -PwithEmi (or any run): EMI, JEI, Tinkers' Construct and Mantle load, for the in-game checks of docs/TESTING.md.
     if (project.hasProperty('withEmi')) {
         runtimeOnly fg.deobf("curse.maven:${emi_curse}")
@@ -232,6 +237,20 @@ dependencies {
         runtimeOnly fg.deobf("curse.maven:${curios_curse}")
         runtimeOnly fg.deobf("curse.maven:${evolvedmekanism_curse}")
         runtimeOnly fg.deobf("curse.maven:${igleelib_curse}")
+    }
+    // ./gradlew runGameTestServer -PwithElytra (or any run): the Hazmat set plus Elytra Slot and Caelus load (the exact pack files),
+    // so the F-42 test looks the real HDPE Reinforced Elytra's curio capability up; without them the test checks the decision and
+    // the gate's skip.
+    if (project.hasProperty('withElytra')) {
+        runtimeOnly fg.deobf("curse.maven:${voltaic_curse}")
+        runtimeOnly fg.deobf("curse.maven:${electrodynamics_curse}")
+        runtimeOnly fg.deobf("curse.maven:${nuclearscience_curse}")
+        runtimeOnly fg.deobf("curse.maven:${mekanism_curse}")
+        runtimeOnly fg.deobf("curse.maven:${curios_curse}")
+        runtimeOnly fg.deobf("curse.maven:${evolvedmekanism_curse}")
+        runtimeOnly fg.deobf("curse.maven:${igleelib_curse}")
+        runtimeOnly fg.deobf("curse.maven:${elytraslot_curse}")
+        runtimeOnly fg.deobf("curse.maven:${caelus_curse}")
     }
     if (project.hasProperty('withBspSu')) {
         runtimeOnly fg.deobf("curse.maven:${bsp_su_curse}")
@@ -305,7 +324,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
             numina_version_range: numina_version_range, powersuits_version_range: powersuits_version_range,
-            emi_version: emi_version, aae_version: aae_version, gobber_version: gobber_version, cm_version: cm_version, mffs_version: mffs_version, dr_version: dr_version, if_version: if_version, voltaic_version: voltaic_version,
+            emi_version: emi_version, aae_version: aae_version, gobber_version: gobber_version, cm_version: cm_version, mffs_version: mffs_version, dr_version: dr_version, if_version: if_version, voltaic_version: voltaic_version, evolvedmekanism_version: evolvedmekanism_version,
     ]
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
