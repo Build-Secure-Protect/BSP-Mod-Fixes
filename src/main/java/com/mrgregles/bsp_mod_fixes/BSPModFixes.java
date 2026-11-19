@@ -41,6 +41,9 @@ public class BSPModFixes {
         if (Boolean.getBoolean("bsp_mod_fixes.jemiProbe")) {
             context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("JemiSlotsProbe", "install"));
         }
+        if (Boolean.getBoolean("bsp_mod_fixes.enchanterProbe")) {
+            context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("EnchanterProbe", "install"));
+        }
         if (Boolean.getBoolean("bsp_mod_fixes.titleProbe")) {
             context.getModEventBus().addListener((FMLLoadCompleteEvent e) -> runProbe("TitleProbe", "install"));
         }

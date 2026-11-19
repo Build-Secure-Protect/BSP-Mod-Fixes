@@ -1,3 +1,11 @@
+# BSP-Mod Fixes 0.11.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8 and Voltaic 1.20.1-1.2.2 with Mekanism and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**The Portable Hazmat Suit now protects against Nuclear Science radiation.** F-40, for Voltaic 1.20.1-1.2.2, the library that runs Nuclear Science's radiation: it only ever looked at the four armour slots when it worked out how much of a dose gets through, so Evolved Mekanism's Portable Hazmat Suit, which sits in a Curios slot, protected against Mekanism's radiation and not against Nuclear Science's. The dose that gets past your armour is now also reduced by the shielding of what you wear in your Curios slots, the way Mekanism itself counts it: the suit switched on blocks it all, switched off it does nothing, and your Geiger counter still reads the field. `curioRadiationShielding` under `[voltaic]` in `bsp_mod_fixes-server.toml` turns it off.
+
 # BSP-Mod Fixes 0.10.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6 and Iron Furnaces 4.1.8 (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.

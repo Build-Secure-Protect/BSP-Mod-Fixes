@@ -24,6 +24,7 @@ public final class FixesConfig {
     public static final ForgeConfigSpec.BooleanValue DR_PLACE_EVENTS_WITHOUT_PLACER;
     public static final ForgeConfigSpec.BooleanValue IF_REPAIR_FURNACE_LIST;
     public static final ForgeConfigSpec.IntValue IF_MAX_FURNACES_PER_PLAYER;
+    public static final ForgeConfigSpec.BooleanValue VOLTAIC_CURIO_RADIATION_SHIELDING;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -163,6 +164,18 @@ public final class FixesConfig {
                 "How many furnaces one player's list may hold, after duplicates are dropped, before the server logs a warning naming",
                 "the player. Nothing is removed. 0 means no warning.")
                 .defineInRange("maxFurnacesPerPlayer", 4096, 0, Integer.MAX_VALUE);
+        b.pop();
+        b.push("voltaic");
+        VOLTAIC_CURIO_RADIATION_SHIELDING = b.comment(
+                "Voltaic runs Nuclear Science's radiation and shields a dose by the four armour slots only (its own hazmat pieces,",
+                "and anything carrying Mekanism's radiation-shielding capability), never by a Curios slot. Evolved Mekanism's",
+                "Portable Hazmat Suit is a curio with that capability, so it shields against Mekanism's radiation (Mekanism reads",
+                "curios itself) and not against Nuclear Science's. true scales the dose left after armour by the equipped curios'",
+                "Mekanism shielding, summed as Mekanism sums it: a switched-on suit leaves nothing, a partial curio a part;",
+                "armour, armour damage, iodine, enchantments and the recorded dose stay as Voltaic has them. false leaves",
+                "Voltaic's behaviour as it is. Only read while exactly Voltaic 1.20.1-1.2.2 is loaded with Mekanism and Curios;",
+                "otherwise the fix is skipped whatever this says.")
+                .define("curioRadiationShielding", true);
         b.pop();
         SPEC = b.build();
     }

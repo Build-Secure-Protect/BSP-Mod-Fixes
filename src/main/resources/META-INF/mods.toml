@@ -114,3 +114,13 @@ description='''${mod_description}'''
     versionRange="[0,)"
     ordering="AFTER"
     side="BOTH"
+
+# Voltaic is optional, on both sides: its fix (F-40) applies only when Voltaic ${voltaic_version} is loaded together with Mekanism
+# and Curios (checked by the mixin config plugin, which logs one line and skips it otherwise). Open range for the same reason as
+# EMI's.
+[[dependencies.${mod_id}]]
+    modId="voltaic"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"

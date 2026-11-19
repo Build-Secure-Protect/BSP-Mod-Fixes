@@ -44,7 +44,13 @@ minecraft {
         }
 
         client {
-            property 'forge.enabledGameTestNamespaces', mod_id
+            // Not on a probe run: the GameTest scan loads every mod's test classes, and another BSP mod's need libraries a dev
+            // client does not have (BSP Server Utilities' tests name the LuckPerms API).
+            if (project.hasProperty('enchanterProbe')) {
+                property 'forge.enableGameTest', 'false' // ForgeGradle turns the scan on for every run; off for the probe
+            } else {
+                property 'forge.enabledGameTestNamespaces', mod_id
+            }
             // ./gradlew runClient -PquickPlay=<world in run/saves>: opens that world at once (vanilla quick play), so a
             // headless check can reach the recipe reload (EMI's JEI layer only loads in a world).
             if (project.hasProperty('quickPlay')) {
@@ -65,6 +71,15 @@ minecraft {
             // the exception; add -PskipFixes=EmiJemiSlotsViewMixin to see EMI as shipped crash (F-37).
             if (project.hasProperty('jemiProbe')) {
                 property 'bsp_mod_fixes.jemiProbe', 'true'
+            }
+            // ./gradlew runClient -PwithEmi -PwithEnderIo -PenchanterProbe -PquickPlay=emitest: runs gametest/EnchanterProbe, which builds
+            // and draws every recipe of EMI's Enchanting category (Ender IO's enchanter through EMI's JEI layer) as the recipe screen does
+            // and logs the exception behind "Error Rendering"; add -PwithAtl to load AllTheLeaks beside it.
+            if (project.hasProperty('enchanterProbe')) {
+                property 'bsp_mod_fixes.enchanterProbe', 'true'
+                // Forge's dev-only "config value before load" check would crash this run (Powersuits asks every item for its
+                // energy capability at key registration; Ender IO's capacitor bank then reads its config): production semantics.
+                args '--mixin.config', 'bsp_mod_fixes.probe.mixins.json'
             }
             // ./gradlew runClient -PtitleProbe: the client closes itself a few seconds after the title screen is up, so a
             // headless run that only wants the startup log ends on its own (gametest/TitleProbe).
@@ -179,6 +194,12 @@ dependencies {
     // Iron Furnaces, compiled against for its fix (F-39); optional at runtime, gated to if_version.
     compileOnly fg.deobf("curse.maven:${if_curse}")
 
+    // Voltaic, Curios and Mekanism, compiled against for the Voltaic fix (F-40); optional at runtime, gated to voltaic_version
+    // with Mekanism and Curios present.
+    compileOnly fg.deobf("curse.maven:${voltaic_curse}")
+    compileOnly fg.deobf("curse.maven:${curios_curse}")
+    compileOnly fg.deobf("curse.maven:${mekanism_curse}")
+
     // ./gradlew runClient -PwithEmi (or any run): EMI, JEI, Tinkers' Construct and Mantle load, for the in-game checks of docs/TESTING.md.
     if (project.hasProperty('withEmi')) {
         runtimeOnly fg.deobf("curse.maven:${emi_curse}")
@@ -193,6 +214,36 @@ dependencies {
     }
     if (project.hasProperty('withAu')) {
         runtimeOnly fg.deobf("curse.maven:${almostunified_curse}")
+    }
+    if (project.hasProperty('withEnderIo')) {
+        runtimeOnly fg.deobf("curse.maven:${enderio_curse}")
+    }
+    if (project.hasProperty('withAtl')) {
+        runtimeOnly fg.deobf("curse.maven:${alltheleaks_curse}")
+    }
+    // ./gradlew runGameTestServer -PwithHazmat (or any run): Voltaic, Electrodynamics, Nuclear Science, Mekanism, Curios, Evolved
+    // Mekanism and IgleeLib load (the exact pack files), so the F-40 test doses a mock player wearing the real Portable Hazmat Suit
+    // through Voltaic's real recipient; without them the test checks the pure arithmetic and the gate's skip.
+    if (project.hasProperty('withHazmat')) {
+        runtimeOnly fg.deobf("curse.maven:${voltaic_curse}")
+        runtimeOnly fg.deobf("curse.maven:${electrodynamics_curse}")
+        runtimeOnly fg.deobf("curse.maven:${nuclearscience_curse}")
+        runtimeOnly fg.deobf("curse.maven:${mekanism_curse}")
+        runtimeOnly fg.deobf("curse.maven:${curios_curse}")
+        runtimeOnly fg.deobf("curse.maven:${evolvedmekanism_curse}")
+        runtimeOnly fg.deobf("curse.maven:${igleelib_curse}")
+    }
+    if (project.hasProperty('withBspSu')) {
+        runtimeOnly fg.deobf("curse.maven:${bsp_su_curse}")
+        runtimeOnly fg.deobf("curse.maven:${bsp_core_curse}")
+    }
+    if (project.hasProperty('withEnchantMods')) {
+        runtimeOnly fg.deobf("curse.maven:${apotheosis_curse}")
+        runtimeOnly fg.deobf("curse.maven:${placebo_curse}")
+        runtimeOnly fg.deobf("curse.maven:${apothicattributes_curse}")
+        runtimeOnly fg.deobf("curse.maven:${almostunified_curse}")
+        runtimeOnly fg.deobf("curse.maven:${enchdesc_curse}")
+        runtimeOnly fg.deobf("curse.maven:${bookshelf_curse}")
     }
     if (project.hasProperty('withCrt')) {
         runtimeOnly fg.deobf("curse.maven:${crafttweaker_curse}")
@@ -254,7 +305,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_id: mod_id, mod_name: mod_name, mod_license: mod_license, mod_version: mod_version,
             mod_authors: mod_authors, mod_description: mod_description,
             numina_version_range: numina_version_range, powersuits_version_range: powersuits_version_range,
-            emi_version: emi_version, aae_version: aae_version, gobber_version: gobber_version, cm_version: cm_version, mffs_version: mffs_version, dr_version: dr_version, if_version: if_version,
+            emi_version: emi_version, aae_version: aae_version, gobber_version: gobber_version, cm_version: cm_version, mffs_version: mffs_version, dr_version: dr_version, if_version: if_version, voltaic_version: voltaic_version,
     ]
     inputs.properties replaceProperties
     filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
@@ -276,7 +327,7 @@ tasks.register('checkLang', Exec) {
 check.dependsOn 'checkLang'
 
 // The GameTests, their helpers and the GameTest server's own mixins (bsp_mod_fixes.gametest.mixins.json) stay out of the jar.
-def gameTestMixin = ['bsp_mod_fixes.gametest.mixins.json', 'com/mrgregles/bsp_mod_fixes/mixin/gametest/**', 'com/mrgregles/bsp_mod_fixes/gametest/**']
+def gameTestMixin = ['bsp_mod_fixes.gametest.mixins.json', 'bsp_mod_fixes.probe.mixins.json', 'com/mrgregles/bsp_mod_fixes/mixin/gametest/**', 'com/mrgregles/bsp_mod_fixes/gametest/**']
 
 tasks.named('jar', Jar).configure {
     exclude gameTestMixin

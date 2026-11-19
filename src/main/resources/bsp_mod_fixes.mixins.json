@@ -43,7 +43,8 @@
     "MffsFieldLimitMixin",
     "MffsForceFieldSyncMixin",
     "DeepResonancePlaceEventMixin",
-    "IronFurnacesListLoadMixin"
+    "IronFurnacesListLoadMixin",
+    "VoltaicCurioShieldingMixin"
   ],
   "injectors": {
     "defaultRequire": 1
