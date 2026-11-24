@@ -24,7 +24,9 @@ import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.FurnaceListRepair;
 import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.IronFurnacesGate;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.FieldLimit;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.FieldSync;
+import com.mrgregles.bsp_mod_fixes.fix.mffs.LoadedField;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.MffsGate;
+import com.mrgregles.bsp_mod_fixes.fix.mffs.SelectionThread;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.SpongeSampling;
 import com.mrgregles.bsp_mod_fixes.fix.jei.JeiStartGate;
 import com.mrgregles.bsp_mod_fixes.fix.proxy.DeferredDisconnectScreen;
@@ -98,6 +100,10 @@ public final class Fixes {
             Map.entry("MffsSpongeMixin", new Fix(SpongeSampling.ID, SpongeSampling.WHAT, SpongeSampling.TARGET)),
             Map.entry("MffsFieldLimitMixin", new Fix(FieldLimit.ID, FieldLimit.WHAT, FieldLimit.TARGET)),
             Map.entry("MffsForceFieldSyncMixin", new Fix(FieldSync.ID, FieldSync.WHAT, FieldSync.TARGET)),
+            Map.entry("MffsSelectionThreadMixin", new Fix(SelectionThread.ID, SelectionThread.WHAT, SelectionThread.TARGET)),
+            Map.entry("MffsLoadedFieldMixin", new Fix(LoadedField.ID, LoadedField.WHAT, LoadedField.TARGET)),
+            Map.entry("MffsFusionProjectMixin", new Fix(LoadedField.ID, LoadedField.WHAT, LoadedField.TARGET)),
+            Map.entry("MffsFieldBlockLoadMixin", new Fix(LoadedField.ID, LoadedField.WHAT, LoadedField.TARGET)),
             Map.entry("DeepResonancePlaceEventMixin", new Fix(PlaceEventLevel.ID, PlaceEventLevel.WHAT, PlaceEventLevel.TARGET)),
             Map.entry("IronFurnacesListLoadMixin", new Fix(FurnaceListRepair.ID, FurnaceListRepair.WHAT, FurnaceListRepair.TARGET)),
             Map.entry("VoltaicCurioShieldingMixin", new Fix(CurioShielding.ID, CurioShielding.WHAT, CurioShielding.TARGET)),

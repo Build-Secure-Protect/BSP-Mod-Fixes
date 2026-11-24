@@ -36,7 +36,18 @@ public final class MffsGate {
             "MffsForceFieldSyncMixin", new Target("dev.su5ed.mffs.blockentity.ForceFieldBlockEntity", Map.of(
                     "getCustomUpdateTag", "()Lnet/minecraft/nbt/CompoundTag;",
                     "handleCustomUpdateTag", "(Lnet/minecraft/nbt/CompoundTag;)V",
-                    "onLoad", "()V")));
+                    "onLoad", "()V")),
+            "MffsSelectionThreadMixin", new Target("dev.su5ed.mffs.blockentity.ProjectorBlockEntity", Map.of(
+                    "runSelectionTask", "()Ljava/util/concurrent/CompletableFuture;")),
+            "MffsLoadedFieldMixin", new Target("dev.su5ed.mffs.blockentity.ProjectorBlockEntity", Map.of(
+                    "selectProjectablePositions", "()Ljava/util/List;",
+                    "destroyField", "()V",
+                    "lambda$destroyField$19", "(Lnet/minecraft/core/BlockPos;)Z")),
+            "MffsFusionProjectMixin", new Target("dev.su5ed.mffs.util.module.FusionModule", Map.of(
+                    "beforeProject", "(Ldev/su5ed/mffs/api/Projector;)V")),
+            "MffsFieldBlockLoadMixin", new Target("dev.su5ed.mffs.blockentity.ForceFieldBlockEntity", Map.of(
+                    "onLoad", "()V",
+                    "getProjector", "()Ljava/util/Optional;")));
 
     /** A mixin's target class and the methods of it the mixin relies on. */
     public record Target(String className, Map<String, String> methods) {}

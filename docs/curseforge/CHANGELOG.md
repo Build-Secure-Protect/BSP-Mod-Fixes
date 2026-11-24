@@ -1,3 +1,13 @@
+# BSP-Mod Fixes 0.14.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, and Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**A force field projector no longer errors on a background thread when a player arrives.** F-43, for MFFS 5.1.29: the projector worked out which field blocks to build next on a background thread while reading things the server was changing at that moment, and with a Fusion module a player arriving at the base made it throw an error and skip that round. The work now runs on the server thread between ticks, as the building itself always did. `selectOnServerThread` under `[mffs]` in `bsp_mod_fixes-server.toml` turns it off.
+
+**A force field no longer loads and drops the chunks around it over and over.** F-44, for MFFS 5.1.29: a projector whose field reached beyond the loaded area pulled every chunk it touched into memory, dropped it a tick later, and did it again at least once a minute for as long as it ran, each time creating and killing that chunk's field blocks; on a busy server that was a million dead block entities an hour, memory climbing until the server was killed, and lag spikes at every clean-up. The field now stays within the chunks a player or a chunk loader keeps: the projector's selection, its teardown, the Fusion module's removals and the field blocks' own load no longer load chunks, and field blocks in unloaded chunks simply stay as they were saved. `fieldStaysInLoadedChunks` under `[mffs]` in `bsp_mod_fixes-server.toml` turns it off.
+
 # BSP-Mod Fixes 0.13.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, and Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.

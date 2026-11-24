@@ -21,6 +21,8 @@ public final class FixesConfig {
     public static final ForgeConfigSpec.IntValue MFFS_MAX_FIELD_BLOCKS;
     public static final ForgeConfigSpec.IntValue MFFS_MAX_FIELD_RADIUS;
     public static final ForgeConfigSpec.BooleanValue MFFS_SYNC_FIELD_BLOCKS;
+    public static final ForgeConfigSpec.BooleanValue MFFS_SELECT_ON_SERVER_THREAD;
+    public static final ForgeConfigSpec.BooleanValue MFFS_FIELD_STAYS_IN_LOADED_CHUNKS;
     public static final ForgeConfigSpec.BooleanValue DR_PLACE_EVENTS_WITHOUT_PLACER;
     public static final ForgeConfigSpec.BooleanValue IF_REPAIR_FURNACE_LIST;
     public static final ForgeConfigSpec.IntValue IF_MAX_FURNACES_PER_PLAYER;
@@ -136,6 +138,23 @@ public final class FixesConfig {
                 "placed into a chunk it already has; false leaves MFFS's behaviour as it is. Both sides read it (Forge sends this file",
                 "to each client at login). Only read while exactly MFFS 5.1.29 is loaded; any other MFFS skips the fix whatever this says.")
                 .define("syncFieldBlocksInChunks", true);
+        MFFS_SELECT_ON_SERVER_THREAD = b.comment(
+                "MFFS works out which of a force field's positions to build next on a background thread (the common ForkJoinPool),",
+                "and that work reads the world and the frequency grid while the server thread changes them: with a Fusion module it",
+                "throws ConcurrentModificationException (\"Error selecting force field blocks\") as a player's arrival loads the",
+                "base, and its block-state reads load chunks from off the server thread. true runs that selection on the server",
+                "thread between ticks instead (the field's geometry is still calculated in the background); false leaves MFFS's",
+                "behaviour as it is. Only read while exactly MFFS 5.1.29 is loaded; any other MFFS skips the fix whatever this says.")
+                .define("selectOnServerThread", true);
+        MFFS_FIELD_STAYS_IN_LOADED_CHUNKS = b.comment(
+                "MFFS's selection, its teardown, the Fusion module's removals and a field block's own load each read block states",
+                "before asking whether the chunk is loaded, and such a read loads the chunk for one tick: every chunk a field touched",
+                "beyond the loaded area was loaded and dropped at least once a minute while the projector ran, each time creating",
+                "and killing the chunk's field block entities (a million dead tickers in a hundred minutes around one projector).",
+                "true leaves positions in unloaded chunks alone, so no field work loads a chunk: field blocks there stay as saved and",
+                "are completed where missing when their chunk is loaded for another reason; false leaves MFFS's behaviour as it is.",
+                "Only read while exactly MFFS 5.1.29 is loaded; any other MFFS skips the fix whatever this says.")
+                .define("fieldStaysInLoadedChunks", true);
         b.pop();
         b.push("deepResonance");
         DR_PLACE_EVENTS_WITHOUT_PLACER = b.comment(

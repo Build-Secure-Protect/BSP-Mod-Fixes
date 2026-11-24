@@ -10,12 +10,15 @@ import dev.su5ed.mffs.setup.ModFluids;
 import dev.su5ed.mffs.setup.ModItems;
 import dev.su5ed.mffs.setup.ModModules;
 import dev.su5ed.mffs.setup.ModObjects;
+import dev.su5ed.mffs.util.ModUtil;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.LevelChunk;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -153,5 +156,39 @@ final class MffsTestBridge {
         } catch (ReflectiveOperationException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    /** Gives the projector a Fusion module in a slot that takes it (an upgrade slot for a matrix module, a field slot otherwise). */
+    static void setFusionModule(BlockEntity be) {
+        ProjectorBlockEntity projector = (ProjectorBlockEntity) be;
+        ItemStack fusion = new ItemStack(ModItems.FUSION_MODULE.get());
+        if (ModUtil.isModule(fusion, Module.Category.FIELD)) {
+            projector.fieldModuleSlots.get(Direction.UP).get(0).setItem(fusion);
+        } else {
+            projector.upgradeSlots.get(1).setItem(fusion);
+        }
+    }
+
+    static boolean hasFusionModule(BlockEntity be) {
+        return ((Projector) be).hasModule(ModModules.FUSION);
+    }
+
+    static void setFrequency(BlockEntity be, int frequency) {
+        ((FortronBlockEntity) be).fortronStorage.setFrequency(frequency);
+    }
+
+    static int calculatedPositions(BlockEntity be) {
+        return ((Projector) be).getCalculatedFieldPositions().size();
+    }
+
+    /** How many of a chunk's block entities are force field blocks. */
+    static int forceFieldEntities(LevelChunk chunk) {
+        int n = 0;
+        for (BlockEntity be : chunk.getBlockEntities().values()) {
+            if (be instanceof ForceFieldBlockEntity) {
+                n++;
+            }
+        }
+        return n;
     }
 }

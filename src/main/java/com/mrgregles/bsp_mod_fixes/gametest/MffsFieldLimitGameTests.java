@@ -97,7 +97,7 @@ public class MffsFieldLimitGameTests {
                             return;
                         }
                         h.assertTrue(after == 0, "refused: nothing projected after the recalculation, found " + after);
-                        h.assertTrue(FieldLimit.refusals() == refusalsBefore + 1, "one refusal recorded");
+                        h.assertTrue(FieldLimit.refusals() == refusalsBefore + 1, "one refusal recorded: " + refusalsBefore + " before, " + FieldLimit.refusals() + " after");
                         // A field block that already stood there (an older field): removed at the next notice, a minute on.
                         BlockPos stray = center.offset(3, 0, 0);
                         level.setBlock(stray, MffsTestBridge.forceField(), 3);
