@@ -28,6 +28,11 @@ final class Suits {
     static final ResourceLocation GLIDER = ResourceLocation.fromNamespaceAndPath("powersuits", "glider");
     static final ResourceLocation SPRINT_ASSIST = ResourceLocation.fromNamespaceAndPath("powersuits", "sprint_assist");
     static final ResourceLocation JUMP_ASSIST = ResourceLocation.fromNamespaceAndPath("powersuits", "jump_assist");
+    static final ResourceLocation POWER_FIST = ResourceLocation.fromNamespaceAndPath("powersuits", "powerfist");
+    static final ResourceLocation RAILGUN = ResourceLocation.fromNamespaceAndPath("powersuits", "railgun");
+    static final ResourceLocation SILK_TOUCH = ResourceLocation.fromNamespaceAndPath("powersuits", "silk_touch");
+    static final ResourceLocation FORTUNE = ResourceLocation.fromNamespaceAndPath("powersuits", "fortune");
+    static final ResourceLocation AQUA_AFFINITY = ResourceLocation.fromNamespaceAndPath("powersuits", "aqua_affinity");
 
     private Suits() {}
 
@@ -43,6 +48,39 @@ final class Suits {
         return player;
     }
 
+    /**
+     * A survival mock player standing in the test area, holding a Power Fist in the main hand with {@code modules} installed.
+     * Right-click modules go in first: Numina's {@code ModeChangingModularItem.serializeNBT} asks the active mode, and while
+     * none is chosen (its static index is -1, until some fist with a saved mode is loaded) that reloads the fist's modules from
+     * the fist's saved NBT, which for a second or later insert is the list of before that insert, so the module just inserted
+     * is dropped and the re-save that follows writes the list without it (a first insert into a fresh fist has no saved NBT
+     * yet and stays). With a right-click module in place the mode is chosen and the later inserts stay. Every module is
+     * checked to be in the fist's NBT afterwards.
+     */
+    static ServerPlayer holding(GameTestHelper h, ResourceLocation... modules) {
+        ServerPlayer player = MockPlayers.serverPlayer(h, GameType.SURVIVAL);
+        player.moveTo(h.absoluteVec(new Vec3(12, 2, 12)));
+        player.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(ForgeRegistries.ITEMS.getValue(POWER_FIST)));
+        IModularItem item = modular(player, EquipmentSlot.MAINHAND);
+        java.util.List<ItemStack> stacks = new java.util.ArrayList<>();
+        for (ResourceLocation module : modules) {
+            ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(module));
+            boolean rightClick = stack.getCapability(NuminaCapabilities.POWER_MODULE)
+                    .filter(lehjr.numina.common.capabilities.module.rightclick.IRightClickModule.class::isInstance).isPresent();
+            stacks.add(rightClick ? 0 : stacks.size(), stack);
+        }
+        for (ItemStack stack : stacks) {
+            install(item, stack);
+        }
+        ((lehjr.numina.common.capabilities.CapabilityUpdate) item).loadCapValues(); // the handler re-reads the fist's NBT, as any later capability access of the fist does
+        for (ResourceLocation module : modules) {
+            if (item.findInstalledModule(module) < 0) {
+                throw new AssertionError(module + " is not in the fist's NBT after the install: " + player.getMainHandItem().getTag());
+            }
+        }
+        return player;
+    }
+
     static IModularItem modular(ServerPlayer player, EquipmentSlot slot) {
         return player.getItemBySlot(slot).getCapability(ForgeCapabilities.ITEM_HANDLER)
                 .filter(IModularItem.class::isInstance).map(IModularItem.class::cast)
@@ -51,7 +89,12 @@ final class Suits {
 
     /** Installs the module into the first slot that takes it, as the creative-install handler does. */
     static void install(IModularItem item, ResourceLocation module) {
-        ItemStack stack = new ItemStack(ForgeRegistries.ITEMS.getValue(module));
+        install(item, new ItemStack(ForgeRegistries.ITEMS.getValue(module)));
+    }
+
+    /** Installs an already constructed module stack into the first slot that takes it. */
+    static void install(IModularItem item, ItemStack stack) {
+        ResourceLocation module = ForgeRegistries.ITEMS.getKey(stack.getItem());
         for (int i = 0; i < item.getSlots(); i++) {
             if (item.insertItem(i, stack, false).isEmpty()) {
                 return;

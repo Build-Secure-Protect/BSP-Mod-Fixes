@@ -51,7 +51,9 @@
     "DeepResonancePlaceEventMixin",
     "IronFurnacesListLoadMixin",
     "VoltaicCurioShieldingMixin",
-    "EvolvedMekanismElytraCurioMixin"
+    "EvolvedMekanismElytraCurioMixin",
+    "NuminaConfigTitleMixin",
+    "PowersuitsRailgunUseMixin"
   ],
   "injectors": {
     "defaultRequire": 1

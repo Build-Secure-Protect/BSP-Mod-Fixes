@@ -72,6 +72,18 @@ This is a deliberate re-balance toward solar: on open ground the old module's st
 
 Keep the defaults first (`armorEnergy` 6 and `armorEnergyPerDamage` 5000 per slider unit, so up to 5,000 FE per damage point absorbed) and tune after play.
 
+### After F-45 (the Mining Enchantment modules read their section)
+
+`[Modules.Mining_Enhancement.silk_touch]`, `[...fortune]` and `[...aqua_affinity]` now apply: `base_silkTouchEnCon` (2,500 by default) is what Silk Touch drains **per tick while switched on**, and `isAllowed = false` on any of the three keeps it out of a fist. Before F-45 the three modules read a `Mining_Enchantment` section that Powersuits never writes, so the code's defaults applied whatever the file said. One of the file's defaults differs from the code's, so F-45 is a balance change there:
+
+| Section | Key | Code default (what applied before F-45) | File default (what applies now) | Set to |
+|---|---|---|---|---|
+| `[Modules.Mining_Enhancement.silk_touch]` | `base_silkTouchEnCon` | 50,000 | **2,500** | as you like; 2,500 is the pack's current value |
+| `[Modules.Mining_Enhancement.aqua_affinity]` | `base_energyCon` | 50,000 | **0.0** (the module is free) | a value, if Aqua Affinity should cost anything; 2,500 would match Silk Touch (the pack's file has 0.0) |
+| `[Modules.Mining_Enhancement.fortune]` | `base_fortuneEnCon`, `fortuneEnCon_enchLevel_multiplier`, `fortuneLevel_enchLevel_multiplier` | 500, 9,500, 3 | 500, 9,500, 3 | nothing: both agree |
+
+Aqua Affinity's `base_aquaHarvSpeed` and `aquaHarvSpeed_power_multiplier` match no property of the module (Powersuits' own dead keys); leave them.
+
 ### Known cosmetic issue
 
 `powersuits-server.toml` has a garbled key, `coolingBonen_usergyCon_multiplier`, from an upstream string bug. Harmless; leave it.

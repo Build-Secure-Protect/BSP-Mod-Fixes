@@ -28,6 +28,8 @@ import com.mrgregles.bsp_mod_fixes.fix.mffs.LoadedField;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.MffsGate;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.SelectionThread;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.SpongeSampling;
+import com.mrgregles.bsp_mod_fixes.fix.powersuits.RailgunShot;
+import com.mrgregles.bsp_mod_fixes.fix.powersuits.SilkTouchConfigKey;
 import com.mrgregles.bsp_mod_fixes.fix.jei.JeiStartGate;
 import com.mrgregles.bsp_mod_fixes.fix.proxy.DeferredDisconnectScreen;
 import com.mrgregles.bsp_mod_fixes.fix.proxy.StalePacketDrop;
@@ -107,7 +109,9 @@ public final class Fixes {
             Map.entry("DeepResonancePlaceEventMixin", new Fix(PlaceEventLevel.ID, PlaceEventLevel.WHAT, PlaceEventLevel.TARGET)),
             Map.entry("IronFurnacesListLoadMixin", new Fix(FurnaceListRepair.ID, FurnaceListRepair.WHAT, FurnaceListRepair.TARGET)),
             Map.entry("VoltaicCurioShieldingMixin", new Fix(CurioShielding.ID, CurioShielding.WHAT, CurioShielding.TARGET)),
-            Map.entry("EvolvedMekanismElytraCurioMixin", new Fix(ElytraCurioRegistration.ID, ElytraCurioRegistration.WHAT, ElytraCurioRegistration.TARGET)));
+            Map.entry("EvolvedMekanismElytraCurioMixin", new Fix(ElytraCurioRegistration.ID, ElytraCurioRegistration.WHAT, ElytraCurioRegistration.TARGET)),
+            Map.entry("NuminaConfigTitleMixin", new Fix(SilkTouchConfigKey.ID, SilkTouchConfigKey.WHAT, SilkTouchConfigKey.TARGET)),
+            Map.entry("PowersuitsRailgunUseMixin", new Fix(RailgunShot.ID, RailgunShot.WHAT, RailgunShot.TARGET)));
 
     private static final List<Fix> ACTIVE = Collections.synchronizedList(new ArrayList<>());
     /** Fixes the mixin plugin skipped, by id, with the reason (the EMI fixes without EMI at the pinned version; client-only fixes on a dedicated server). */
