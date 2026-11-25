@@ -1,3 +1,11 @@
+# BSP-Mod Fixes 0.16.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, and Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**The Rail Gun no longer shoots once and goes dead until you change weapon.** F-47, for Modular Powersuits 2.3.13: the Rail Gun's 15-tick cooldown was counted down only while its module was switched on, but the trigger never checked that, so a Rail Gun whose module was off (by a toggle key, the Tinker Table's toggle, or possibly an unlucky default) fired once and then nothing counted its cooldown down; changing weapon happened to reset it, so it fired once more. The cooldown now runs by the game clock inside the shot itself and ends 15 ticks after each shot whether the module is on or off. A fist from before this fix fires at once. Changing weapon still resets the cooldown, as before.
+
 # BSP-Mod Fixes 0.15.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, and Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.

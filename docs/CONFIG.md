@@ -79,7 +79,7 @@ Keep the defaults first (`armorEnergy` 6 and `armorEnergyPerDamage` 5000 per sli
 | Section | Key | Code default (what applied before F-45) | File default (what applies now) | Set to |
 |---|---|---|---|---|
 | `[Modules.Mining_Enhancement.silk_touch]` | `base_silkTouchEnCon` | 50,000 | **2,500** | as you like; 2,500 is the pack's current value |
-| `[Modules.Mining_Enhancement.aqua_affinity]` | `base_energyCon` | 50,000 | **0.0** (the module is free) | a value, if Aqua Affinity should cost anything; 2,500 would match Silk Touch (the pack's file has 0.0) |
+| `[Modules.Mining_Enhancement.aqua_affinity]` | `base_energyCon` | 50,000 | **0.0** (the module is free) | **2,500**, matching Silk Touch (D159); the pack's `defaultconfigs` and each world's file have 0.0 until set |
 | `[Modules.Mining_Enhancement.fortune]` | `base_fortuneEnCon`, `fortuneEnCon_enchLevel_multiplier`, `fortuneLevel_enchLevel_multiplier` | 500, 9,500, 3 | 500, 9,500, 3 | nothing: both agree |
 
 Aqua Affinity's `base_aquaHarvSpeed` and `aquaHarvSpeed_power_multiplier` match no property of the module (Powersuits' own dead keys); leave them.

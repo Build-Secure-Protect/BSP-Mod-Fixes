@@ -53,7 +53,8 @@
     "VoltaicCurioShieldingMixin",
     "EvolvedMekanismElytraCurioMixin",
     "NuminaConfigTitleMixin",
-    "PowersuitsRailgunUseMixin"
+    "PowersuitsRailgunUseMixin",
+    "PowersuitsRailgunCooldownMixin"
   ],
   "injectors": {
     "defaultRequire": 1

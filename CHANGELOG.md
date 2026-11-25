@@ -6,6 +6,11 @@ All notable changes to this project are documented in this file. The format is b
 
 Nothing yet.
 
+## [0.16.0] - 2026-11-25
+
+### Added
+- F-47 (Modular Powersuits 2.3.13, both sides): the Rail Gun's cooldown is counted by game time in its own `use`, so it ends 15 ticks after the shot whether or not the module is online. Powersuits wrote `cooldown = 15` into the fist's `MMModItem` compound at each shot and counted it down only in the module's `onPlayerTickActive`, which Numina runs only while the module is online, while `use` itself fired without looking at the online flag: a Rail Gun whose module was offline (its `Active` tag false, by a module toggle key, the Tinker Table's toggle, or possibly Numina's static default at an unlucky lookup, which the measurement did not reproduce) fired once and never again, since nothing counted its cooldown down, until a weapon change rewrote `MMModItem` from the module list and wiped the cooldown with it: "just shot once, and it's needed to change weapon to shoot again". The one cooldown read and the one cooldown write in `use` are redirected: the write keeps Powersuits' tag and stamps, beside it, the game time the cooldown ends at; the read answers the ticks left by that stamp. No stamp (a fist from before the fix, or a compound a mode change just rewrote) means ready, as does a stamp more than a full cooldown plus five ticks ahead (another server's clock, carried over by the inventory sync; the five ticks of slack keep a client whose clock runs a tick or two behind the server's between time syncs from playing a shot's sound the server refuses, and cost a few ticks once on a foreign clock that lands inside them). The per-tick count-down still runs while the module is online and no longer matters, and the stamp stays in the compound after it until the next rewrite. A mode change still resets the cooldown as before. No switch.
+
 ## [0.15.0] - 2026-11-25
 
 ### Added

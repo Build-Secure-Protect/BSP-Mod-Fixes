@@ -3,6 +3,7 @@ package com.mrgregles.bsp_mod_fixes.gametest;
 import com.mrgregles.bsp_mod_fixes.BSPModFixes;
 import com.mrgregles.bsp_mod_fixes.MixinFixPlugin;
 import com.mrgregles.bsp_mod_fixes.fix.Fixes;
+import com.mrgregles.bsp_mod_fixes.fix.powersuits.RailgunCooldown;
 import com.mrgregles.bsp_mod_fixes.fix.powersuits.RailgunShot;
 import com.mrgregles.bsp_mod_fixes.fix.powersuits.SilkTouchConfigKey;
 import lehjr.numina.common.capabilities.NuminaCapabilities;
@@ -116,6 +117,73 @@ public class RailgunGameTests {
             h.assertTrue(RailgunShot.skipped() == skipped + 2, "two item uses skipped, got " + (RailgunShot.skipped() - skipped));
         }
         h.succeed();
+    }
+
+    @GameTest(template = ModFixesGameTests.EMPTY)
+    public void the_rail_guns_cooldown_ends_by_game_time_whether_or_not_the_module_is_online(GameTestHelper h) {
+        // the rule
+        h.assertTrue(RailgunCooldown.remaining(false, 0, 100) == 0.0, "no stamp: ready");
+        h.assertTrue(RailgunCooldown.remaining(true, 115, 100) == 15.0 && RailgunCooldown.remaining(true, 115, 110) == 5.0, "a stamp ahead: the ticks left");
+        h.assertTrue(RailgunCooldown.remaining(true, 115, 115) == 0.0 && RailgunCooldown.remaining(true, 115, 200) == 0.0, "a stamp reached or passed: ready");
+        h.assertTrue(RailgunCooldown.remaining(true, 118, 100) == 18.0 && RailgunCooldown.remaining(true, 120, 100) == 20.0, "a stamp within the clock slack beyond a cooldown (a client a few ticks behind the server): the ticks left");
+        h.assertTrue(RailgunCooldown.remaining(true, 121, 100) == 0.0 && RailgunCooldown.remaining(true, 100_000, 100) == 0.0, "a stamp beyond the slack (another clock): ready");
+
+        boolean fixOn = !Fixes.skipped().containsKey(RailgunCooldown.ID);
+        h.assertTrue(fixOn || Fixes.skipped().get(RailgunCooldown.ID).equals(MixinFixPlugin.SKIP_REASON), "F-47 is applied or switched off for this run: " + Fixes.skipped());
+
+        // an offline Rail Gun: Powersuits' per-tick count-down never runs for it
+        ServerPlayer player = Suits.holding(h, Suits.BATTERY, Suits.RAILGUN);
+        Suits.charge(player, 1_000_000);
+        ItemStack fist = player.getMainHandItem();
+        IModeChangingItem handler = fistHandler(fist);
+        int slot = handler.findInstalledModule(Suits.RAILGUN);
+        handler.setActiveMode(slot);
+        // through the fist's handler, as Numina's toggle packet does: the module's tag is saved into the fist's NBT (a toggle on the
+        // module object alone is lost at the next energy access, which reloads the fist's modules from that NBT)
+        handler.toggleModule(Suits.RAILGUN, false);
+        IPowerModule gun = Suits.module(player, EquipmentSlot.MAINHAND, Suits.RAILGUN);
+        h.assertTrue(!gun.isModuleOnline() && activeTag(handler.getStackInSlot(slot)).equals("false"), "the module is offline: " + activeTag(handler.getStackInSlot(slot)));
+        h.assertTrue(ForgeRegistries.ITEMS.getKey(handler.getActiveModule().getItem()).equals(Suits.RAILGUN), "an offline Rail Gun is still the fist's active mode (Powersuits never asks)");
+
+        long readyAt = h.getLevel().getGameTime() + 15;
+        h.assertTrue(fires(h, player, fist), "the first click fires");
+        CompoundTag tag = TagUtils.getMuseModularItemTag(fist);
+        h.assertTrue(TagUtils.getModularItemDoubleOrZero(fist, COOLDOWN) == 15.0, "Powersuits' cooldown tag is written as before, got " + TagUtils.getModularItemDoubleOrZero(fist, COOLDOWN));
+        h.assertTrue(tag.contains(RailgunCooldown.READY_AT) == fixOn && (!fixOn || tag.getLong(RailgunCooldown.READY_AT) == readyAt),
+                "with the fix the shot is stamped with the game time it ends at (" + readyAt + "), got " + tag.get(RailgunCooldown.READY_AT));
+        tick(player, 20); // the module is offline: Powersuits' tick leaves the cooldown alone
+        h.assertTrue(!Suits.module(player, EquipmentSlot.MAINHAND, Suits.RAILGUN).isModuleOnline(), "the module is still offline after the click and the ticks");
+        h.assertTrue(TagUtils.getModularItemDoubleOrZero(fist, COOLDOWN) == 15.0, "twenty player ticks leave the offline module's cooldown at 15, got " + TagUtils.getModularItemDoubleOrZero(fist, COOLDOWN));
+        h.assertFalse(fires(h, player, fist), "a click within the cooldown does not fire, fix or not");
+
+        // a fist from before the fix, or one whose compound a mode change rewrote: Powersuits' cooldown standing, no stamp
+        ServerPlayer stale = Suits.holding(h, Suits.BATTERY, Suits.RAILGUN);
+        Suits.charge(stale, 1_000_000);
+        ItemStack staleFist = stale.getMainHandItem();
+        fistHandler(staleFist).setActiveMode(fistHandler(staleFist).findInstalledModule(Suits.RAILGUN));
+        TagUtils.setModularItemDoubleOrRemove(staleFist, COOLDOWN, 15.0);
+        long released = RailgunCooldown.released();
+        h.assertTrue(fires(h, stale, staleFist) == fixOn, "a standing cooldown with no stamp: fires with the fix (ready by the clock), stuck as shipped");
+        h.assertTrue(RailgunCooldown.released() == released + (fixOn ? 1 : 0), "the release is counted once, got " + (RailgunCooldown.released() - released));
+
+        h.runAfterDelay(20, () -> {
+            h.assertTrue(h.getLevel().getGameTime() >= readyAt, "twenty ticks later the game time has passed the stamp");
+            h.assertTrue(TagUtils.getModularItemDoubleOrZero(fist, COOLDOWN) == 15.0, "Powersuits' cooldown of the offline module still stands at 15");
+            h.assertTrue(fires(h, player, fist) == fixOn, "the offline Rail Gun fires again after its cooldown by game time with the fix; as shipped it never fires again");
+            if (fixOn) {
+                h.assertTrue(TagUtils.getMuseModularItemTag(fist).getLong(RailgunCooldown.READY_AT) == h.getLevel().getGameTime() + 15, "the new shot is stamped");
+            }
+            h.succeed();
+        });
+    }
+
+    /** One click of the fist through the item's own {@code use}; whether a shot went off (energy drained). */
+    private static boolean fires(GameTestHelper h, ServerPlayer player, ItemStack fist) {
+        double energy = Suits.energy(player);
+        InteractionResultHolder<ItemStack> result = fist.getItem().use(h.getLevel(), player, InteractionHand.MAIN_HAND);
+        h.assertTrue(result.getResult() == InteractionResult.SUCCESS, "a Rail Gun click is a success, got " + result.getResult());
+        player.stopUsingItem();
+        return Suits.energy(player) < energy;
     }
 
     /**
