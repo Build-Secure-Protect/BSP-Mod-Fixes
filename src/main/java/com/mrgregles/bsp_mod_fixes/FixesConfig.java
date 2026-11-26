@@ -23,6 +23,7 @@ public final class FixesConfig {
     public static final ForgeConfigSpec.BooleanValue MFFS_SYNC_FIELD_BLOCKS;
     public static final ForgeConfigSpec.BooleanValue MFFS_SELECT_ON_SERVER_THREAD;
     public static final ForgeConfigSpec.BooleanValue MFFS_FIELD_STAYS_IN_LOADED_CHUNKS;
+    public static final ForgeConfigSpec.BooleanValue CHUNKS_UNLOAD_OVER_COPIES;
     public static final ForgeConfigSpec.BooleanValue DR_PLACE_EVENTS_WITHOUT_PLACER;
     public static final ForgeConfigSpec.BooleanValue IF_REPAIR_FURNACE_LIST;
     public static final ForgeConfigSpec.IntValue IF_MAX_FURNACES_PER_PLAYER;
@@ -195,6 +196,16 @@ public final class FixesConfig {
                 "Voltaic's behaviour as it is. Only read while exactly Voltaic 1.20.1-1.2.2 is loaded with Mekanism and Curios;",
                 "otherwise the fix is skipped whatever this says.")
                 .define("curioRadiationShielding", true);
+        b.pop();
+        b.push("chunks");
+        CHUNKS_UNLOAD_OVER_COPIES = b.comment(
+                "When a chunk unloads, Minecraft calls every block entity's onChunkUnloaded and then its setRemoved while walking the",
+                "chunk's block entity map itself; a hook that changes that map meanwhile (a mod looking a neighbour up in the unloading",
+                "chunk, which drops the removed entry and creates a new block entity; a block change) throws",
+                "ConcurrentModificationException at the end of the pass, which crashes the server and leaves the chunk's block",
+                "entities and tickers half-alive. true walks each pass over a copy, logs once per block entity type which one changed",
+                "the map (+N/-M) and removes any block entity added during the unload. false leaves vanilla's walk over the live map.")
+                .define("unloadOverCopies", true);
         b.pop();
         SPEC = b.build();
     }

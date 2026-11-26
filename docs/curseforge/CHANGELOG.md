@@ -1,3 +1,11 @@
+# BSP-Mod Fixes 0.17.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, and Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**The server no longer crashes with ConcurrentModificationException when a chunk unloads.** F-48, for Minecraft 1.20.1 itself: when a chunk unloads, the game tells each of its block entities that the chunk is going and then that they are removed, walking its own list of them as it goes. If any mod's block entity reacts by looking a neighbour up in that chunk, or by changing a block there, the list changes under the game's feet and it crashes at the end of the pass with "Exception ticking world", and the chunk's block entities are left half-removed. The walk now runs over a copy, so the unload always finishes; the first time a block entity of some type does this the server log names it, its position and its dimension, so the mod at fault can be found; and any block entity created during the unload is removed with the chunk. `unloadOverCopies` in `bsp_mod_fixes-server.toml` turns it off.
+
 # BSP-Mod Fixes 0.16.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, and Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.

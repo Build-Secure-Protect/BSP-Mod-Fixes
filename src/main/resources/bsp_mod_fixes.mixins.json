@@ -54,7 +54,8 @@
     "EvolvedMekanismElytraCurioMixin",
     "NuminaConfigTitleMixin",
     "PowersuitsRailgunUseMixin",
-    "PowersuitsRailgunCooldownMixin"
+    "PowersuitsRailgunCooldownMixin",
+    "LevelChunkUnloadMixin"
   ],
   "injectors": {
     "defaultRequire": 1

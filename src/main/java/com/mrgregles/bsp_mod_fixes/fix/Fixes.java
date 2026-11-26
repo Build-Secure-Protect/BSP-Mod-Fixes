@@ -2,6 +2,7 @@ package com.mrgregles.bsp_mod_fixes.fix;
 
 import com.mojang.logging.LogUtils;
 import com.mrgregles.bsp_mod_fixes.fix.aae.QuantumAbsorption;
+import com.mrgregles.bsp_mod_fixes.fix.chunks.UnloadIteration;
 import com.mrgregles.bsp_mod_fixes.fix.cm.CmGate;
 import com.mrgregles.bsp_mod_fixes.fix.cm.LoadSaves;
 import com.mrgregles.bsp_mod_fixes.fix.cm.PreviewLeak;
@@ -113,7 +114,8 @@ public final class Fixes {
             Map.entry("EvolvedMekanismElytraCurioMixin", new Fix(ElytraCurioRegistration.ID, ElytraCurioRegistration.WHAT, ElytraCurioRegistration.TARGET)),
             Map.entry("NuminaConfigTitleMixin", new Fix(SilkTouchConfigKey.ID, SilkTouchConfigKey.WHAT, SilkTouchConfigKey.TARGET)),
             Map.entry("PowersuitsRailgunUseMixin", new Fix(RailgunShot.ID, RailgunShot.WHAT, RailgunShot.TARGET)),
-            Map.entry("PowersuitsRailgunCooldownMixin", new Fix(RailgunCooldown.ID, RailgunCooldown.WHAT, RailgunCooldown.TARGET)));
+            Map.entry("PowersuitsRailgunCooldownMixin", new Fix(RailgunCooldown.ID, RailgunCooldown.WHAT, RailgunCooldown.TARGET)),
+            Map.entry("LevelChunkUnloadMixin", new Fix(UnloadIteration.ID, UnloadIteration.WHAT, UnloadIteration.TARGET)));
 
     private static final List<Fix> ACTIVE = Collections.synchronizedList(new ArrayList<>());
     /** Fixes the mixin plugin skipped, by id, with the reason (the EMI fixes without EMI at the pinned version; client-only fixes on a dedicated server). */
