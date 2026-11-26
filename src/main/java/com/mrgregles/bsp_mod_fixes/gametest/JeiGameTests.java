@@ -54,14 +54,17 @@ public class JeiGameTests {
     }
 
     @GameTest(template = ModFixesGameTests.EMPTY)
-    public void jei_gate_applies_the_fix_to_any_15_74_build_and_skips_it_on_a_dedicated_server(GameTestHelper h) {
+    public void jei_gate_applies_the_fix_to_any_15_74_build_skips_15_75_as_superseded_and_skips_it_on_a_dedicated_server(GameTestHelper h) {
         h.assertTrue(JeiGate.verdict(Optional.of("15.74.0.234")) == JeiGate.Verdict.APPLY, "the pack's build applies");
         h.assertTrue(JeiGate.verdict(Optional.of("15.74.0.229")) == JeiGate.Verdict.APPLY, "the servers' build applies (D33: any 15.74)");
         h.assertTrue(JeiGate.verdict(Optional.of("15.74.1.300")) == JeiGate.Verdict.APPLY, "a later 15.74 build applies");
         h.assertTrue(JeiGate.verdict(Optional.of("15.20.0.106")) == JeiGate.Verdict.OTHER_VERSION, "an older series is another version");
-        h.assertTrue(JeiGate.verdict(Optional.of("15.75.0.243")) == JeiGate.Verdict.APPLY, "the pack's 15.75 build applies (D179: checked against the same observer and slot views)");
+        h.assertTrue(JeiGate.verdict(Optional.of("15.75.0.243")) == JeiGate.Verdict.SUPERSEDED, "the pack's 15.75 build waits for the tag sync itself: superseded, skipped at INFO (D180)");
+        h.assertTrue(JeiGate.verdict(Optional.of("15.75.0.243"), false) == JeiGate.Verdict.SUPERSEDED, "superseded before the method check: a changed observer there is JEI's own business");
         h.assertTrue(JeiGate.verdict(Optional.of("15.76.0.1")) == JeiGate.Verdict.OTHER_VERSION, "a newer series is another version");
-        h.assertTrue(JeiGate.inSeries("15.75.1.9") && !JeiGate.inSeries("15.73.9.9") && !JeiGate.inSeries("16.75.0.1"), "the series rule");
+        h.assertTrue(JeiGate.inSeries("15.74.1.9") && !JeiGate.inSeries("15.75.0.243") && !JeiGate.inSeries("15.73.9.9") && !JeiGate.inSeries("16.74.0.1"), "the series rule");
+        h.assertTrue(JeiGate.superseded("15.75.9.9") && !JeiGate.superseded("15.74.0.234") && !JeiGate.superseded("15.750.1"), "the superseded rule");
+        h.assertTrue(!JeiGate.Verdict.SUPERSEDED.applies() && JeiGate.Verdict.SUPERSEDED.reason().contains("itself"), "superseded is a skip with its reason");
         h.assertTrue(JeiGate.verdict(Optional.of("15.7.4.1")) == JeiGate.Verdict.OTHER_VERSION, "the prefix needs its dots");
         h.assertTrue(JeiGate.verdict(Optional.empty()) == JeiGate.Verdict.ABSENT, "no JEI: absent");
         h.assertTrue(JeiGate.verdict(Optional.of("15.74.0.234"), false) == JeiGate.Verdict.CHANGED_TARGET, "a 15.74 build without the patched methods costs the fix, not the client");

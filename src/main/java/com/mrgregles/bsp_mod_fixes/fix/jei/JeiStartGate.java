@@ -6,7 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * F-19 (JEI 15.74, client only): JEI starts only after the server's tags have arrived. At login Minecraft 1.20.1 sends the
+ * F-19 (JEI 15.74, client only; JEI 15.75 does this itself, D180, and the gate skips it there as superseded): JEI starts only after the server's tags have arrived. At login Minecraft 1.20.1 sends the
  * recipe packet before the tag packet, and JEI's start observer starts JEI inside the recipe packet's handler without
  * waiting for the tag sync. Every JEI plugin that resolves a tag ingredient while it registers its recipes then sees an
  * empty tag: Mekanism drops such recipes as "incomplete" (every metallurgic infusing recipe, most of its ore processing),

@@ -6,10 +6,16 @@ All notable changes to this project are documented in this file. The format is b
 
 Nothing yet.
 
+## [0.19.1] - 2026-11-26
+
+### Changed
+- F-19 (JEI, client only) is skipped on JEI 15.75.x as superseded, with one INFO line, instead of applying there (D180). The audit of 0.19.0 read 15.75.0.243's `StartEventObserver` beyond the two method names 0.19.0 had checked: JEI gave it a `TagsUpdatedEvent` listener at LOWEST priority and a second flag (`observedTagSync`) that `startIfReady` now waits on beside the login, so JEI itself starts only after the login's tag packet and after every other tag listener, which is what F-19 did. On such a build the fix adds nothing: F-19's own tag listener released its hold before JEI's, and the deferral to the next tick ran against an already started JEI. The gate keeps F-19 for 15.74.x (`JeiGate.SERIES`) and names 15.75.x as superseded (`SUPERSEDED_SERIES`, a verdict of its own, before the method check). The 0.19.0 entry below said the observer was "unchanged"; only its two method names were.
+- The JEI API comparison behind the EMI fixes, completed: of the 26 JEI API types the mod's sources name, all are member for member the same in 15.75.0.243 as in 15.74.0.234 except `IDrawable` (one default method added) and `IIngredientRenderer` (two default methods added), both only inherited or passed, never implemented by this mod. The dead `JeiGate.VERSION_PREFIX` is gone.
+
 ## [0.19.0] - 2026-11-26
 
 ### Changed
-- F-19 (JEI, client only) applies to any JEI 15.75.x build as well as 15.74.x (D179). The pack moved to JEI 15.75.0.243 on 2026-11-26; its start observer still has the two methods the fix patches, and the slot view interfaces the EMI fixes F-37 and F-41 implement (`IRecipeSlotView`, `IRecipeSlotDrawable`) are member for member the same as in 15.74.0.234, so the EMI fixes are unaffected; the mod is now compiled against 15.75.0.243. A gate pinned to 15.74 alone would have skipped F-19 on the new build with one log line and no other effect.
+- F-19 (JEI, client only) applies to any JEI 15.75.x build as well as 15.74.x (D179; reversed in 0.19.1: 15.75 has the fix itself). The pack moved to JEI 15.75.0.243 on 2026-11-26; its start observer still has the two methods the fix patches, and the slot view interfaces the EMI fixes F-37 and F-41 implement (`IRecipeSlotView`, `IRecipeSlotDrawable`) are member for member the same as in 15.74.0.234, so the EMI fixes are unaffected; the mod is now compiled against 15.75.0.243. A gate pinned to 15.74 alone would have skipped F-19 on the new build with one log line and no other effect.
 - The pack moved to Cyclops Core 1.22.5 (2026-11-14); the Integrated Dynamics fixes F-49 and F-50 read two `DimPos` members that are unchanged, Integrated Dynamics 1.31.5 accepts the new build, and `-PwithId` now loads it.
 
 ## [0.18.0] - 2026-11-26

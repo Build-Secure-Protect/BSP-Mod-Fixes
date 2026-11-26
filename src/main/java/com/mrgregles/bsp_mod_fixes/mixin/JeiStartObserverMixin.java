@@ -33,7 +33,7 @@ public abstract class JeiStartObserverMixin {
     }
 
     /**
-     * At HEAD, not TAIL: JEI's jar is R8-optimised and {@code register} reuses the {@code this} and parameter slots for
+     * At HEAD, not TAIL: the 15.74 jar is R8-optimised and its {@code register} reuses the {@code this} and parameter slots for
      * other values, so a callback at the tail fails verification ("Bad type on operand stack"); at the head the slots hold
      * what their descriptors say. The listener's registration order does not matter.
      */

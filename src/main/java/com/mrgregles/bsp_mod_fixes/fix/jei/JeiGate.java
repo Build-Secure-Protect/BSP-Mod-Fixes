@@ -11,12 +11,12 @@ import org.spongepowered.asm.service.MixinService;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 
 /**
  * The gate for the JEI fix (F-19): it patches JEI's internal start observer, so the mixin config plugin applies it only
- * when a JEI build of a series it was checked against is loaded (any {@code 15.74.x}, D33; any {@code 15.75.x}, D179, whose start
- * observer and the slot view interfaces the EMI fixes implement are unchanged) whose start observer still has the
+ * when a JEI build of the series it was written for is loaded (any {@code 15.74.x}, D33) whose start observer still has the
  * two methods the mixin patches. JEI is an optional client-side mod of the pack; without it, with another series, or with
  * a changed observer, the mixin is skipped before Mixin looks its target up, and the startup
  * report lists the fix as skipped with the reason. On a dedicated server JEI's client start code never runs, so the verdict
@@ -25,11 +25,15 @@ import java.util.Set;
  */
 public final class JeiGate {
     public static final String MOD_ID = "jei";
-    /** The JEI series the mixin targets: every build whose version starts with one of these ({@code jei-238222:9394360} is 15.74.0.234, {@code 9827054} is 15.75.0.243). */
-    public static final java.util.List<String> SERIES = java.util.List.of("15.74.", "15.75.");
-    /** The first series, kept for the tests and the log line. */
-    public static final String VERSION_PREFIX = SERIES.get(0);
-    public static final String TARGET = "JEI 15.74 or 15.75";
+    /** The JEI series the mixin targets: every build whose version starts with one of these ({@code jei-238222:9394360} is 15.74.0.234). */
+    public static final List<String> SERIES = List.of("15.74.");
+    /**
+     * The series that wait for the login's tag sync themselves: 15.75 (D180; {@code 9827054} is 15.75.0.243) gave its
+     * {@code StartEventObserver} a {@code TagsUpdatedEvent} listener at LOWEST priority and a second flag {@code startIfReady}
+     * waits on, the very thing F-19 did. On such a build the fix is superseded and skipped, logged at INFO.
+     */
+    public static final List<String> SUPERSEDED_SERIES = List.of("15.75.");
+    public static final String TARGET = "JEI 15.74";
     /** The mixins of bsp_mod_fixes.mixins.json this gate decides for (simple names). */
     public static final Set<String> MIXINS = Set.of("JeiStartObserverMixin");
 
@@ -37,7 +41,8 @@ public final class JeiGate {
     public enum Verdict {
         APPLY(""),
         ABSENT("JEI is not loaded"),
-        OTHER_VERSION("JEI is not a 15.74.x or 15.75.x build"),
+        OTHER_VERSION("JEI is not a " + String.join("x or ", SERIES) + "x build"),
+        SUPERSEDED("JEI 15.75 waits for the login's tag sync itself; nothing left to fix"),
         CHANGED_TARGET("this JEI build's start observer lacks the methods the fix patches"),
         SERVER("client-side only, nothing to patch on a dedicated server");
 
@@ -85,16 +90,28 @@ public final class JeiGate {
         if (installedVersion.isEmpty()) {
             return Verdict.ABSENT;
         }
+        if (superseded(installedVersion.get())) {
+            return Verdict.SUPERSEDED;
+        }
         if (!inSeries(installedVersion.get())) {
             return Verdict.OTHER_VERSION;
         }
         return targetHasMethods ? Verdict.APPLY : Verdict.CHANGED_TARGET;
     }
 
-    /** Pure: whether a JEI version string belongs to a series the fix was checked against. */
+    /** Pure: whether a JEI version string belongs to a series the fix was written for. */
     public static boolean inSeries(String version) {
-        for (String series : SERIES) {
-            if (version.startsWith(series)) {
+        return startsWithOneOf(version, SERIES);
+    }
+
+    /** Pure: whether a JEI version string belongs to a series that has the fix itself. */
+    public static boolean superseded(String version) {
+        return startsWithOneOf(version, SUPERSEDED_SERIES);
+    }
+
+    private static boolean startsWithOneOf(String version, List<String> prefixes) {
+        for (String prefix : prefixes) {
+            if (version.startsWith(prefix)) {
                 return true;
             }
         }
@@ -162,7 +179,8 @@ public final class JeiGate {
                         case SERVER -> Fixes.LOGGER.info("BSP-Mod Fixes: dedicated server, the JEI fix is client-side and skipped");
                         case APPLY -> Fixes.LOGGER.info("BSP-Mod Fixes: JEI {} is loaded, the JEI fix applies", installed.orElse("?"));
                         case ABSENT -> Fixes.LOGGER.info("BSP-Mod Fixes: JEI is not loaded, the JEI fix is skipped");
-                        case OTHER_VERSION -> Fixes.LOGGER.warn("BSP-Mod Fixes: JEI {} is loaded but the JEI fix was checked against {}; it is skipped", installed.orElse("?"), SERIES);
+                        case OTHER_VERSION -> Fixes.LOGGER.warn("BSP-Mod Fixes: JEI {} is loaded but the JEI fix was written for {}x; it is skipped", installed.orElse("?"), String.join("x and ", SERIES));
+                        case SUPERSEDED -> Fixes.LOGGER.info("BSP-Mod Fixes: JEI {} waits for the login's tag sync itself; the JEI fix is skipped as superseded", installed.orElse("?"));
                         case CHANGED_TARGET -> Fixes.LOGGER.warn("BSP-Mod Fixes: JEI {} is loaded but its start observer no longer has the methods the JEI fix patches; it is skipped", installed.orElse("?"));
                     }
                     decided = v;

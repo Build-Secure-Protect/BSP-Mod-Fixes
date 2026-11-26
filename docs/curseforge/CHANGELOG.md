@@ -1,10 +1,18 @@
+# BSP-Mod Fixes 0.19.1
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios, and Integrated Dynamics 1.31.5 with Cyclops Core and Common Capabilities (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.75.0.243 or 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix (JEI 15.75 has that fix itself).
+
+## Changed
+
+**JEI 15.75 does the JEI start fix itself, so F-19 now steps aside there.** JEI 15.75.0.243's start observer waits for the login's tag packet before starting, the very thing F-19 (0.9.0) did for 15.74. On 15.75 the fix is skipped with one log line saying so; on 15.74 it applies as before. 0.19.0 had applied it on 15.75 as well, where it did nothing useful. Nothing else changes; the EMI fixes are unaffected by the JEI update.
+
 # BSP-Mod Fixes 0.19.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios, and Integrated Dynamics 1.31.5 with Cyclops Core and Common Capabilities (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.75.0.243 or 15.74.0.234 for the EMI fixes; any JEI 15.74 or 15.75 build for the JEI fix.
 
 ## Changed
 
-**Ready for JEI 15.75 and Cyclops Core 1.22.5.** The pack moved to JEI 15.75.0.243 and Cyclops Core 1.22.5. The JEI start fix (F-19) now applies to 15.75 builds as well as 15.74; its target is unchanged in the new build, and every JEI interface the EMI fixes implement is the same, so those need nothing. The Integrated Dynamics fixes (F-49, F-50) read nothing of Cyclops Core that changed. No fix behaves differently; a 0.18.0 client on JEI 15.75 would only have lost F-19.
+**Ready for JEI 15.75 and Cyclops Core 1.22.5.** The pack moved to JEI 15.75.0.243 and Cyclops Core 1.22.5. The JEI start fix (F-19) was made to apply to 15.75 builds as well as 15.74 (0.19.1 reverses that: JEI 15.75 has the fix itself, see above), and every JEI interface the EMI fixes implement is the same, so those need nothing. The Integrated Dynamics fixes (F-49, F-50) read nothing of Cyclops Core that changed. No fix behaves differently; a 0.18.0 client on JEI 15.75 would only have lost F-19.
 
 # BSP-Mod Fixes 0.18.0
 
