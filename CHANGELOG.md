@@ -6,6 +6,12 @@ All notable changes to this project are documented in this file. The format is b
 
 Nothing yet.
 
+## [0.19.0] - 2026-11-26
+
+### Changed
+- F-19 (JEI, client only) applies to any JEI 15.75.x build as well as 15.74.x (D179). The pack moved to JEI 15.75.0.243 on 2026-11-26; its start observer still has the two methods the fix patches, and the slot view interfaces the EMI fixes F-37 and F-41 implement (`IRecipeSlotView`, `IRecipeSlotDrawable`) are member for member the same as in 15.74.0.234, so the EMI fixes are unaffected; the mod is now compiled against 15.75.0.243. A gate pinned to 15.74 alone would have skipped F-19 on the new build with one log line and no other effect.
+- The pack moved to Cyclops Core 1.22.5 (2026-11-14); the Integrated Dynamics fixes F-49 and F-50 read two `DimPos` members that are unchanged, Integrated Dynamics 1.31.5 accepts the new build, and `-PwithId` now loads it.
+
 ## [0.18.0] - 2026-11-26
 
 ### Added

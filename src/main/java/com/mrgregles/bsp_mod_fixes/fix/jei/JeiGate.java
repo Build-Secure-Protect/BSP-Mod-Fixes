@@ -15,7 +15,8 @@ import java.util.Set;
 
 /**
  * The gate for the JEI fix (F-19): it patches JEI's internal start observer, so the mixin config plugin applies it only
- * when a JEI build of the series it was written for is loaded (any {@code 15.74.x}, D33) whose start observer still has the
+ * when a JEI build of a series it was checked against is loaded (any {@code 15.74.x}, D33; any {@code 15.75.x}, D179, whose start
+ * observer and the slot view interfaces the EMI fixes implement are unchanged) whose start observer still has the
  * two methods the mixin patches. JEI is an optional client-side mod of the pack; without it, with another series, or with
  * a changed observer, the mixin is skipped before Mixin looks its target up, and the startup
  * report lists the fix as skipped with the reason. On a dedicated server JEI's client start code never runs, so the verdict
@@ -24,9 +25,11 @@ import java.util.Set;
  */
 public final class JeiGate {
     public static final String MOD_ID = "jei";
-    /** The JEI series the mixin targets: every build whose version starts with this ({@code jei-238222:9394360} is 15.74.0.234). */
-    public static final String VERSION_PREFIX = "15.74.";
-    public static final String TARGET = "JEI 15.74";
+    /** The JEI series the mixin targets: every build whose version starts with one of these ({@code jei-238222:9394360} is 15.74.0.234, {@code 9827054} is 15.75.0.243). */
+    public static final java.util.List<String> SERIES = java.util.List.of("15.74.", "15.75.");
+    /** The first series, kept for the tests and the log line. */
+    public static final String VERSION_PREFIX = SERIES.get(0);
+    public static final String TARGET = "JEI 15.74 or 15.75";
     /** The mixins of bsp_mod_fixes.mixins.json this gate decides for (simple names). */
     public static final Set<String> MIXINS = Set.of("JeiStartObserverMixin");
 
@@ -34,7 +37,7 @@ public final class JeiGate {
     public enum Verdict {
         APPLY(""),
         ABSENT("JEI is not loaded"),
-        OTHER_VERSION("JEI is not a " + VERSION_PREFIX + "x build"),
+        OTHER_VERSION("JEI is not a 15.74.x or 15.75.x build"),
         CHANGED_TARGET("this JEI build's start observer lacks the methods the fix patches"),
         SERVER("client-side only, nothing to patch on a dedicated server");
 
@@ -82,10 +85,20 @@ public final class JeiGate {
         if (installedVersion.isEmpty()) {
             return Verdict.ABSENT;
         }
-        if (!installedVersion.get().startsWith(VERSION_PREFIX)) {
+        if (!inSeries(installedVersion.get())) {
             return Verdict.OTHER_VERSION;
         }
         return targetHasMethods ? Verdict.APPLY : Verdict.CHANGED_TARGET;
+    }
+
+    /** Pure: whether a JEI version string belongs to a series the fix was checked against. */
+    public static boolean inSeries(String version) {
+        for (String series : SERIES) {
+            if (version.startsWith(series)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** Whether a class (as Mixin reads it) has every method of {@code required}, name to descriptor. Pure. */
@@ -144,12 +157,12 @@ public final class JeiGate {
                 if (v == null) {
                     Optional<String> installed = installedVersion();
                     v = FMLEnvironment.dist.isDedicatedServer() ? Verdict.SERVER
-                            : verdict(installed, installed.map(i -> i.startsWith(VERSION_PREFIX)).orElse(false) && targetHasMethods());
+                            : verdict(installed, installed.map(JeiGate::inSeries).orElse(false) && targetHasMethods());
                     switch (v) {
                         case SERVER -> Fixes.LOGGER.info("BSP-Mod Fixes: dedicated server, the JEI fix is client-side and skipped");
                         case APPLY -> Fixes.LOGGER.info("BSP-Mod Fixes: JEI {} is loaded, the JEI fix applies", installed.orElse("?"));
                         case ABSENT -> Fixes.LOGGER.info("BSP-Mod Fixes: JEI is not loaded, the JEI fix is skipped");
-                        case OTHER_VERSION -> Fixes.LOGGER.warn("BSP-Mod Fixes: JEI {} is loaded but the JEI fix was built for {}x; it is skipped", installed.orElse("?"), VERSION_PREFIX);
+                        case OTHER_VERSION -> Fixes.LOGGER.warn("BSP-Mod Fixes: JEI {} is loaded but the JEI fix was checked against {}; it is skipped", installed.orElse("?"), SERIES);
                         case CHANGED_TARGET -> Fixes.LOGGER.warn("BSP-Mod Fixes: JEI {} is loaded but its start observer no longer has the methods the JEI fix patches; it is skipped", installed.orElse("?"));
                     }
                     decided = v;

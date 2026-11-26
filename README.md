@@ -79,7 +79,7 @@ What each fix does is in `CHANGELOG.md`; the server settings that go with it are
 
 - Minecraft 1.20.1 with Forge 47.3.10 or newer (the network runs 47.4.23).
 - Numina 2.3.13 and Modular Powersuits 2.3.13, on the client and on the server.
-- Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes (F-11 onward); they are skipped with any other EMI. Any JEI 15.74 build for the JEI fix (F-19); it is skipped with any other JEI.
+- Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.75.0.243 (or 15.74.0.234, whose API is the same where the fixes touch it) for the EMI fixes (F-11 onward); they are skipped with any other EMI. Any JEI 15.74 or 15.75 build for the JEI fix (F-19); it is skipped with any other JEI.
 - Nothing extra for the server-switch fixes (F-16, F-17); they matter on clients that switch servers through Velocity with Forge Client Reset Packet 0.3.2 and do nothing elsewhere.
 - Optional, both sides: AdvancedAE 1.3.6-1.20.1 for the quantum armor fix (F-25); it is skipped with any other AdvancedAE.
 - Optional, both sides: Gobber 2 2.8.9 for the dragon armour flight fix (F-27); it is skipped with any other Gobber.
