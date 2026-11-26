@@ -7,6 +7,7 @@ import com.mrgregles.bsp_mod_fixes.fix.deepresonance.DeepResonanceGate;
 import com.mrgregles.bsp_mod_fixes.fix.emi.EmiGate;
 import com.mrgregles.bsp_mod_fixes.fix.evolvedmekanism.EvolvedMekanismGate;
 import com.mrgregles.bsp_mod_fixes.fix.gobber.GobberGate;
+import com.mrgregles.bsp_mod_fixes.fix.integrateddynamics.IdGate;
 import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.IronFurnacesGate;
 import com.mrgregles.bsp_mod_fixes.fix.jei.JeiGate;
 import com.mrgregles.bsp_mod_fixes.fix.mffs.MffsGate;
@@ -80,6 +81,9 @@ public final class MixinFixPlugin implements IMixinConfigPlugin {
         }
         if (EvolvedMekanismGate.gates(simpleName)) {
             return EvolvedMekanismGate.allows(simpleName);
+        }
+        if (IdGate.gates(simpleName)) {
+            return IdGate.allows(simpleName);
         }
         if (ClientGate.gates(simpleName)) {
             return ClientGate.allows(simpleName);

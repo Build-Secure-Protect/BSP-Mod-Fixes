@@ -187,6 +187,9 @@ dependencies {
 
     // MFFS (Modular Force Field System), compiled against for its fixes (F-34 onward); optional at runtime, gated to mffs_version.
     compileOnly fg.deobf("curse.maven:${mffs_curse}")
+    // Integrated Dynamics (F-49 onward) and the Cyclops Core it is built on: the mixin targets and the helpers the tests call.
+    compileOnly fg.deobf("curse.maven:${id_curse}")
+    compileOnly fg.deobf("curse.maven:${cyclopscore_curse}")
 
     // Deep Resonance, compiled against for its fix (F-38); optional at runtime, gated to dr_version.
     compileOnly fg.deobf("curse.maven:${dr_curse}")
@@ -293,6 +296,13 @@ dependencies {
     // run the real sponge module against it; without it they check the pure rule and the gate's skip.
     if (project.hasProperty('withMffs')) {
         runtimeOnly fg.deobf("curse.maven:${mffs_curse}")
+    }
+    // ./gradlew runGameTestServer -PwithId (or any run): Integrated Dynamics, Cyclops Core and Common Capabilities load (the exact
+    // pack files), so its tests build a real cable network and kill it; without them they check the pure rules and the gate's skip.
+    if (project.hasProperty('withId')) {
+        runtimeOnly fg.deobf("curse.maven:${id_curse}")
+        runtimeOnly fg.deobf("curse.maven:${cyclopscore_curse}")
+        runtimeOnly fg.deobf("curse.maven:${commoncapabilities_curse}")
     }
     // ./gradlew runGameTestServer -PwithDr (or any run): Deep Resonance, McJtyLib and RFTools Base load (the exact pack files), so
     // its test posts a real place event with no entity through the mod's real handler; without it the test checks the pure rule

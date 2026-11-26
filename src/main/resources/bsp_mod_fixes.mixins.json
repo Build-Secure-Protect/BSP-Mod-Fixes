@@ -55,7 +55,9 @@
     "NuminaConfigTitleMixin",
     "PowersuitsRailgunUseMixin",
     "PowersuitsRailgunCooldownMixin",
-    "LevelChunkUnloadMixin"
+    "LevelChunkUnloadMixin",
+    "IdNetworkKillMixin",
+    "IdPartRemovalMixin"
   ],
   "injectors": {
     "defaultRequire": 1

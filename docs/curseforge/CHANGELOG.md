@@ -1,3 +1,13 @@
+# BSP-Mod Fixes 0.18.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios, and Integrated Dynamics 1.31.5 with Cyclops Core and Common Capabilities (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.
+
+## Added
+
+**An Integrated Dynamics network with a stale part record no longer crashes the server.** F-49, for Integrated Dynamics 1.31.5: when a network shut itself down because its last cable was gone, or an element was removed, it asked every part for its state with no guard; if a part had left its cable while the network still listed it, the whole server went down with "Exception in server tick loop". Such a record is now skipped and dropped, and the server log names the position and side once, so the cable can be looked at.
+
+**A part removed from a cable that has just loaded no longer leaves a stale record behind.** F-50, for Integrated Dynamics 1.31.5: in the moments after a chunk loads, a cable has not yet re-attached to its network, and a part removed then told no network it was going. The saved network that still lists it is now told, so nothing is left for F-49 to meet. Both fixes apply only beside exactly Integrated Dynamics 1.31.5 with Cyclops Core and Common Capabilities, and `skipDanglingParts` in `bsp_mod_fixes-server.toml` turns them off.
+
 # BSP-Mod Fixes 0.17.0
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, and Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix.

@@ -20,6 +20,8 @@ import com.mrgregles.bsp_mod_fixes.fix.emi.TooltipBuilderFix;
 import com.mrgregles.bsp_mod_fixes.fix.emi.TransferSlots;
 import com.mrgregles.bsp_mod_fixes.fix.evolvedmekanism.ElytraCurioRegistration;
 import com.mrgregles.bsp_mod_fixes.fix.gobber.DragonFlightSends;
+import com.mrgregles.bsp_mod_fixes.fix.integrateddynamics.DanglingParts;
+import com.mrgregles.bsp_mod_fixes.fix.integrateddynamics.OrphanRemoval;
 import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.FurnaceListNames;
 import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.FurnaceListRepair;
 import com.mrgregles.bsp_mod_fixes.fix.ironfurnaces.IronFurnacesGate;
@@ -115,7 +117,9 @@ public final class Fixes {
             Map.entry("NuminaConfigTitleMixin", new Fix(SilkTouchConfigKey.ID, SilkTouchConfigKey.WHAT, SilkTouchConfigKey.TARGET)),
             Map.entry("PowersuitsRailgunUseMixin", new Fix(RailgunShot.ID, RailgunShot.WHAT, RailgunShot.TARGET)),
             Map.entry("PowersuitsRailgunCooldownMixin", new Fix(RailgunCooldown.ID, RailgunCooldown.WHAT, RailgunCooldown.TARGET)),
-            Map.entry("LevelChunkUnloadMixin", new Fix(UnloadIteration.ID, UnloadIteration.WHAT, UnloadIteration.TARGET)));
+            Map.entry("LevelChunkUnloadMixin", new Fix(UnloadIteration.ID, UnloadIteration.WHAT, UnloadIteration.TARGET)),
+            Map.entry("IdNetworkKillMixin", new Fix(DanglingParts.ID, DanglingParts.WHAT, DanglingParts.TARGET)),
+            Map.entry("IdPartRemovalMixin", new Fix(OrphanRemoval.ID, OrphanRemoval.WHAT, OrphanRemoval.TARGET)));
 
     private static final List<Fix> ACTIVE = Collections.synchronizedList(new ArrayList<>());
     /** Fixes the mixin plugin skipped, by id, with the reason (the EMI fixes without EMI at the pinned version; client-only fixes on a dedicated server). */

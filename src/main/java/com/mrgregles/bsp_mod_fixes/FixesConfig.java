@@ -24,6 +24,7 @@ public final class FixesConfig {
     public static final ForgeConfigSpec.BooleanValue MFFS_SELECT_ON_SERVER_THREAD;
     public static final ForgeConfigSpec.BooleanValue MFFS_FIELD_STAYS_IN_LOADED_CHUNKS;
     public static final ForgeConfigSpec.BooleanValue CHUNKS_UNLOAD_OVER_COPIES;
+    public static final ForgeConfigSpec.BooleanValue ID_SKIP_DANGLING_PARTS;
     public static final ForgeConfigSpec.BooleanValue DR_PLACE_EVENTS_WITHOUT_PLACER;
     public static final ForgeConfigSpec.BooleanValue IF_REPAIR_FURNACE_LIST;
     public static final ForgeConfigSpec.IntValue IF_MAX_FURNACES_PER_PLAYER;
@@ -206,6 +207,18 @@ public final class FixesConfig {
                 "entities and tickers half-alive. true walks each pass over a copy, logs once per block entity type which one changed",
                 "the map (+N/-M) and removes any block entity added during the unload. false leaves vanilla's walk over the live map.")
                 .define("unloadOverCopies", true);
+        b.pop();
+        b.push("integratedDynamics");
+        ID_SKIP_DANGLING_PARTS = b.comment(
+                "Integrated Dynamics' networks are world data that outlive their chunks and tick from the server tick. When a network",
+                "shuts down (its last cable gone) or an element is removed, it asks each part for its state with no guard, and a part",
+                "that left its cable while the cable had no network attached (the moments after a chunk loads, before the cable's",
+                "ticker re-attaches it) leaves a record the network keeps: the next kill throws PartStateException out of the server",
+                "tick and crashes the server. true skips such a record on the kill and removal paths with one WARN per position",
+                "(F-49), and when a part is removed from a cable without a network, removes its record from the saved network that",
+                "still lists it (F-50). false leaves Integrated Dynamics' behaviour as it is. Only read while exactly Integrated",
+                "Dynamics 1.31.5 is loaded with Cyclops Core and Common Capabilities; otherwise the fixes are skipped whatever this says.")
+                .define("skipDanglingParts", true);
         b.pop();
         SPEC = b.build();
     }
