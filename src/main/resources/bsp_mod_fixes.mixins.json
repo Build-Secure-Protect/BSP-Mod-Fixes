@@ -57,7 +57,9 @@
     "PowersuitsRailgunCooldownMixin",
     "LevelChunkUnloadMixin",
     "IdNetworkKillMixin",
-    "IdPartRemovalMixin"
+    "IdPartRemovalMixin",
+    "LevelChunkOffThreadMixin",
+    "DistanceManagerTicketMixin"
   ],
   "injectors": {
     "defaultRequire": 1

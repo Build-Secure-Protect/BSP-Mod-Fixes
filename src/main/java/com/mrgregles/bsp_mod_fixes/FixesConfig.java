@@ -1,6 +1,10 @@
 package com.mrgregles.bsp_mod_fixes;
 
+import com.mrgregles.bsp_mod_fixes.fix.chunks.ChunkWatch;
 import net.minecraftforge.common.ForgeConfigSpec;
+
+import java.util.Collections;
+import java.util.List;
 
 /** Server config, {@code bsp_mod_fixes-server.toml} in the world's serverconfig folder. Documented in docs/CONFIG.md. */
 public final class FixesConfig {
@@ -25,6 +29,9 @@ public final class FixesConfig {
     public static final ForgeConfigSpec.BooleanValue MFFS_FIELD_STAYS_IN_LOADED_CHUNKS;
     public static final ForgeConfigSpec.BooleanValue CHUNKS_UNLOAD_OVER_COPIES;
     public static final ForgeConfigSpec.BooleanValue ID_SKIP_DANGLING_PARTS;
+    public static final ForgeConfigSpec.BooleanValue DIAG_OFF_THREAD_TRACER;
+    public static final ForgeConfigSpec.BooleanValue DIAG_CHUNK_WATCH_TRACER;
+    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> DIAG_CHUNK_WATCH_AREAS;
     public static final ForgeConfigSpec.BooleanValue DR_PLACE_EVENTS_WITHOUT_PLACER;
     public static final ForgeConfigSpec.BooleanValue IF_REPAIR_FURNACE_LIST;
     public static final ForgeConfigSpec.IntValue IF_MAX_FURNACES_PER_PLAYER;
@@ -204,9 +211,37 @@ public final class FixesConfig {
                 "chunk's block entity map itself; a hook that changes that map meanwhile (a mod looking a neighbour up in the unloading",
                 "chunk, which drops the removed entry and creates a new block entity; a block change) throws",
                 "ConcurrentModificationException at the end of the pass, which crashes the server and leaves the chunk's block",
-                "entities and tickers half-alive. true walks each pass over a copy, logs once per block entity type which one changed",
-                "the map (+N/-M) and removes any block entity added during the unload. false leaves vanilla's walk over the live map.")
+                "entities and tickers half-alive; a mod changing the map from another thread (a reader dropping a removed entry) does",
+                "the same to any walk of the map. true walks each pass over a copy, retaking the copy when another thread changed it",
+                "(five attempts, then the passes run from the next server task, then they are skipped with a warning), logs once per",
+                "block entity type which one changed the map (+N/-M), once per chunk when another thread did, and removes any block",
+                "entity added during the unload. false leaves vanilla's walk over the live map.")
                 .define("unloadOverCopies", true);
+        b.pop();
+        b.push("diagnostics");
+        DIAG_OFF_THREAD_TRACER = b.comment(
+                "A chunk's block entity map is a plain HashMap that the server thread walks when the chunk unloads; a mod that changes",
+                "it from another thread (a reader that drops a removed entry, a writer) races that walk, which then throws",
+                "ConcurrentModificationException, the crash unloadOverCopies now survives. true logs, once per thread name and",
+                "calling class per run, the first time such a thread changes a chunk's block entity map (setBlockEntity,",
+                "removeBlockEntity, clearAllBlockEntities, or getBlockEntity dropping a removed entry) with the dimension, chunk,",
+                "position and the full stack, so the mod at fault is named, and the F-48 warning then says whether this tracer saw a",
+                "writer for that chunk. false logs nothing. Server levels only. A diagnostic: nothing is changed either way.")
+                .define("offThreadBlockEntityTracer", true);
+        DIAG_CHUNK_WATCH_TRACER = b.comment(
+                "true logs, for every chunk inside chunkWatchAreas, each chunk ticket added or removed (its type, level and key, the",
+                "class that asked, and once per ticket type and caller a minute a stack of up to twelve frames outside Minecraft,",
+                "Forge and Java) and each load and unload, one INFO line each, so what keeps a chunk reloading can be read from the",
+                "log. false logs nothing. Nothing is logged while chunkWatchAreas is empty. A diagnostic: nothing is changed.")
+                .define("chunkWatchTracer", true);
+        DIAG_CHUNK_WATCH_AREAS = b.comment(
+                "The chunks the tracer watches, as areas, one string each: \"<dimension> <minChunkX> <minChunkZ> <maxChunkX> <maxChunkZ>\"",
+                "in chunk coordinates (a block's x or z divided by 16, rounded down), both ends included. For example, a 5x5 area",
+                "around a base in the Other and one Compact Machines room:",
+                "chunkWatchAreas = [\"allthemodium:the_other 464 464 468 468\", \"compactmachines:compact_world 128 -64 128 -64\"]",
+                "A string not in that form makes Forge refuse the whole list and put the default back, with a line in its log.",
+                "Empty by default: nothing is watched.")
+                .defineListAllowEmpty("chunkWatchAreas", Collections.<String>emptyList(), ChunkWatch::isValidLine);
         b.pop();
         b.push("integratedDynamics");
         ID_SKIP_DANGLING_PARTS = b.comment(

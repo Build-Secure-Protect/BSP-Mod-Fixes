@@ -2,6 +2,9 @@ package com.mrgregles.bsp_mod_fixes.fix;
 
 import com.mojang.logging.LogUtils;
 import com.mrgregles.bsp_mod_fixes.fix.aae.QuantumAbsorption;
+import com.mrgregles.bsp_mod_fixes.MixinFixPlugin;
+import com.mrgregles.bsp_mod_fixes.fix.chunks.ChunkWatch;
+import com.mrgregles.bsp_mod_fixes.fix.chunks.OffThreadTracer;
 import com.mrgregles.bsp_mod_fixes.fix.chunks.UnloadIteration;
 import com.mrgregles.bsp_mod_fixes.fix.cm.CmGate;
 import com.mrgregles.bsp_mod_fixes.fix.cm.LoadSaves;
@@ -119,7 +122,9 @@ public final class Fixes {
             Map.entry("PowersuitsRailgunCooldownMixin", new Fix(RailgunCooldown.ID, RailgunCooldown.WHAT, RailgunCooldown.TARGET)),
             Map.entry("LevelChunkUnloadMixin", new Fix(UnloadIteration.ID, UnloadIteration.WHAT, UnloadIteration.TARGET)),
             Map.entry("IdNetworkKillMixin", new Fix(DanglingParts.ID, DanglingParts.WHAT, DanglingParts.TARGET)),
-            Map.entry("IdPartRemovalMixin", new Fix(OrphanRemoval.ID, OrphanRemoval.WHAT, OrphanRemoval.TARGET)));
+            Map.entry("IdPartRemovalMixin", new Fix(OrphanRemoval.ID, OrphanRemoval.WHAT, OrphanRemoval.TARGET)),
+            Map.entry("LevelChunkOffThreadMixin", new Fix(OffThreadTracer.ID, OffThreadTracer.WHAT, OffThreadTracer.TARGET)),
+            Map.entry("DistanceManagerTicketMixin", new Fix(ChunkWatch.ID, ChunkWatch.WHAT, ChunkWatch.TARGET)));
 
     private static final List<Fix> ACTIVE = Collections.synchronizedList(new ArrayList<>());
     /** Fixes the mixin plugin skipped, by id, with the reason (the EMI fixes without EMI at the pinned version; client-only fixes on a dedicated server). */
@@ -150,6 +155,14 @@ public final class Fixes {
         // Furnaces' classes, so only beside the build the mixin was written for and when the mixin was not skipped
         if (IronFurnacesGate.installedVersion().map(IronFurnacesGate.VERSION::equals).orElse(false) && !SKIPPED.containsKey(FurnaceListRepair.ID)) {
             MinecraftForge.EVENT_BUS.addListener(FurnaceListNames::onServerTick);
+        }
+        // F-48, a server stop drops the task queue: the chunks whose deferred passes were queued are forgotten with it
+        MinecraftForge.EVENT_BUS.addListener(UnloadIteration::onServerStopped);
+        // F-52, the load and unload lines of the watched chunks (the ticket mixin does the rest); its target class loads after
+        // this, so the plugin has not decided yet, and the dev-only skip list is read directly to keep both halves together
+        if (!MixinFixPlugin.switchedOff("DistanceManagerTicketMixin", System.getProperty(MixinFixPlugin.SKIP_PROPERTY))) {
+            MinecraftForge.EVENT_BUS.addListener(ChunkWatch::onChunkLoad);
+            MinecraftForge.EVENT_BUS.addListener(ChunkWatch::onChunkUnload);
         }
     }
 

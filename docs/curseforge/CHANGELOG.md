@@ -1,3 +1,15 @@
+# BSP-Mod Fixes 0.20.0
+
+Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios, and Integrated Dynamics 1.31.5 with Cyclops Core and Common Capabilities (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.75.0.243 or 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix (JEI 15.75 has that fix itself).
+
+## Added
+
+**Two diagnostics for the chunk reload race, so the mod behind it can be named.** F-51 logs, once per thread and calling class, the first time a thread other than the server's changes a chunk's block entity map (even a mere reader does, when it meets a removed block entity), with the full stack: that race is what made chunk unloads crash the server. F-52 logs, for the chunks you list in `chunkWatchAreas` under `[diagnostics]` in `bsp_mod_fixes-server.toml` (for example `["allthemodium:the_other 464 464 468 468"]`; empty by default, so nothing is logged until you fill it), every chunk ticket added or removed with who asked for it, and every load and unload, one INFO line each, so what keeps reloading an area with nobody near can be read from the log. Both are switches under `[diagnostics]`, both on by default, and neither changes anything in the game.
+
+## Changed
+
+**The chunk unload fix (F-48) now survives a write from another thread.** 0.17.0 copied the chunk's block entity map before walking it, which protects against a mod changing it from the server thread, but its copy itself was still a walk of the live map, so another thread changing the map at that moment crashed the server inside the fix. Every copy is now retaken, up to five times, when the map changes under it; if five copies fail, the unload's two passes and its clear run from the next server task instead, so the chunk's block entities still get their `onChunkUnloaded` and `setRemoved`; only a second failure there skips them. One WARN per chunk names the chunk and says whether F-51 saw an off-thread writer for it.
+
 # BSP-Mod Fixes 0.19.1
 
 Minecraft 1.20.1, Forge 47.3.10 or newer, Java 17. Needed on the client and the server. Requires Numina 2.3.13 and Modular Powersuits 2.3.13 exactly. Optional, each skipped with one log line beside any other build: AdvancedAE 1.3.6-1.20.1, Gobber 2 2.8.9, Compact Machines 6.0.3, MFFS (Modular Force Field System) 5.1.29, Deep Resonance 1.20-5.0.6, Iron Furnaces 4.1.8, Voltaic 1.20.1-1.2.2 with Mekanism and Curios, Evolved Mekanism 1.3.0-fix3 with Elytra Slot and Curios, and Integrated Dynamics 1.31.5 with Cyclops Core and Common Capabilities (client and server). Optional, client only: EMI 1.1.24+1.20.1+forge with JEI 15.75.0.243 or 15.74.0.234 for the EMI fixes; any JEI 15.74 build for the JEI fix (JEI 15.75 has that fix itself).
